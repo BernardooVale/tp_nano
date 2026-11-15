@@ -88,6 +88,21 @@ MODULES = [
             "README.md",
         ],
     },
+    {
+        "dir": "06_fronteira_tensao_nao_padronizada",
+        "script": "executar_varredura_tensoes.py",
+        "expected": [
+            "sweep_nand_nor_vdd_pol.sp",
+            "sweep_nand_nor_asym.sp",
+            "sweep_xor_xnor_vdd_vin.sp",
+            "mapa_tensoes_nand_nor.csv",
+            "mapa_tensoes_xor_xnor.csv",
+            "fig1_nand_nor_mapa_vdd_polaridade.png",
+            "fig2_nand_nor_assimetria_vg2.png",
+            "fig3_xor_xnor_mapa_vdd_vin.png",
+            "README.md",
+        ],
+    },
 ]
 
 
