@@ -1,0 +1,12 @@
+$DATA1 SOURCE='HSPICE' VERSION='J-2014.09-SP2 64-BIT'
+.TITLE '*'
+ nand_ipeak_00_10 nand_pwr_00_10   nand_ipeak_10_11 nand_pwr_10_11  
+ nand_ipeak_11_01 nand_pwr_11_01   nand_ipeak_01_00 nand_pwr_01_00  
+ nor_ipeak_00_10  nor_pwr_00_10    nor_ipeak_10_11  nor_pwr_10_11   
+ nor_ipeak_11_01  nor_pwr_11_01    nor_ipeak_01_00  nor_pwr_01_00   
+ temper           alter#          
+  1.175e-06        7.564e-08        4.762e-08        7.143e-08      
+  4.762e-08        7.143e-08        1.018e-06        3.345e-07      
+  1.471e-06        7.758e-08        4.762e-08        7.143e-08      
+  4.762e-08        7.143e-08        1.018e-06        3.344e-07      
+   25.0000        1               

@@ -1,0 +1,158 @@
+***** HSPICE -- J-2014.09-SP2 64-BIT (Feb 26 2015) RHEL64 ******
+ Input File: ari_N_output.sp
+ lic:
+ lic: FLEXlm: v10.9.8
+ lic: USER:   dreis                HOSTNAME: cse-ws-32
+ lic: HOSTID: 6c3be5388b6e         PID:      23180
+ lic: Using FLEXlm license file:
+ lic: /afs/crc.nd.edu/group/cse/synopsys/license.dat
+ lic: Checkout 1 hspice
+ lic: License/Maintenance for hspice will expire on 23-may-2019/2017.12
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER /afs/crc.nd.edu/group/cse/synopsys/license.d
+ lic:
+ init: begin read circuit files,  cpu clock=  1.00E-02
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/ad
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/ad
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/behave
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/bjt
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/burr_brn
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/comlinear
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/dio
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/fet
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/lin_tech
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/pci
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/signet
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/ti
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/tline
+       option search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2
+                         /hspice/parts/xilinx
+       option runlvl
+       option post
+       option lis_new
+       option ingold
+       option method = trap
+       option runlvl =     6.00
+       option co =     132.
+       option measform =     3.00
+       option sampling_method = srs
+       option captab
+ init: end read circuit files,  cpu clock=  1.00E-02 peak memory=       174 mb
+ init: begin check errors,  cpu clock=  1.00E-02
+ init: end check errors,  cpu clock=  1.00E-02 peak memory=       177 mb
+ init: begin setup matrix, pivot=     0 cpu clock=  1.00E-02
+       establish matrix -- done,  cpu clock=  1.00E-02 peak memory=       177 mb
+       re-order matrix -- done,  cpu clock=  1.00E-02 peak memory=       177 mb
+ init: end setup matrix,  cpu clock=  1.00E-02 peak memory=       177 mb
+ sweep: voltage         voltage1         begin, #sweeps =   6
+ voltage: vg              =    1.00E-01
+ dcop: begin dcop,  cpu clock=  1.00E-02
+ dcop: end dcop,  cpu clock=  2.00E-02 peak memory=       177 mb  tot_iter=       3
+ output: results_ari_N_output.tr0
+ sweep: tran tran1    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  2.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 2.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 2.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 2.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 2.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 2.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 2.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 2.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 2.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 2.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 2.00E-02
+ sweep: tran tran1    end,  cpu clock=  2.00E-02 peak memory=       177 mb
+ voltage: vg              =    3.00E-01
+ dcop: begin dcop,  cpu clock=  3.00E-02
+ dcop: end dcop,  cpu clock=  3.00E-02 peak memory=       177 mb  tot_iter=       6
+ output: results_ari_N_output.printtr0
+ sweep: tran tran2    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  3.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 3.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 3.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 3.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 3.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 3.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 3.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 3.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 3.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 3.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 3.00E-02
+ sweep: tran tran2    end,  cpu clock=  3.00E-02 peak memory=       177 mb
+ voltage: vg              =    5.00E-01
+ dcop: begin dcop,  cpu clock=  4.00E-02
+ dcop: end dcop,  cpu clock=  4.00E-02 peak memory=       177 mb  tot_iter=       9
+ output: results_ari_N_output.printtr0
+ sweep: tran tran3    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  4.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 4.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 4.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 4.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 4.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 4.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 4.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 4.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 4.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 4.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 4.00E-02
+ sweep: tran tran3    end,  cpu clock=  4.00E-02 peak memory=       177 mb
+ voltage: vg              =    7.00E-01
+ dcop: begin dcop,  cpu clock=  4.00E-02
+ dcop: end dcop,  cpu clock=  4.00E-02 peak memory=       177 mb  tot_iter=      12
+ output: results_ari_N_output.printtr0
+ sweep: tran tran4    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  4.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 4.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 4.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 4.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 5.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 5.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 5.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 5.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 5.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 5.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 5.00E-02
+ sweep: tran tran4    end,  cpu clock=  5.00E-02 peak memory=       177 mb
+ voltage: vg              =    9.00E-01
+ dcop: begin dcop,  cpu clock=  5.00E-02
+ dcop: end dcop,  cpu clock=  5.00E-02 peak memory=       177 mb  tot_iter=      15
+ output: results_ari_N_output.printtr0
+ sweep: tran tran5    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  5.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 5.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 5.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 5.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 5.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 5.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 5.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 5.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 5.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 5.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 5.00E-02
+ sweep: tran tran5    end,  cpu clock=  5.00E-02 peak memory=       177 mb
+ voltage: vg              =    1.10E+00
+ dcop: begin dcop,  cpu clock=  5.00E-02
+ dcop: end dcop,  cpu clock=  5.00E-02 peak memory=       177 mb  tot_iter=      18
+ output: results_ari_N_output.printtr0
+ sweep: tran tran6    begin, stop_t=  4.00E-09 #sweeps=4001 cpu clock=  5.00E-02
+ tran: time= 5.5307E-10 tot_iter=      14 conv_iter=       7 cpu clock= 5.00E-02
+ tran: time= 9.5307E-10 tot_iter=      18 conv_iter=       9 cpu clock= 5.00E-02
+ tran: time= 1.3531E-09 tot_iter=      22 conv_iter=      11 cpu clock= 5.00E-02
+ tran: time= 1.7531E-09 tot_iter=      26 conv_iter=      13 cpu clock= 5.00E-02
+ tran: time= 2.1531E-09 tot_iter=      30 conv_iter=      15 cpu clock= 5.00E-02
+ tran: time= 2.5531E-09 tot_iter=      34 conv_iter=      17 cpu clock= 6.00E-02
+ tran: time= 2.9531E-09 tot_iter=      38 conv_iter=      19 cpu clock= 6.00E-02
+ tran: time= 3.3531E-09 tot_iter=      42 conv_iter=      21 cpu clock= 6.00E-02
+ tran: time= 3.7531E-09 tot_iter=      46 conv_iter=      23 cpu clock= 6.00E-02
+ tran: time= 4.0000E-09 tot_iter=      50 conv_iter=      25 cpu clock= 6.00E-02
+ sweep: tran tran6    end,  cpu clock=  6.00E-02 peak memory=       177 mb
+ sweep: voltage         voltage         1 end
+>info:         ***** hspice job concluded
+ lic: Release hspice token(s)

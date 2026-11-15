@@ -1,0 +1,1503 @@
+### v(vdd) results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+800m
+### v(vdd):MONTE_CARLO=2 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+699.82m
+### v(vdd):MONTE_CARLO=3 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+766.54m
+### v(vdd):MONTE_CARLO=4 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0095
+### v(vdd):MONTE_CARLO=5 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+825.17m
+### v(vdd):MONTE_CARLO=6 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+575.16m
+### v(vdd):MONTE_CARLO=7 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+882m
+### v(vdd):MONTE_CARLO=8 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+738.29m
+### v(vdd):MONTE_CARLO=9 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+840.12m
+### v(vdd):MONTE_CARLO=10 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+735.14m
+### v(vdd):MONTE_CARLO=11 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+868.97m
+### v(vdd):MONTE_CARLO=12 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+836.25m
+### v(vdd):MONTE_CARLO=13 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+906.07m
+### v(vdd):MONTE_CARLO=14 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+644.52m
+### v(vdd):MONTE_CARLO=15 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+876.64m
+### v(vdd):MONTE_CARLO=16 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+847.8m
+### v(vdd):MONTE_CARLO=17 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+564.39m
+### v(vdd):MONTE_CARLO=18 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+900.17m
+### v(vdd):MONTE_CARLO=19 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+634.89m
+### v(vdd):MONTE_CARLO=20 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+493.72m
+### v(vdd):MONTE_CARLO=21 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.58m
+### v(vdd):MONTE_CARLO=22 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+709.71m
+### v(vdd):MONTE_CARLO=23 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+734.95m
+### v(vdd):MONTE_CARLO=24 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+986.43m
+### v(vdd):MONTE_CARLO=25 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+768.64m
+### v(vdd):MONTE_CARLO=26 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+719.12m
+### v(vdd):MONTE_CARLO=27 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+627.43m
+### v(vdd):MONTE_CARLO=28 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+679.42m
+### v(vdd):MONTE_CARLO=29 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+883.37m
+### v(vdd):MONTE_CARLO=30 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+748.42m
+### v(vdd):MONTE_CARLO=31 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+933.34m
+### v(vdd):MONTE_CARLO=32 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+713.92m
+### v(vdd):MONTE_CARLO=33 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+678.84m
+### v(vdd):MONTE_CARLO=34 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+743.07m
+### v(vdd):MONTE_CARLO=35 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+625.77m
+### v(vdd):MONTE_CARLO=36 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+743.79m
+### v(vdd):MONTE_CARLO=37 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+767.75m
+### v(vdd):MONTE_CARLO=38 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+792.76m
+### v(vdd):MONTE_CARLO=39 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+915.28m
+### v(vdd):MONTE_CARLO=40 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+727.73m
+### v(vdd):MONTE_CARLO=41 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+923.47m
+### v(vdd):MONTE_CARLO=42 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+898.44m
+### v(vdd):MONTE_CARLO=43 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+715.45m
+### v(vdd):MONTE_CARLO=44 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+767.03m
+### v(vdd):MONTE_CARLO=45 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+823.99m
+### v(vdd):MONTE_CARLO=46 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+733.12m
+### v(vdd):MONTE_CARLO=47 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+719.33m
+### v(vdd):MONTE_CARLO=48 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+824.5m
+### v(vdd):MONTE_CARLO=49 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+915.27m
+### v(vdd):MONTE_CARLO=50 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+927.07m
+### v(vdd):MONTE_CARLO=51 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+715.2m
+### v(vdd):MONTE_CARLO=52 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+838.16m
+### v(vdd):MONTE_CARLO=53 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+680.1m
+### v(vdd):MONTE_CARLO=54 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+820.71m
+### v(vdd):MONTE_CARLO=55 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+528.22m
+### v(vdd):MONTE_CARLO=56 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+878.19m
+### v(vdd):MONTE_CARLO=57 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+781.05m
+### v(vdd):MONTE_CARLO=58 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+830.44m
+### v(vdd):MONTE_CARLO=59 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+709.68m
+### v(vdd):MONTE_CARLO=60 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+861.35m
+### v(vdd):MONTE_CARLO=61 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+831.73m
+### v(vdd):MONTE_CARLO=62 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+696.9m
+### v(vdd):MONTE_CARLO=63 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+897.14m
+### v(vdd):MONTE_CARLO=64 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+779.72m
+### v(vdd):MONTE_CARLO=65 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+748.13m
+### v(vdd):MONTE_CARLO=66 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+914.02m
+### v(vdd):MONTE_CARLO=67 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+973.91m
+### v(vdd):MONTE_CARLO=68 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.61m
+### v(vdd):MONTE_CARLO=69 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+778.33m
+### v(vdd):MONTE_CARLO=70 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+680.54m
+### v(vdd):MONTE_CARLO=71 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+535.01m
+### v(vdd):MONTE_CARLO=72 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+780.31m
+### v(vdd):MONTE_CARLO=73 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0406
+### v(vdd):MONTE_CARLO=74 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+837.47m
+### v(vdd):MONTE_CARLO=75 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+858.85m
+### v(vdd):MONTE_CARLO=76 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+722.53m
+### v(vdd):MONTE_CARLO=77 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+677.87m
+### v(vdd):MONTE_CARLO=78 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.013
+### v(vdd):MONTE_CARLO=79 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0179
+### v(vdd):MONTE_CARLO=80 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+594.95m
+### v(vdd):MONTE_CARLO=81 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+861.41m
+### v(vdd):MONTE_CARLO=82 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+731.43m
+### v(vdd):MONTE_CARLO=83 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+868.6m
+### v(vdd):MONTE_CARLO=84 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+957.87m
+### v(vdd):MONTE_CARLO=85 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+683.33m
+### v(vdd):MONTE_CARLO=86 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+779.64m
+### v(vdd):MONTE_CARLO=87 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+630.47m
+### v(vdd):MONTE_CARLO=88 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+599.68m
+### v(vdd):MONTE_CARLO=89 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+601m
+### v(vdd):MONTE_CARLO=90 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+752.69m
+### v(vdd):MONTE_CARLO=91 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+909.43m
+### v(vdd):MONTE_CARLO=92 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+807.53m
+### v(vdd):MONTE_CARLO=93 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+862.3m
+### v(vdd):MONTE_CARLO=94 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+710.71m
+### v(vdd):MONTE_CARLO=95 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+718.72m
+### v(vdd):MONTE_CARLO=96 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+770.53m
+### v(vdd):MONTE_CARLO=97 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+787.84m
+### v(vdd):MONTE_CARLO=98 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+826.26m
+### v(vdd):MONTE_CARLO=99 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+672.83m
+### v(vdd):MONTE_CARLO=100 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+615.61m
+### v(vdd):MONTE_CARLO=101 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+514.66m
+### v(vdd):MONTE_CARLO=102 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+958.57m
+### v(vdd):MONTE_CARLO=103 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+770.24m
+### v(vdd):MONTE_CARLO=104 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+822.97m
+### v(vdd):MONTE_CARLO=105 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+852.05m
+### v(vdd):MONTE_CARLO=106 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+822.17m
+### v(vdd):MONTE_CARLO=107 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+780.58m
+### v(vdd):MONTE_CARLO=108 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+854.27m
+### v(vdd):MONTE_CARLO=109 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+879.97m
+### v(vdd):MONTE_CARLO=110 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+814.95m
+### v(vdd):MONTE_CARLO=111 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+671.18m
+### v(vdd):MONTE_CARLO=112 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+906.51m
+### v(vdd):MONTE_CARLO=113 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+996.78m
+### v(vdd):MONTE_CARLO=114 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+699.88m
+### v(vdd):MONTE_CARLO=115 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+613.41m
+### v(vdd):MONTE_CARLO=116 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+696.51m
+### v(vdd):MONTE_CARLO=117 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+836.94m
+### v(vdd):MONTE_CARLO=118 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+456.4m
+### v(vdd):MONTE_CARLO=119 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+936.83m
+### v(vdd):MONTE_CARLO=120 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+695.53m
+### v(vdd):MONTE_CARLO=121 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+890.32m
+### v(vdd):MONTE_CARLO=122 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+730.3m
+### v(vdd):MONTE_CARLO=123 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+926.79m
+### v(vdd):MONTE_CARLO=124 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+955.18m
+### v(vdd):MONTE_CARLO=125 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+864.93m
+### v(vdd):MONTE_CARLO=126 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+870.93m
+### v(vdd):MONTE_CARLO=127 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+886.21m
+### v(vdd):MONTE_CARLO=128 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.1597
+### v(vdd):MONTE_CARLO=129 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+731.2m
+### v(vdd):MONTE_CARLO=130 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+745.21m
+### v(vdd):MONTE_CARLO=131 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+716.97m
+### v(vdd):MONTE_CARLO=132 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0173
+### v(vdd):MONTE_CARLO=133 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0971
+### v(vdd):MONTE_CARLO=134 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+691.74m
+### v(vdd):MONTE_CARLO=135 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+756.07m
+### v(vdd):MONTE_CARLO=136 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+500.55m
+### v(vdd):MONTE_CARLO=137 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0448
+### v(vdd):MONTE_CARLO=138 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+847.12m
+### v(vdd):MONTE_CARLO=139 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+955.74m
+### v(vdd):MONTE_CARLO=140 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+927.96m
+### v(vdd):MONTE_CARLO=141 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+760.06m
+### v(vdd):MONTE_CARLO=142 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+689.95m
+### v(vdd):MONTE_CARLO=143 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+745.09m
+### v(vdd):MONTE_CARLO=144 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+965.22m
+### v(vdd):MONTE_CARLO=145 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+797.34m
+### v(vdd):MONTE_CARLO=146 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+831.46m
+### v(vdd):MONTE_CARLO=147 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+911.75m
+### v(vdd):MONTE_CARLO=148 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+894.02m
+### v(vdd):MONTE_CARLO=149 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+828.77m
+### v(vdd):MONTE_CARLO=150 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+655.07m
+### v(vdd):MONTE_CARLO=151 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+893.58m
+### v(vdd):MONTE_CARLO=152 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+821.58m
+### v(vdd):MONTE_CARLO=153 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+838.39m
+### v(vdd):MONTE_CARLO=154 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+964.88m
+### v(vdd):MONTE_CARLO=155 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+794.56m
+### v(vdd):MONTE_CARLO=156 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+928.87m
+### v(vdd):MONTE_CARLO=157 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+747.26m
+### v(vdd):MONTE_CARLO=158 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.072
+### v(vdd):MONTE_CARLO=159 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+840.44m
+### v(vdd):MONTE_CARLO=160 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+777.9m
+### v(vdd):MONTE_CARLO=161 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+752.33m
+### v(vdd):MONTE_CARLO=162 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+550.31m
+### v(vdd):MONTE_CARLO=163 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+965.11m
+### v(vdd):MONTE_CARLO=164 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+778.87m
+### v(vdd):MONTE_CARLO=165 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+528.83m
+### v(vdd):MONTE_CARLO=166 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+697.26m
+### v(vdd):MONTE_CARLO=167 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+734.11m
+### v(vdd):MONTE_CARLO=168 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+809.06m
+### v(vdd):MONTE_CARLO=169 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+765.3m
+### v(vdd):MONTE_CARLO=170 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+775.65m
+### v(vdd):MONTE_CARLO=171 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0498
+### v(vdd):MONTE_CARLO=172 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+958.85m
+### v(vdd):MONTE_CARLO=173 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+809.1m
+### v(vdd):MONTE_CARLO=174 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+898.25m
+### v(vdd):MONTE_CARLO=175 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+841.94m
+### v(vdd):MONTE_CARLO=176 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+841.17m
+### v(vdd):MONTE_CARLO=177 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+786.93m
+### v(vdd):MONTE_CARLO=178 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+982.77m
+### v(vdd):MONTE_CARLO=179 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+777.1m
+### v(vdd):MONTE_CARLO=180 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+781.71m
+### v(vdd):MONTE_CARLO=181 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+823.48m
+### v(vdd):MONTE_CARLO=182 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+736.85m
+### v(vdd):MONTE_CARLO=183 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+852.51m
+### v(vdd):MONTE_CARLO=184 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+833.71m
+### v(vdd):MONTE_CARLO=185 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+711.65m
+### v(vdd):MONTE_CARLO=186 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+618.08m
+### v(vdd):MONTE_CARLO=187 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+985.16m
+### v(vdd):MONTE_CARLO=188 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+679.74m
+### v(vdd):MONTE_CARLO=189 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+726.48m
+### v(vdd):MONTE_CARLO=190 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+746.21m
+### v(vdd):MONTE_CARLO=191 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+987.7m
+### v(vdd):MONTE_CARLO=192 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+631.5m
+### v(vdd):MONTE_CARLO=193 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+839.79m
+### v(vdd):MONTE_CARLO=194 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+938.82m
+### v(vdd):MONTE_CARLO=195 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+883.49m
+### v(vdd):MONTE_CARLO=196 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+699.24m
+### v(vdd):MONTE_CARLO=197 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+855.87m
+### v(vdd):MONTE_CARLO=198 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+577.63m
+### v(vdd):MONTE_CARLO=199 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+647.01m
+### v(vdd):MONTE_CARLO=200 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+682.88m
+### v(vdd):MONTE_CARLO=201 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+968.98m
+### v(vdd):MONTE_CARLO=202 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+710.3m
+### v(vdd):MONTE_CARLO=203 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+530.65m
+### v(vdd):MONTE_CARLO=204 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+726.69m
+### v(vdd):MONTE_CARLO=205 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+780.52m
+### v(vdd):MONTE_CARLO=206 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+959.69m
+### v(vdd):MONTE_CARLO=207 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+810.98m
+### v(vdd):MONTE_CARLO=208 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+976.82m
+### v(vdd):MONTE_CARLO=209 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0579
+### v(vdd):MONTE_CARLO=210 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+933.68m
+### v(vdd):MONTE_CARLO=211 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+707.28m
+### v(vdd):MONTE_CARLO=212 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+848.68m
+### v(vdd):MONTE_CARLO=213 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+819.36m
+### v(vdd):MONTE_CARLO=214 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+870.31m
+### v(vdd):MONTE_CARLO=215 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+952.14m
+### v(vdd):MONTE_CARLO=216 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+699.43m
+### v(vdd):MONTE_CARLO=217 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+588.8m
+### v(vdd):MONTE_CARLO=218 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+607.6m
+### v(vdd):MONTE_CARLO=219 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+869.3m
+### v(vdd):MONTE_CARLO=220 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+729.97m
+### v(vdd):MONTE_CARLO=221 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+600.86m
+### v(vdd):MONTE_CARLO=222 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+673.23m
+### v(vdd):MONTE_CARLO=223 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+818.41m
+### v(vdd):MONTE_CARLO=224 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+801.64m
+### v(vdd):MONTE_CARLO=225 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+797.41m
+### v(vdd):MONTE_CARLO=226 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+519.65m
+### v(vdd):MONTE_CARLO=227 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+943.9m
+### v(vdd):MONTE_CARLO=228 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+784.52m
+### v(vdd):MONTE_CARLO=229 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+853.65m
+### v(vdd):MONTE_CARLO=230 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.49m
+### v(vdd):MONTE_CARLO=231 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+784.87m
+### v(vdd):MONTE_CARLO=232 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+462.63m
+### v(vdd):MONTE_CARLO=233 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+787.9m
+### v(vdd):MONTE_CARLO=234 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+756.92m
+### v(vdd):MONTE_CARLO=235 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+973.93m
+### v(vdd):MONTE_CARLO=236 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0038
+### v(vdd):MONTE_CARLO=237 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+817.22m
+### v(vdd):MONTE_CARLO=238 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+805.96m
+### v(vdd):MONTE_CARLO=239 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+986.17m
+### v(vdd):MONTE_CARLO=240 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+854.22m
+### v(vdd):MONTE_CARLO=241 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+741.13m
+### v(vdd):MONTE_CARLO=242 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+697.29m
+### v(vdd):MONTE_CARLO=243 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+649.67m
+### v(vdd):MONTE_CARLO=244 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+935.94m
+### v(vdd):MONTE_CARLO=245 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+729.07m
+### v(vdd):MONTE_CARLO=246 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+733.23m
+### v(vdd):MONTE_CARLO=247 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+735.57m
+### v(vdd):MONTE_CARLO=248 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+846.62m
+### v(vdd):MONTE_CARLO=249 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+927.28m
+### v(vdd):MONTE_CARLO=250 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+667.34m
+
+### v(vss) results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+0
+### v(vss):MONTE_CARLO=2 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-82.944m
+### v(vss):MONTE_CARLO=3 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+21.497m
+### v(vss):MONTE_CARLO=4 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+89.463m
+### v(vss):MONTE_CARLO=5 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+104.47m
+### v(vss):MONTE_CARLO=6 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+277.42m
+### v(vss):MONTE_CARLO=7 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-127.19m
+### v(vss):MONTE_CARLO=8 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+44.822m
+### v(vss):MONTE_CARLO=9 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+143.79m
+### v(vss):MONTE_CARLO=10 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-37.795m
+### v(vss):MONTE_CARLO=11 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+34.145m
+### v(vss):MONTE_CARLO=12 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-18.412m
+### v(vss):MONTE_CARLO=13 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-74.455m
+### v(vss):MONTE_CARLO=14 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+66.972m
+### v(vss):MONTE_CARLO=15 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-119.11m
+### v(vss):MONTE_CARLO=16 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+96.943m
+### v(vss):MONTE_CARLO=17 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+60.729m
+### v(vss):MONTE_CARLO=18 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+24.511m
+### v(vss):MONTE_CARLO=19 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+83.618m
+### v(vss):MONTE_CARLO=20 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-128.97m
+### v(vss):MONTE_CARLO=21 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+72.403m
+### v(vss):MONTE_CARLO=22 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-21.723m
+### v(vss):MONTE_CARLO=23 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-157.57m
+### v(vss):MONTE_CARLO=24 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+184.48m
+### v(vss):MONTE_CARLO=25 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+172.63m
+### v(vss):MONTE_CARLO=26 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+42.329m
+### v(vss):MONTE_CARLO=27 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-69.524m
+### v(vss):MONTE_CARLO=28 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+38.295m
+### v(vss):MONTE_CARLO=29 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+160.99m
+### v(vss):MONTE_CARLO=30 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+74.325m
+### v(vss):MONTE_CARLO=31 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+50.619m
+### v(vss):MONTE_CARLO=32 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+19.822m
+### v(vss):MONTE_CARLO=33 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-133.96m
+### v(vss):MONTE_CARLO=34 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-89.085m
+### v(vss):MONTE_CARLO=35 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-62.775m
+### v(vss):MONTE_CARLO=36 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+143.17m
+### v(vss):MONTE_CARLO=37 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+177.44m
+### v(vss):MONTE_CARLO=38 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-61.332m
+### v(vss):MONTE_CARLO=39 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-143.5m
+### v(vss):MONTE_CARLO=40 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-5.2766m
+### v(vss):MONTE_CARLO=41 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+43.828m
+### v(vss):MONTE_CARLO=42 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+51.796m
+### v(vss):MONTE_CARLO=43 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+35.061m
+### v(vss):MONTE_CARLO=44 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+37.082m
+### v(vss):MONTE_CARLO=45 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+62.739m
+### v(vss):MONTE_CARLO=46 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+153.2m
+### v(vss):MONTE_CARLO=47 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+143.74m
+### v(vss):MONTE_CARLO=48 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-40.509m
+### v(vss):MONTE_CARLO=49 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-26.284m
+### v(vss):MONTE_CARLO=50 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-63.281m
+### v(vss):MONTE_CARLO=51 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+62.45m
+### v(vss):MONTE_CARLO=52 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-224.93m
+### v(vss):MONTE_CARLO=53 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-4.2149m
+### v(vss):MONTE_CARLO=54 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-54.246m
+### v(vss):MONTE_CARLO=55 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-53.506m
+### v(vss):MONTE_CARLO=56 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+51.617m
+### v(vss):MONTE_CARLO=57 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+243.11m
+### v(vss):MONTE_CARLO=58 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+116.89m
+### v(vss):MONTE_CARLO=59 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+71.341m
+### v(vss):MONTE_CARLO=60 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-36.987m
+### v(vss):MONTE_CARLO=61 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+785.2u
+### v(vss):MONTE_CARLO=62 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+9.5537m
+### v(vss):MONTE_CARLO=63 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+82.17m
+### v(vss):MONTE_CARLO=64 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+141.74m
+### v(vss):MONTE_CARLO=65 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+70.708m
+### v(vss):MONTE_CARLO=66 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+117.65m
+### v(vss):MONTE_CARLO=67 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+226.76m
+### v(vss):MONTE_CARLO=68 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+39.371m
+### v(vss):MONTE_CARLO=69 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-116.02m
+### v(vss):MONTE_CARLO=70 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-41.191m
+### v(vss):MONTE_CARLO=71 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+67.121m
+### v(vss):MONTE_CARLO=72 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+15.678m
+### v(vss):MONTE_CARLO=73 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+114.57m
+### v(vss):MONTE_CARLO=74 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-106m
+### v(vss):MONTE_CARLO=75 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-152.3m
+### v(vss):MONTE_CARLO=76 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-88.269m
+### v(vss):MONTE_CARLO=77 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-73.046m
+### v(vss):MONTE_CARLO=78 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-161.27m
+### v(vss):MONTE_CARLO=79 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+16.248m
+### v(vss):MONTE_CARLO=80 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+131.87m
+### v(vss):MONTE_CARLO=81 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+54.405m
+### v(vss):MONTE_CARLO=82 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+76.318m
+### v(vss):MONTE_CARLO=83 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-18.778m
+### v(vss):MONTE_CARLO=84 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+169.7m
+### v(vss):MONTE_CARLO=85 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-29.421m
+### v(vss):MONTE_CARLO=86 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-174.93m
+### v(vss):MONTE_CARLO=87 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+125.66m
+### v(vss):MONTE_CARLO=88 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-47.223m
+### v(vss):MONTE_CARLO=89 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+142.55m
+### v(vss):MONTE_CARLO=90 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-43.41m
+### v(vss):MONTE_CARLO=91 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-61.138m
+### v(vss):MONTE_CARLO=92 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+40.871m
+### v(vss):MONTE_CARLO=93 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-77.343m
+### v(vss):MONTE_CARLO=94 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-129.69m
+### v(vss):MONTE_CARLO=95 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-22.352m
+### v(vss):MONTE_CARLO=96 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-58.207m
+### v(vss):MONTE_CARLO=97 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+38.922m
+### v(vss):MONTE_CARLO=98 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-41.154m
+### v(vss):MONTE_CARLO=99 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+82.317m
+### v(vss):MONTE_CARLO=100 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-40.418m
+### v(vss):MONTE_CARLO=101 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+119.2m
+### v(vss):MONTE_CARLO=102 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+41.686m
+### v(vss):MONTE_CARLO=103 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+45.938m
+### v(vss):MONTE_CARLO=104 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-13.038m
+### v(vss):MONTE_CARLO=105 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+80.753m
+### v(vss):MONTE_CARLO=106 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-137.91m
+### v(vss):MONTE_CARLO=107 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-76.779m
+### v(vss):MONTE_CARLO=108 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+55.86m
+### v(vss):MONTE_CARLO=109 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-100.85m
+### v(vss):MONTE_CARLO=110 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+19.417m
+### v(vss):MONTE_CARLO=111 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-134.97m
+### v(vss):MONTE_CARLO=112 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-52.623m
+### v(vss):MONTE_CARLO=113 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-27.568m
+### v(vss):MONTE_CARLO=114 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-130.16m
+### v(vss):MONTE_CARLO=115 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+36.026m
+### v(vss):MONTE_CARLO=116 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-86.106m
+### v(vss):MONTE_CARLO=117 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-63.863m
+### v(vss):MONTE_CARLO=118 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+57.18m
+### v(vss):MONTE_CARLO=119 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+121.64m
+### v(vss):MONTE_CARLO=120 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-118.88m
+### v(vss):MONTE_CARLO=121 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-116.39m
+### v(vss):MONTE_CARLO=122 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+99.787m
+### v(vss):MONTE_CARLO=123 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+100.29m
+### v(vss):MONTE_CARLO=124 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+47.615m
+### v(vss):MONTE_CARLO=125 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+44.168m
+### v(vss):MONTE_CARLO=126 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+41.772m
+### v(vss):MONTE_CARLO=127 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-352.65m
+### v(vss):MONTE_CARLO=128 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-108.38m
+### v(vss):MONTE_CARLO=129 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-225.05m
+### v(vss):MONTE_CARLO=130 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-31.247m
+### v(vss):MONTE_CARLO=131 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-118.16m
+### v(vss):MONTE_CARLO=132 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+35.634m
+### v(vss):MONTE_CARLO=133 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+80.271m
+### v(vss):MONTE_CARLO=134 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+191.69m
+### v(vss):MONTE_CARLO=135 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+95.57m
+### v(vss):MONTE_CARLO=136 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+46.571m
+### v(vss):MONTE_CARLO=137 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-162.38m
+### v(vss):MONTE_CARLO=138 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+28.889m
+### v(vss):MONTE_CARLO=139 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-162.36u
+### v(vss):MONTE_CARLO=140 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+190.11m
+### v(vss):MONTE_CARLO=141 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-148.11m
+### v(vss):MONTE_CARLO=142 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-56.023m
+### v(vss):MONTE_CARLO=143 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-83.066m
+### v(vss):MONTE_CARLO=144 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+144.93m
+### v(vss):MONTE_CARLO=145 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+63.688m
+### v(vss):MONTE_CARLO=146 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+130.23m
+### v(vss):MONTE_CARLO=147 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+201.31m
+### v(vss):MONTE_CARLO=148 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+41.979m
+### v(vss):MONTE_CARLO=149 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+187.44m
+### v(vss):MONTE_CARLO=150 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+41.498m
+### v(vss):MONTE_CARLO=151 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-46.947m
+### v(vss):MONTE_CARLO=152 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+139.2m
+### v(vss):MONTE_CARLO=153 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-46.059m
+### v(vss):MONTE_CARLO=154 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-38.042m
+### v(vss):MONTE_CARLO=155 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-133.27m
+### v(vss):MONTE_CARLO=156 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+36.345m
+### v(vss):MONTE_CARLO=157 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-97.829m
+### v(vss):MONTE_CARLO=158 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-172.72m
+### v(vss):MONTE_CARLO=159 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+186.72m
+### v(vss):MONTE_CARLO=160 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+123.81m
+### v(vss):MONTE_CARLO=161 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-31.06m
+### v(vss):MONTE_CARLO=162 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-94.355m
+### v(vss):MONTE_CARLO=163 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+33.13m
+### v(vss):MONTE_CARLO=164 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+80.405m
+### v(vss):MONTE_CARLO=165 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+20.83m
+### v(vss):MONTE_CARLO=166 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+79.204m
+### v(vss):MONTE_CARLO=167 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-69.058m
+### v(vss):MONTE_CARLO=168 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+95.101m
+### v(vss):MONTE_CARLO=169 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-66.954m
+### v(vss):MONTE_CARLO=170 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+103.81m
+### v(vss):MONTE_CARLO=171 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-37.192m
+### v(vss):MONTE_CARLO=172 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-56.301m
+### v(vss):MONTE_CARLO=173 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-95.959m
+### v(vss):MONTE_CARLO=174 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-23.194m
+### v(vss):MONTE_CARLO=175 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+45.261m
+### v(vss):MONTE_CARLO=176 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+3.5003m
+### v(vss):MONTE_CARLO=177 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-103.58m
+### v(vss):MONTE_CARLO=178 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+39.297m
+### v(vss):MONTE_CARLO=179 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-39.647m
+### v(vss):MONTE_CARLO=180 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+63.259m
+### v(vss):MONTE_CARLO=181 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+57.885m
+### v(vss):MONTE_CARLO=182 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+18.733m
+### v(vss):MONTE_CARLO=183 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-228.65m
+### v(vss):MONTE_CARLO=184 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+111.7m
+### v(vss):MONTE_CARLO=185 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+121.05m
+### v(vss):MONTE_CARLO=186 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-63.19m
+### v(vss):MONTE_CARLO=187 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+281.37m
+### v(vss):MONTE_CARLO=188 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+26.236m
+### v(vss):MONTE_CARLO=189 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+82.688m
+### v(vss):MONTE_CARLO=190 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-9.314m
+### v(vss):MONTE_CARLO=191 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+130.09m
+### v(vss):MONTE_CARLO=192 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+33.777m
+### v(vss):MONTE_CARLO=193 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+77.374m
+### v(vss):MONTE_CARLO=194 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+136.5m
+### v(vss):MONTE_CARLO=195 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+69.112m
+### v(vss):MONTE_CARLO=196 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+15.716m
+### v(vss):MONTE_CARLO=197 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-567.85u
+### v(vss):MONTE_CARLO=198 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-74.382m
+### v(vss):MONTE_CARLO=199 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-50.964m
+### v(vss):MONTE_CARLO=200 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+56.694m
+### v(vss):MONTE_CARLO=201 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+88.255m
+### v(vss):MONTE_CARLO=202 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-20.792m
+### v(vss):MONTE_CARLO=203 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-29.854m
+### v(vss):MONTE_CARLO=204 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-60.175m
+### v(vss):MONTE_CARLO=205 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+83.119m
+### v(vss):MONTE_CARLO=206 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-66.613m
+### v(vss):MONTE_CARLO=207 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+75.657m
+### v(vss):MONTE_CARLO=208 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+40.813m
+### v(vss):MONTE_CARLO=209 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+135.23m
+### v(vss):MONTE_CARLO=210 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+164.67m
+### v(vss):MONTE_CARLO=211 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+150.59m
+### v(vss):MONTE_CARLO=212 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+166.97m
+### v(vss):MONTE_CARLO=213 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-59.781m
+### v(vss):MONTE_CARLO=214 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-62.881m
+### v(vss):MONTE_CARLO=215 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+74.125m
+### v(vss):MONTE_CARLO=216 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+62.557m
+### v(vss):MONTE_CARLO=217 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-87.673m
+### v(vss):MONTE_CARLO=218 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-71.405m
+### v(vss):MONTE_CARLO=219 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+32.664m
+### v(vss):MONTE_CARLO=220 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+103.44m
+### v(vss):MONTE_CARLO=221 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-46.937m
+### v(vss):MONTE_CARLO=222 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-84.557m
+### v(vss):MONTE_CARLO=223 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+35.735m
+### v(vss):MONTE_CARLO=224 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-121.36m
+### v(vss):MONTE_CARLO=225 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+190.81m
+### v(vss):MONTE_CARLO=226 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-144.05m
+### v(vss):MONTE_CARLO=227 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.5614m
+### v(vss):MONTE_CARLO=228 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-21.537m
+### v(vss):MONTE_CARLO=229 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-60.612m
+### v(vss):MONTE_CARLO=230 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+104.2m
+### v(vss):MONTE_CARLO=231 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-56.502m
+### v(vss):MONTE_CARLO=232 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-16.875m
+### v(vss):MONTE_CARLO=233 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+77.37m
+### v(vss):MONTE_CARLO=234 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+62.897m
+### v(vss):MONTE_CARLO=235 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-130.28m
+### v(vss):MONTE_CARLO=236 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-4.4942m
+### v(vss):MONTE_CARLO=237 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+19.128m
+### v(vss):MONTE_CARLO=238 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-277.76m
+### v(vss):MONTE_CARLO=239 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-26.987m
+### v(vss):MONTE_CARLO=240 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+105.53m
+### v(vss):MONTE_CARLO=241 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+76.87m
+### v(vss):MONTE_CARLO=242 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+122.95m
+### v(vss):MONTE_CARLO=243 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-52.049m
+### v(vss):MONTE_CARLO=244 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-58.314m
+### v(vss):MONTE_CARLO=245 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+50.368m
+### v(vss):MONTE_CARLO=246 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+47.013m
+### v(vss):MONTE_CARLO=247 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+44.416m
+### v(vss):MONTE_CARLO=248 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-41.872m
+### v(vss):MONTE_CARLO=249 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+62.857m
+### v(vss):MONTE_CARLO=250 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+-116.88m
+
+### v(out) results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+799.46m
+### v(out):MONTE_CARLO=2 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+699.01m
+### v(out):MONTE_CARLO=3 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+765.94m
+### v(out):MONTE_CARLO=4 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0093
+### v(out):MONTE_CARLO=5 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+824.79m
+### v(out):MONTE_CARLO=6 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+575.55m
+### v(out):MONTE_CARLO=7 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+881.48m
+### v(out):MONTE_CARLO=8 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+737.68m
+### v(out):MONTE_CARLO=9 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+839.86m
+### v(out):MONTE_CARLO=10 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+734.43m
+### v(out):MONTE_CARLO=11 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+868.58m
+### v(out):MONTE_CARLO=12 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+835.74m
+### v(out):MONTE_CARLO=13 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+905.67m
+### v(out):MONTE_CARLO=14 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+643.98m
+### v(out):MONTE_CARLO=15 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+876.14m
+### v(out):MONTE_CARLO=16 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+847.45m
+### v(out):MONTE_CARLO=17 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+563.9m
+### v(out):MONTE_CARLO=18 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+899.84m
+### v(out):MONTE_CARLO=19 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+634.38m
+### v(out):MONTE_CARLO=20 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+491.55m
+### v(out):MONTE_CARLO=21 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.23m
+### v(out):MONTE_CARLO=22 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+708.97m
+### v(out):MONTE_CARLO=23 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+733.89m
+### v(out):MONTE_CARLO=24 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+986.36m
+### v(out):MONTE_CARLO=25 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+768.38m
+### v(out):MONTE_CARLO=26 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+718.48m
+### v(out):MONTE_CARLO=27 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+626.62m
+### v(out):MONTE_CARLO=28 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+678.8m
+### v(out):MONTE_CARLO=29 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+883.18m
+### v(out):MONTE_CARLO=30 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+747.89m
+### v(out):MONTE_CARLO=31 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+933.1m
+### v(out):MONTE_CARLO=32 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+713.24m
+### v(out):MONTE_CARLO=33 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+677.78m
+### v(out):MONTE_CARLO=34 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+742.32m
+### v(out):MONTE_CARLO=35 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+624.97m
+### v(out):MONTE_CARLO=36 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+743.46m
+### v(out):MONTE_CARLO=37 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+767.51m
+### v(out):MONTE_CARLO=38 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+792.14m
+### v(out):MONTE_CARLO=39 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+914.73m
+### v(out):MONTE_CARLO=40 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+727.04m
+### v(out):MONTE_CARLO=41 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+923.2m
+### v(out):MONTE_CARLO=42 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+898.12m
+### v(out):MONTE_CARLO=43 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+714.8m
+### v(out):MONTE_CARLO=44 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+766.46m
+### v(out):MONTE_CARLO=45 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+823.57m
+### v(out):MONTE_CARLO=46 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+732.82m
+### v(out):MONTE_CARLO=47 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+719.01m
+### v(out):MONTE_CARLO=48 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+823.96m
+### v(out):MONTE_CARLO=49 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+914.93m
+### v(out):MONTE_CARLO=50 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+926.72m
+### v(out):MONTE_CARLO=51 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+714.64m
+### v(out):MONTE_CARLO=52 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+836.93m
+### v(out):MONTE_CARLO=53 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+679.36m
+### v(out):MONTE_CARLO=54 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+820.18m
+### v(out):MONTE_CARLO=55 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+527.24m
+### v(out):MONTE_CARLO=56 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+877.84m
+### v(out):MONTE_CARLO=57 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+780.89m
+### v(out):MONTE_CARLO=58 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+830.1m
+### v(out):MONTE_CARLO=59 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+709.13m
+### v(out):MONTE_CARLO=60 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+860.92m
+### v(out):MONTE_CARLO=61 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+831.25m
+### v(out):MONTE_CARLO=62 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+696.19m
+### v(out):MONTE_CARLO=63 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+896.87m
+### v(out):MONTE_CARLO=64 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+779.36m
+### v(out):MONTE_CARLO=65 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+747.59m
+### v(out):MONTE_CARLO=66 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+913.84m
+### v(out):MONTE_CARLO=67 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+973.85m
+### v(out):MONTE_CARLO=68 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.21m
+### v(out):MONTE_CARLO=69 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+777.58m
+### v(out):MONTE_CARLO=70 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+679.78m
+### v(out):MONTE_CARLO=71 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+534.52m
+### v(out):MONTE_CARLO=72 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+779.7m
+### v(out):MONTE_CARLO=73 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0405
+### v(out):MONTE_CARLO=74 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+836.89m
+### v(out):MONTE_CARLO=75 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+858.21m
+### v(out):MONTE_CARLO=76 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+721.75m
+### v(out):MONTE_CARLO=77 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+677.03m
+### v(out):MONTE_CARLO=78 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0124
+### v(out):MONTE_CARLO=79 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0177
+### v(out):MONTE_CARLO=80 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+594.69m
+### v(out):MONTE_CARLO=81 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+861.04m
+### v(out):MONTE_CARLO=82 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+730.91m
+### v(out):MONTE_CARLO=83 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+868.17m
+### v(out):MONTE_CARLO=84 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+957.77m
+### v(out):MONTE_CARLO=85 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+682.6m
+### v(out):MONTE_CARLO=86 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+778.66m
+### v(out):MONTE_CARLO=87 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+630.18m
+### v(out):MONTE_CARLO=88 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+598.85m
+### v(out):MONTE_CARLO=89 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+600.77m
+### v(out):MONTE_CARLO=90 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+752.05m
+### v(out):MONTE_CARLO=91 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+909.05m
+### v(out):MONTE_CARLO=92 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+807.03m
+### v(out):MONTE_CARLO=93 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+861.81m
+### v(out):MONTE_CARLO=94 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+709.76m
+### v(out):MONTE_CARLO=95 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+717.97m
+### v(out):MONTE_CARLO=96 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+769.87m
+### v(out):MONTE_CARLO=97 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+787.32m
+### v(out):MONTE_CARLO=98 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+825.72m
+### v(out):MONTE_CARLO=99 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+672.32m
+### v(out):MONTE_CARLO=100 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+614.78m
+### v(out):MONTE_CARLO=101 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+514.74m
+### v(out):MONTE_CARLO=102 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+958.36m
+### v(out):MONTE_CARLO=103 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+769.68m
+### v(out):MONTE_CARLO=104 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+822.45m
+### v(out):MONTE_CARLO=105 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+851.71m
+### v(out):MONTE_CARLO=106 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+821.49m
+### v(out):MONTE_CARLO=107 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+779.92m
+### v(out):MONTE_CARLO=108 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+853.9m
+### v(out):MONTE_CARLO=109 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+879.52m
+### v(out):MONTE_CARLO=110 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+814.44m
+### v(out):MONTE_CARLO=111 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+670.1m
+### v(out):MONTE_CARLO=112 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+906.14m
+### v(out):MONTE_CARLO=113 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+996.54m
+### v(out):MONTE_CARLO=114 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+698.89m
+### v(out):MONTE_CARLO=115 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+612.77m
+### v(out):MONTE_CARLO=116 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+695.69m
+### v(out):MONTE_CARLO=117 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+836.44m
+### v(out):MONTE_CARLO=118 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+456.15m
+### v(out):MONTE_CARLO=119 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+936.67m
+### v(out):MONTE_CARLO=120 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+694.58m
+### v(out):MONTE_CARLO=121 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+889.85m
+### v(out):MONTE_CARLO=122 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+729.81m
+### v(out):MONTE_CARLO=123 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+926.59m
+### v(out):MONTE_CARLO=124 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+954.99m
+### v(out):MONTE_CARLO=125 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+864.55m
+### v(out):MONTE_CARLO=126 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+870.55m
+### v(out):MONTE_CARLO=127 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+882.48m
+### v(out):MONTE_CARLO=128 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.1593
+### v(out):MONTE_CARLO=129 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+729.56m
+### v(out):MONTE_CARLO=130 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+744.52m
+### v(out):MONTE_CARLO=131 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+716.07m
+### v(out):MONTE_CARLO=132 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0171
+### v(out):MONTE_CARLO=133 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.097
+### v(out):MONTE_CARLO=134 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+691.57m
+### v(out):MONTE_CARLO=135 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+755.61m
+### v(out):MONTE_CARLO=136 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+499.92m
+### v(out):MONTE_CARLO=137 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0442
+### v(out):MONTE_CARLO=138 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+846.69m
+### v(out):MONTE_CARLO=139 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+955.47m
+### v(out):MONTE_CARLO=140 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+927.85m
+### v(out):MONTE_CARLO=141 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+759.15m
+### v(out):MONTE_CARLO=142 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+689.15m
+### v(out):MONTE_CARLO=143 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+744.34m
+### v(out):MONTE_CARLO=144 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+965.11m
+### v(out):MONTE_CARLO=145 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+796.85m
+### v(out):MONTE_CARLO=146 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+831.16m
+### v(out):MONTE_CARLO=147 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+911.64m
+### v(out):MONTE_CARLO=148 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+893.69m
+### v(out):MONTE_CARLO=149 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+828.54m
+### v(out):MONTE_CARLO=150 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+654.43m
+### v(out):MONTE_CARLO=151 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+893.2m
+### v(out):MONTE_CARLO=152 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+821.29m
+### v(out):MONTE_CARLO=153 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+837.91m
+### v(out):MONTE_CARLO=154 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+964.61m
+### v(out):MONTE_CARLO=155 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+793.8m
+### v(out):MONTE_CARLO=156 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+928.62m
+### v(out):MONTE_CARLO=157 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+746.52m
+### v(out):MONTE_CARLO=158 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0713
+### v(out):MONTE_CARLO=159 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+840.22m
+### v(out):MONTE_CARLO=160 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+777.5m
+### v(out):MONTE_CARLO=161 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+751.66m
+### v(out):MONTE_CARLO=162 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+549.13m
+### v(out):MONTE_CARLO=163 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+964.89m
+### v(out):MONTE_CARLO=164 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+778.4m
+### v(out):MONTE_CARLO=165 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+528.16m
+### v(out):MONTE_CARLO=166 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+696.73m
+### v(out):MONTE_CARLO=167 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+733.38m
+### v(out):MONTE_CARLO=168 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+808.65m
+### v(out):MONTE_CARLO=169 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+764.62m
+### v(out):MONTE_CARLO=170 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+775.23m
+### v(out):MONTE_CARLO=171 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0495
+### v(out):MONTE_CARLO=172 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+958.55m
+### v(out):MONTE_CARLO=173 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+808.48m
+### v(out):MONTE_CARLO=174 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+897.88m
+### v(out):MONTE_CARLO=175 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+841.52m
+### v(out):MONTE_CARLO=176 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+840.71m
+### v(out):MONTE_CARLO=177 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+786.24m
+### v(out):MONTE_CARLO=178 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+982.58m
+### v(out):MONTE_CARLO=179 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+776.48m
+### v(out):MONTE_CARLO=180 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+781.19m
+### v(out):MONTE_CARLO=181 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+823.05m
+### v(out):MONTE_CARLO=182 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+736.21m
+### v(out):MONTE_CARLO=183 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+851.27m
+### v(out):MONTE_CARLO=184 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+833.36m
+### v(out):MONTE_CARLO=185 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+711.26m
+### v(out):MONTE_CARLO=186 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+617.24m
+### v(out):MONTE_CARLO=187 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+985.14m
+### v(out):MONTE_CARLO=188 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+679.08m
+### v(out):MONTE_CARLO=189 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+725.95m
+### v(out):MONTE_CARLO=190 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+745.51m
+### v(out):MONTE_CARLO=191 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+987.59m
+### v(out):MONTE_CARLO=192 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+630.85m
+### v(out):MONTE_CARLO=193 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+839.41m
+### v(out):MONTE_CARLO=194 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+938.68m
+### v(out):MONTE_CARLO=195 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+883.18m
+### v(out):MONTE_CARLO=196 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+698.53m
+### v(out):MONTE_CARLO=197 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+855.42m
+### v(out):MONTE_CARLO=198 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+576.64m
+### v(out):MONTE_CARLO=199 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+646.28m
+### v(out):MONTE_CARLO=200 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+682.28m
+### v(out):MONTE_CARLO=201 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+968.81m
+### v(out):MONTE_CARLO=202 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+709.56m
+### v(out):MONTE_CARLO=203 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+529.79m
+### v(out):MONTE_CARLO=204 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+725.98m
+### v(out):MONTE_CARLO=205 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+780.05m
+### v(out):MONTE_CARLO=206 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+959.37m
+### v(out):MONTE_CARLO=207 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+810.53m
+### v(out):MONTE_CARLO=208 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+976.63m
+### v(out):MONTE_CARLO=209 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0578
+### v(out):MONTE_CARLO=210 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+933.54m
+### v(out):MONTE_CARLO=211 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+706.94m
+### v(out):MONTE_CARLO=212 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+848.45m
+### v(out):MONTE_CARLO=213 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+818.82m
+### v(out):MONTE_CARLO=214 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+869.86m
+### v(out):MONTE_CARLO=215 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+951.95m
+### v(out):MONTE_CARLO=216 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+698.86m
+### v(out):MONTE_CARLO=217 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+587.82m
+### v(out):MONTE_CARLO=218 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+606.71m
+### v(out):MONTE_CARLO=219 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+868.91m
+### v(out):MONTE_CARLO=220 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+729.5m
+### v(out):MONTE_CARLO=221 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+600.03m
+### v(out):MONTE_CARLO=222 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+672.38m
+### v(out):MONTE_CARLO=223 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+817.93m
+### v(out):MONTE_CARLO=224 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+800.92m
+### v(out):MONTE_CARLO=225 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+797.19m
+### v(out):MONTE_CARLO=226 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+517.63m
+### v(out):MONTE_CARLO=227 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+943.61m
+### v(out):MONTE_CARLO=228 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+783.94m
+### v(out):MONTE_CARLO=229 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+853.19m
+### v(out):MONTE_CARLO=230 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+856.16m
+### v(out):MONTE_CARLO=231 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+784.23m
+### v(out):MONTE_CARLO=232 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+461.54m
+### v(out):MONTE_CARLO=233 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+787.43m
+### v(out):MONTE_CARLO=234 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+756.37m
+### v(out):MONTE_CARLO=235 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+973.45m
+### v(out):MONTE_CARLO=236 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+1.0036
+### v(out):MONTE_CARLO=237 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+816.73m
+### v(out):MONTE_CARLO=238 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+803.88m
+### v(out):MONTE_CARLO=239 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+985.93m
+### v(out):MONTE_CARLO=240 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+853.89m
+### v(out):MONTE_CARLO=241 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+740.62m
+### v(out):MONTE_CARLO=242 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+696.92m
+### v(out):MONTE_CARLO=243 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+648.94m
+### v(out):MONTE_CARLO=244 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+935.62m
+### v(out):MONTE_CARLO=245 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+728.45m
+### v(out):MONTE_CARLO=246 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+732.61m
+### v(out):MONTE_CARLO=247 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+734.95m
+### v(out):MONTE_CARLO=248 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+846.15m
+### v(out):MONTE_CARLO=249 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+927.03m
+### v(out):MONTE_CARLO=250 results_ari_nand_poly_lc_mc.tr0 (X=9.98u)
+666.35m
+

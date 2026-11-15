@@ -1,0 +1,12 @@
+Metrica,Valor,Unidade,Criterio,Passou
+Vq_Hold_Key0 (t=12ns),0.976764,V,> 0.80 V,True
+Vqb_Hold_Key0 (t=12ns),0.00204296,V,< 0.20 V,True
+DeltaV_Key0 (t=12ns),0.9747214,V,> 0.80 V,True
+DeltaV_Collapse1 (t=18ns),0.0841498,V,< 0.15 V,True
+DeltaV_Key1 (t=28ns),0.0762016,V,< 0.15 V,True
+"SNM_Hold (Key=0, WL=0V)",167.11827956950327,mV,> 150 mV,True
+"SNM_Read_Unassisted (Key=0, WL=1.0V)",0.0,mV,== 0 mV (Read Disturb),True
+"SNM_Read_Assist (Key=0, WL=0.30V)",66.2296533592132,mV,> 50 mV,True
+"SNM_Hold (Key=1, WL=0V)",0.0,mV,== 0 mV,True
+"SNM_Read_Assist (Key=1, WL=0.30V)",0.0,mV,== 0 mV,True
+"SNM_Read_Unassisted (Key=1, WL=1.0V)",0.0,mV,== 0 mV,True

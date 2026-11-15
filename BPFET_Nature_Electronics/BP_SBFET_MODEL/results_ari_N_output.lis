@@ -1,0 +1,242 @@
+ ****** HSPICE -- J-2014.09-SP2 64-BIT (Feb 26 2015) RHEL64 ******              
+  Copyright (C) 2014 Synopsys, Inc. All Rights Reserved.                        
+  Unpublished-rights reserved under US copyright laws.
+  This program is protected by law and is subject to the
+  terms and conditions of the license agreement from Synopsys.
+  Use of this program is your acceptance to be bound by the
+  license agreement. HSPICE is the trademark of Synopsys, Inc.
+  Input File: ari_N_output.sp                                                   
+  Command line options: ari_N_output.sp -o results_ari_N_output
+ lic:  
+ lic: FLEXlm: v10.9.8 
+ lic: USER:   dreis                HOSTNAME: cse-ws-32 
+ lic: HOSTID: 6c3be5388b6e         PID:      23180 
+ lic: Using FLEXlm license file: 
+ lic: /afs/crc.nd.edu/group/cse/synopsys/license.dat 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 23-may-2019/2017.12 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER /afs/crc.nd.edu/group/cse/synopsys/license.d
+ lic:   
+ Init: read install configuration file: /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2/hspice/meta.cfg
+ **info** *pvaI* current limit stacksize=10485760, set new limit stacksize=62914560
+
+  
+  
+  ******  Machine Information  ***********************************
+  CPU:
+  model name	: Intel(R) Core(TM) i5-3570 CPU @ 3.40GHz
+  cpu MHz	: 1600.000
+  
+  OS:
+  Linux version 2.6.32-642.13.2.el6.x86_64 (mockbuild@x86-029.build.eng.bos.redhat.com) (gcc version 4.4.7 20120313 (Red Hat 4.4.7-17) (GCC) ) #1 SMP Sat Feb 18 16:54:58 EST 2017
+
+  ******  Loading Files  *****************************************
+  Loading 'ari_N_output.sp '
+  Loading '/afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2/hspice/hspice.ini '
+ Loading pVA library results_ari_N_output.pvadir/pvaRTL_amd64.so...
+  **info** (ari_N_output.sp:22) DC voltage reset to initial transient source value              in source        0:vd                  new dc= -0.1500D+01
+ **info** *pvaI* Creating VA module (ari) for instance XARI_N with gmd reduction
+
+  
+      
+  ******  Options set in the netlist  ****************************
+  captab  = 1          co      = 131        ingold  = 1         
+  lis_new = 1          measform= 3          method  = 1         
+  post    = binary     runlvl  = 6          sampling_method= 1         
+  search = /afs/crc.nd.edu/group/cse/synopsys/J-2014.09-SP2/hspice/parts/ad
+  
+  
+  ******  Summary of possible problems in netlist  ***************
+  Negative resistor :      0
+  Negative capacitor:      0
+  Negative inductor :      0
+  Unconnected node  :      0
+  Dangling terminal :      0
+  Source loop       :      0
+  
+  ******  Circuit Statistics  ************************************
+  Voltage Sources     :       5
+  Verilog-A Instances :       1
+  Total # of Nodes    :       6
+  Total # of Elements :       6
+
+
+  
+  ******  Analysis Details  **************************************
+  dcop: begin dcop,  cpu clock=  1.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    1.000E-01 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  2.00E-02 peak memory=       177 mb  tot_iter=    
+    3                                             
+  Opening 'results_ari_N_output.tr0' for output.
+  Waveform Format: BIN      
+ 
+  Transient Beginning
+ **info** *pvaI* minimum timestep = 1e-21
+
+  Transient End
+
+          ***** job concluded
+  dcop: begin dcop,  cpu clock=  3.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    3.000E-01 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  3.00E-02 peak memory=       177 mb  tot_iter=    
+    6                                             
+ 
+  Transient Beginning
+  Transient End
+
+          ***** job concluded
+  dcop: begin dcop,  cpu clock=  4.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    5.000E-01 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  4.00E-02 peak memory=       177 mb  tot_iter=    
+    9                                             
+ 
+  Transient Beginning
+  Transient End
+
+          ***** job concluded
+  dcop: begin dcop,  cpu clock=  4.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    7.000E-01 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  4.00E-02 peak memory=       177 mb  tot_iter=    
+   12                                             
+ 
+  Transient Beginning
+  Transient End
+
+          ***** job concluded
+  dcop: begin dcop,  cpu clock=  5.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    9.000E-01 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  5.00E-02 peak memory=       177 mb  tot_iter=    
+   15                                             
+ 
+  Transient Beginning
+  Transient End
+
+          ***** job concluded
+  dcop: begin dcop,  cpu clock=  5.00E-02                                       
+                                                  
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** source        0:vg =    1.100E+00 ***
+
+
+ maximum nodal capacitance=    0.00             on node     0:0               
+
+    nodal  capacitance table 
+
+    node    =    cap      node    =    cap      node    =    cap      node    =    cap      node    =    cap
+
+ +0:d       =   0.      0:g       =   0.      0:g1      =   0.      0:g2      =   0.      0:s       =   0.     
+
+ 
+  dcop: end dcop,  cpu clock=  5.00E-02 peak memory=       177 mb  tot_iter=    
+   18                                             
+ 
+  Transient Beginning
+  100.00% Tran Time= 4.00e-09s Estimated Time Left: 0:00:00        
+  Transient End
+
+          ***** job concluded
+ ****** HSPICE -- J-2014.09-SP2 64-BIT (Feb 26 2015) RHEL64 ******              
+ ******  
+ *a single bp tfet device simulation
+
+ ****** job statistics summary tnom=  25.000 temp=  27.000 ******
+
+  ******  HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :     4
+  Actual Threads Count       :     1
+
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.01           1          18
+  transient          0.02       24006         312         156 rev=         0
+  readin             0.01
+  errchk             0.00
+  setup              0.00
+  output             0.02
+
+
+           peak memory used        177.84 megabytes
+           total cpu time            0.06 seconds
+           total elapsed time        0.42 seconds
+           job started at     17:56:39 05/18/2018
+           job ended   at     17:56:40 05/18/2018
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.22(s)

@@ -1,0 +1,50 @@
+//#######################################################################
+//#
+//#  File :  bp_ari.va
+//#  Author : Dayane Reis
+//#  Date : Apr 26, 2018
+//#  Description : Black Phosphorus FET Model
+//#  References : Based on Experimental Measurements from Peng Wu
+//		(Prof. Appenzeller's student) at Purdue University
+//#  Restrictions :
+//#
+//#######################################################################
+//#
+//#  Version history:
+//#
+//#   v0.1 Apr 26, 2018  Dayane Reis : Initial version
+//#   
+//#
+//#######################################################################
+
+`include "disciplines.vams"
+`include "constants.vams"
+
+module ari (d, g, s, g1, g2);
+	inout d, g, s, g1, g2;
+	electrical d, g, s, g1, g2;
+	real IdsP, IdsN;
+	parameter real W=1; //device width
+	parameter real aN=1; //constant that defines linear extrapolation rate for N
+	parameter real aP=1; //constant that defines linear extrapolation rate for P
+
+analog begin
+
+//Vg2 is the polarity gate - should be fixed at either -1.2 (-1.5)V or 0.8V
+IdsP=$table_model(V(g1,s), V(g2,s), V(g,s), V(d,s), "BP_ARI_dataP.txt", "1LL,1LL,1LL,3LL");
+IdsN=$table_model(V(g1,s), V(g2,s), V(g,s), V(d,s), "BP_ARI_dataN.txt", "1LL,1LL,1LL,3LL");
+
+if (V(g2,s)>0) //nmos
+	//if (V(d,s)<0)
+	//	I(d,s) <+ aN*IdsN*W;
+	//else
+		I(d,s) <+ 1*IdsN*W;
+if (V(g2,s)<0) //pmos
+	//if ((V(d,s)>0 & V(g,s)>-0.7  ))
+	//	I(d,s) <+ aP*IdsP*W;
+	//else
+		I(d,s) <+ 1*IdsP*W;
+
+end
+endmodule
+

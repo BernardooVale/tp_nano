@@ -1,0 +1,27 @@
+### Custom WaveView session file (version L-2016.03 build Feb 24, ) ###
+### saved at 18:28:34 on Thu Apr 26 2018 ###
+wdf 0 "/afs/nd.edu/user2/dreis/Spice/ARI/results_N_output.tr0" load=used 
+wdf 1 "/afs/nd.edu/user2/dreis/Spice/ARI/results_P_output.tr0" load=used 
+wdf 2 "/afs/nd.edu/user2/dreis/Spice/ARI/results_N_transfer.tr0" load=used 
+wdf 3 "/afs/nd.edu/user2/dreis/Spice/ARI/results_P_transfer.tr0" load=used 
+scalar list
+waveview_begin 1  stack  offset=0 name_b=81 mntr_b=81 name_width=66 "name=waveview 1" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=2 "name=i(vd)" attr=0:0:2:0 autoset=true disp=show swphead=true swpline=true 
+  panel_end
+waveview_end
+waveview_begin 2  stack  offset=0 name_b=81 mntr_b=81 name_width=66 "name=waveview 2" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=1 "delim=." sigtype=2 "name=i(vd)" attr=0:0:2:0 autoset=true disp=show swphead=true swpline=true 
+  panel_end
+waveview_end
+waveview_begin 3  stack  offset=0 name_b=236 mntr_b=425 name_width=221 mcur=9.13148808824768e-01 vc=cur-pnl xvar=2|v(g) "name=waveview 3" 
+  panel_begin linear pidx=0 spath=name+file uymin=1e-10 uymax=1.46e-06 xlabel=TIME(sec) yaxis=log ymin=1e-10 ymax=1.46e-06 
+    line src=wdf lidx=0 fidx=2 "delim=." sigtype=2 "name=i(vs)" attr=0:0:2:0 autoset=true disp=show 
+  panel_end
+waveview_end
+waveview_begin 4  stack  offset=0 name_b=81 mntr_b=81 name_width=66 xvar=3|v(g) "name=waveview 4" 
+  panel_begin linear pidx=0 spath=name+file uymin=1e-10 uymax=1.79e-06 xlabel=TIME(sec) yaxis=log ymin=1e-10 ymax=1.79e-06 
+    line src=wdf lidx=0 fidx=3 "delim=." sigtype=2 "name=i(vd)" attr=0:0:2:0 autoset=true disp=show 
+  panel_end
+waveview_end

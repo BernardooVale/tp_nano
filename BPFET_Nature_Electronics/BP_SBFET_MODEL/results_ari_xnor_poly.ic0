@@ -1,0 +1,22 @@
+* "simulator" "HSPICE" 
+* "version" "J-2014.09-SP2 64-BIT"
+* "format" "HSP"
+* "rundate" "15:31:46 05/18/2018 "
+* "netlist" "ari_xnor_poly.sp "
+* "runtitle" "*"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ a =   0.            
++ an =   1.1000        
++ b =   0.            
++ bn =   1.1000        
++ g2a =   0.            
++ g2b = 800.0000m       
++ out =   1.5000        
++ vdd =   1.5000        
++ vss =   0.            
+***   END: Saved Operating Point ***                     

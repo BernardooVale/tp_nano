@@ -1,0 +1,18 @@
+* "simulator" "HSPICE" 
+* "version" "J-2014.09-SP2 64-BIT"
+* "format" "HSP"
+* "rundate" "17:56:42 05/18/2018 "
+* "netlist" "ari_P_output.sp "
+* "runtitle" "*a single bp tfet device simulation"
+* time =    0.            
+* temperature =   27.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc= 1.000e-12       
+.nodeset
++ d =  -1.5000        
++ g =  -1.1000        
++ g1 =  -1.5000        
++ g2 =  -1.5000        
++ s =   0.            
+***   END: Saved Operating Point ***                     

@@ -1,0 +1,18 @@
+* "simulator" "HSPICE" 
+* "version" "J-2014.09-SP2 64-BIT"
+* "format" "HSP"
+* "rundate" "17:56:46 05/18/2018 "
+* "netlist" "ari_N_transfer.sp "
+* "runtitle" "*a single rfet device simulation"
+* time =    0.            
+* temperature =   27.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc= 1.000e-12       
+.nodeset
++ d =   0.8000        
++ g =  -0.8000        
++ g1 =  -0.1000        
++ g2 =   0.8000        
++ s =   0.            
+***   END: Saved Operating Point ***                     

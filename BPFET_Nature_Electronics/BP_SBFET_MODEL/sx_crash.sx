@@ -1,0 +1,66 @@
+### Custom WaveView session file (version L-2016.03 build Feb 24, ) ###
+### saved at 21:51:05 on Mon May 14 2018 ###
+wdf 0 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_xnor_poly.tr0" load=used 
+wdf 1 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_xor_poly.tr0" load=used 
+wdf 2 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_N_output2.tr0" load=used 
+wdf 3 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_P_output2.tr0" load=used 
+wdf 4 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_N_transfer2.tr0" load=used 
+wdf 5 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_P_transfer2.tr0" load=used 
+wdf 6 "/afs/nd.edu/user2/dreis/Spice/ARIv2/results_ari_xor_poly.tr0" load=used 
+scalar list
+waveview_begin 1  stack  offset=0 name_b=178 mntr_b=248 name_width=163 mcur=9.72829121983599e-08 vc=cur-pnl "name=waveview 1" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(out)" attr=0:0:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=1 "delim=." sigtype=1 "name=v(out)" attr=1:1:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=2 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=2 "name=i(vdd)" attr=3:3:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=3 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=1 "delim=." sigtype=2 "name=i(vdd)" attr=2:2:2:0 autoset=true disp=show 
+  panel_end
+waveview_end
+waveview_begin 2  stack  offset=0 name_b=272 mntr_b=342 name_width=257 mcur=4.22258073668326e-01 vc=cur-pnl xvar=2|v(d) "name=waveview 1" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=2 "delim=." sigtype=2 "name=i(vs)" attr=0:0:2:0 autoset=true disp=show swphead=true swpline=true swpopen=true 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=3 "delim=." sigtype=2 "name=i(vd)" attr=3:1:2:0 autoset=true disp=show swphead=true swpline=true swpopen=true 
+  panel_end
+waveview_end
+waveview_begin 3  stack  offset=0 name_b=281 mntr_b=353 name_width=266 mcur=-3.11343134173089e-01 vc=cur-pnl xvar=5|v(g) "name=waveview 3" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) xmin=-1.09823011229907e+00 xmax=1.10000002384186e+00 
+    line src=wdf lidx=0 fidx=4 "delim=." sigtype=2 "name=i(vd)" attr=2:0:2:0 autoset=true disp=show swphead=true swpline=true swpopen=true 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) xmin=-1.09823011229907e+00 xmax=1.10000002384186e+00 
+    line src=wdf lidx=0 fidx=5 "delim=." sigtype=2 "name=i(vd)" attr=7:3:2:0 autoset=true disp=show swphead=true swpline=true swpopen=true 
+  panel_end
+waveview_end
+waveview_begin 4  stack  offset=0 name_b=81 mntr_b=151 name_width=66 mcur=7.48342514663704e-08 vc=cur-pnl "name=waveview 4" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=6 "delim=." sigtype=1 "name=v(a)" attr=0:0:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=6 "delim=." sigtype=1 "name=v(b)" attr=1:1:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=2 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=6 "delim=." sigtype=1 "name=v(out)" attr=2:0:3:0 disp=show 
+    line src=wdf lidx=1 fidx=6 "delim=." sigtype=1 "name=v(out)" attr=6:6:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=3 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=6 "delim=." sigtype=2 "name=i(vdd)" attr=3:3:2:0 autoset=true disp=show 
+  panel_end
+waveview_end
+waveview_begin 5  stack  offset=0 name_b=162 mntr_b=232 name_width=147 mcur=6.21528495884539e-09 vc=cur-pnl "name=waveview 5" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(out)" attr=0:0:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(a)" attr=1:1:2:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=2 spath=name+file xlabel=TIME(sec) 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(b)" attr=2:2:2:0 autoset=true disp=show 
+  panel_end
+waveview_end
