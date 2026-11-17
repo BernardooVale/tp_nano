@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BP-FET Studio — Simulador Visual Polimórfico (ngspice-47)</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Barra Superior -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">BP</div>
+        <div class="brand-text">
+          <h1>BP-FET Studio</h1>
+          <span>Simulador Visual de Circuitos Polimórficos 2D · ngspice-47</span>
+        </div>
+      </div>
+
+      <div class="mode-switch" role="group" aria-label="Modo de edição">
+        <button id="btnModeHigh" class="mode-btn active" data-mode="high">
+          Alto Nível: Portas Polimórficas
+        </button>
+        <button id="btnModeLow" class="mode-btn" data-mode="low">
+          Baixo Nível: Transistores ARI
+        </button>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="template-picker">
+          <label for="templateSelect">Templates:</label>
+          <select id="templateSelect"></select>
+        </div>
+
+        <label class="toggle-chip" title="Executa em Key=0 e Key=1 para comparar assinatura DPA">
+          <input type="checkbox" id="chkCompareKeys" checked />
+          <span>Comparar Key=0 vs Key=1 (DPA)</span>
+        </label>
+
+        <button id="btnSimulate" class="btn-primary">
+          <span class="btn-icon">▶</span>
+          <span>Compilar e Simular no ngspice</span>
+        </button>
+        <div id="simStatusBadge" class="status-badge idle">Pronto para simular</div>
+      </div>
+    </header>
+
+    <!-- Área Principal -->
+    <main class="workspace">
+      <!-- Barra Lateral Esquerda -->
+      <aside class="sidebar">
+        <section class="panel-block">
+          <div class="panel-header">
+            <h2>Componentes</h2>
+            <span id="paletteModeTag" class="mini-tag">Alto Nível</span>
+          </div>
+          <div id="paletteContainer" class="palette-list"></div>
+          <div class="palette-footer">
+            <button id="btnFitView" class="btn-secondary small">Centralizar</button>
+            <button id="btnClearCanvas" class="btn-danger small">Limpar Tela</button>
+          </div>
+        </section>
+
+        <section class="panel-block inspector-block">
+          <div class="panel-header">
+            <h2>Propriedades</h2>
+            <span id="inspectorTypeTag" class="mini-tag muted">Nenhum</span>
+          </div>
+          <div id="inspectorContent" class="inspector-body">
+            <p class="empty-hint">
+              Clique em um bloco no circuito para configurar sua tupla polimórfica, entradas ou propriedades elétricas.<br /><br />
+              <strong>Dica de fiação:</strong> clique em um pino e depois no pino de destino (ou arraste de um pino até o outro). Clique em um fio para selecioná-lo e removê-lo.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel-block legend-block">
+          <div class="panel-header">
+            <h2>Escala de Tensão &amp; Polaridade</h2>
+          </div>
+          <div class="voltage-scale">
+            <div class="scale-bar"></div>
+            <div class="scale-labels">
+              <span>-1.5V</span>
+              <span>0.0V</span>
+              <span>0.8V</span>
+              <span>1.1V</span>
+              <span>1.5V</span>
+            </div>
+          </div>
+          <div class="polarity-legend">
+            <span class="pol-pill pfet">p-FET (Vg2 ≤ Vs)</span>
+            <span class="pol-pill nfet">n-FET (Vg2 &gt; Vs)</span>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Centro: Canvas + Player + Dock Inferior -->
+      <section class="center-column">
+        <div class="canvas-wrapper">
+          <div class="canvas-toolbar">
+            <span id="canvasHelpText">Arraste blocos · Clique/arraste entre pinos para ligar fios · Duplo clique ou 🔍 na porta abre o Raio-X</span>
+            <div class="zoom-controls">
+              <button id="btnZoomOut" class="icon-btn" title="Diminuir zoom">−</button>
+              <span id="zoomLabel">100%</span>
+              <button id="btnZoomIn" class="icon-btn" title="Aumentar zoom">+</button>
+            </div>
+          </div>
+
+          <svg id="circuitCanvas" class="circuit-svg" tabindex="0">
+            <defs>
+              <pattern id="gridPattern" width="24" height="24" patternUnits="userSpaceOnUse">
+                <circle cx="1" cy="1" r="1" fill="rgba(148, 163, 184, 0.16)" />
+              </pattern>
+              <filter id="glowSoft" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <rect id="canvasBg" width="100%" height="100%" fill="url(#gridPattern)" />
+            <g id="viewportLayer">
+              <g id="edgesLayer"></g>
+              <g id="wirePreviewLayer"></g>
+              <g id="nodesLayer"></g>
+            </g>
+          </svg>
+
+          <div id="toastBanner" class="toast-banner hidden"></div>
+        </div>
+
+        <!-- Barra do Player Temporal -->
+        <div class="player-bar">
+          <div class="player-buttons">
+            <button id="btnPlayerStart" class="icon-btn" title="Início (0 ns)">⏮</button>
+            <button id="btnPlayerPlay" class="play-btn" title="Play / Pause">▶</button>
+            <button id="btnPlayerStep" class="icon-btn" title="Avançar passo">⏭</button>
+          </div>
+
+          <div class="speed-group">
+            <label for="speedSelect">Vel:</label>
+            <select id="speedSelect">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="2">2x</option>
+            </select>
+          </div>
+
+          <div id="keyViewGroup" class="key-view-group">
+            <span class="key-view-label">Animando:</span>
+            <button id="btnViewK0" class="key-pill active" data-key="0">Key = 0</button>
+            <button id="btnViewK1" class="key-pill" data-key="1">Key = 1</button>
+          </div>
+
+          <div class="scrubber-group">
+            <input type="range" id="timeSlider" min="0" max="299" value="0" />
+          </div>
+
+          <div class="time-readouts">
+            <span id="timeText" class="mono-pill">0.00 / 25.00 ns</span>
+            <span id="vectorText" class="vector-pill">Aguardando simulação</span>
+          </div>
+        </div>
+
+        <!-- Painel Inferior de Análise (3 Abas) -->
+        <section id="analysisDock" class="analysis-dock">
+          <div class="dock-tabs">
+            <div class="tab-buttons">
+              <button class="tab-btn active" data-tab="scope">Osciloscópio (ngspice)</button>
+              <button class="tab-btn" data-tab="truth">Tabela-Verdade &amp; Métricas DPA</button>
+              <button class="tab-btn" data-tab="netlist">Netlist SPICE (.sp)</button>
+            </div>
+            <div class="dock-controls">
+              <span id="dockSummaryPill" class="summary-pill">Simule para ver formas de onda</span>
+              <button id="btnToggleDock" class="btn-secondary small">Minimizar</button>
+            </div>
+          </div>
+
+          <div class="dock-content">
+            <!-- Aba 1: Osciloscópio -->
+            <div id="tabScope" class="tab-pane active">
+              <div class="scope-grid">
+                <div class="scope-card">
+                  <div class="scope-card-header">
+                    <span>Tensões Nodais V(t) — Entradas &amp; Saídas</span>
+                    <div id="scopeVoltageLegend" class="scope-legend"></div>
+                  </div>
+                  <canvas id="canvasScopeV"></canvas>
+                </div>
+                <div class="scope-card">
+                  <div class="scope-card-header">
+                    <span>Assinatura de Corrente |I_VDD(t)| (µA) — Canal Lateral DPA</span>
+                    <div class="scope-legend">
+                      <span><i class="leg-line k0"></i>Key = 0</span>
+                      <span><i class="leg-line k1"></i>Key = 1 (tracejado)</span>
+                    </div>
+                  </div>
+                  <canvas id="canvasScopeI"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Aba 2: Tabela-Verdade & Métricas -->
+            <div id="tabTruth" class="tab-pane">
+              <div class="truth-layout">
+                <div id="metricsCards" class="metrics-grid"></div>
+                <div id="truthTableWrap" class="truth-table-wrap"></div>
+              </div>
+            </div>
+
+            <!-- Aba 3: Netlist SPICE -->
+            <div id="tabNetlist" class="tab-pane">
+              <div class="netlist-toolbar">
+                <span>Código SPICE gerado e executado no ngspice-47</span>
+                <button id="btnCopyNetlist" class="btn-secondary small">Copiar Netlist</button>
+              </div>
+              <pre id="netlistCode" class="netlist-pre">* Clique em "Compilar e Simular no ngspice" para gerar o netlist.</pre>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Raio-X (Esquemático Interno da Porta Polimórfica) -->
+  <div id="xrayModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 id="xrayTitle">Raio-X da Porta Polimórfica</h2>
+          <p id="xraySubtitle">Inspeção em nível de transistor BP SB-FET (ARI)</p>
+        </div>
+        <div class="modal-player-controls">
+          <button id="xrayPlayBtn" class="play-btn small">▶</button>
+          <button id="xrayKey0Btn" class="key-pill active">Key = 0</button>
+          <button id="xrayKey1Btn" class="key-pill">Key = 1</button>
+          <span id="xrayTimeBadge" class="mono-pill">0.00 ns</span>
+          <button id="btnCloseXray" class="btn-secondary">Fechar ✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="xray-canvas-wrap">
+          <svg id="xraySvg" class="xray-svg"></svg>
+        </div>
+        <div class="xray-sidebar">
+          <h3>Estado dos Transistores ARI</h3>
+          <div id="xrayTransistorTable" class="xray-table-wrap"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
