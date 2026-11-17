@@ -1,0 +1,4 @@
+Perfil,Arquitetura,N_Transistores_Nucleo,Largura_Total_W_um,Corretude_K0_pct,HD_Chave_Errada_pct,Atraso_Sum_ps,Atraso_Cout_ps,Atraso_Critico_ps,Potencia_Media_nW,PDP_Critico_aJ,I_pico_Cout_K0_uA,I_pico_Cout_K1_uA,Assimetria_DPA_Cout_Pico_pct,Assimetria_DPA_Cout_Media_pct,Assimetria_DPA_Polimorfico_Pico_pct
+1. Baseline (Comum),2x XOR 4T + 4x INV 2T + 1x MAJ3 4T fixo,20,24.0,100.0,0.0,177.49,177.72,177.72,741.97,131.86,1.8871,,,,
+2. Custo/Desempenho (NAND/NOR),2x XOR/XNOR 4T + 4x INV 2T + 3x NAND/NOR 4T,28,38.0,100.0,68.75,177.49,636.68,636.68,732.6,466.44,0.5364,0.2509,113.83,62.44,113.83
+3. Baixa Assimetria (XOR+MAJ/XOR),2x XOR/XNOR 4T + 4x INV 2T + 1x MAJ3/XOR3 10T,26,38.0,100.0,87.5,177.49,196.98,196.98,787.87,155.19,1.436,1.4355,0.04,47.47,0.04

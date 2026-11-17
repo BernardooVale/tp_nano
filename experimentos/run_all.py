@@ -103,6 +103,24 @@ MODULES = [
             "README.md",
         ],
     },
+    {
+        "dir": "07_assimetria_tuplas_logicas",
+        "script": "executar_assimetria_tuplas.py",
+        "expected": [
+            "tuplas_2entradas.sp",
+            "tuplas_3entradas.sp",
+            "sim_robustez_tuplas.sp",
+            "full_adder_perfis_dpa.sp",
+            "tabelas_verdade_tuplas.csv",
+            "metricas_tuplas_dpa.csv",
+            "benchmark_full_adder_perfis.csv",
+            "fig1_assinaturas_corrente_tuplas.png",
+            "fig2_pareto_assimetria_vs_custo.png",
+            "fig3_robustez_montecarlo_tuplas.png",
+            "fig4_benchmark_full_adder_perfis.png",
+            "README.md",
+        ],
+    },
 ]
 
 
