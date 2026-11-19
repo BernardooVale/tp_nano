@@ -7,6 +7,8 @@ const state = {
   tuples: {},
   templates: [],
   circuit: { nodes: [], edges: [], durationNs: 25.0 },
+  savedByMode: { high: null, low: null },
+  undoStack: [],
   selectedNodeId: null,
   selectedEdgeId: null,
   compareKeys: true,
@@ -47,6 +49,7 @@ const el = {
 
   paletteModeTag: document.getElementById("paletteModeTag"),
   paletteContainer: document.getElementById("paletteContainer"),
+  btnUndo: document.getElementById("btnUndo"),
   btnFitView: document.getElementById("btnFitView"),
   btnClearCanvas: document.getElementById("btnClearCanvas"),
   inspectorTypeTag: document.getElementById("inspectorTypeTag"),
@@ -54,6 +57,7 @@ const el = {
 
   circuitCanvas: document.getElementById("circuitCanvas"),
   canvasBg: document.getElementById("canvasBg"),
+  canvasHelpText: document.getElementById("canvasHelpText"),
   viewportLayer: document.getElementById("viewportLayer"),
   edgesLayer: document.getElementById("edgesLayer"),
   wirePreviewLayer: document.getElementById("wirePreviewLayer"),
@@ -97,19 +101,92 @@ const el = {
   btnCloseXray: document.getElementById("btnCloseXray"),
 };
 
-// Paleta de cores para osciloscópio
-const TRACE_COLORS = [
-  "#38bdf8",
-  "#22c55e",
-  "#f59e0b",
-  "#a855f7",
-  "#f43f5e",
-  "#14b8a6",
-  "#eab308",
-];
+// ---------------------------------------------------------------------------
+// Tokens de Aparência & Acessibilidade (Light/Dark + Reduced Motion)
+// ---------------------------------------------------------------------------
+
+const lightModeMedia = window.matchMedia("(prefers-color-scheme: light)");
+const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function getThemeTokens() {
+  const isLight = lightModeMedia.matches;
+  const reducedMotion = reducedMotionMedia.matches;
+
+  if (isLight) {
+    return {
+      isLight: true,
+      reducedMotion,
+      textMain: "#1d1d1f",
+      textMuted: "#515662",
+      nodeCardBg: "#ffffff",
+      nodeHeaderBg: "#f3f5f8",
+      wireIdle: "#7e8799",
+      pinStroke: "#ffffff",
+      channelBg: "#cbd5e1",
+      gateBar: "#515662",
+      accent: "#0071e3",
+      accentText: "#0058b0",
+      pfet: "#b25e00",
+      pfetText: "#8a4700",
+      pfetBg: "rgba(178, 94, 0, 0.12)",
+      pfetBorder: "rgba(178, 94, 0, 0.42)",
+      nfet: "#007a72",
+      nfetText: "#005e58",
+      nfetBg: "rgba(0, 122, 114, 0.12)",
+      nfetBorder: "rgba(0, 122, 114, 0.42)",
+      high: "#1b7f37",
+      danger: "#d70015",
+      dangerText: "#a80010",
+      dangerBg: "rgba(215, 0, 21, 0.11)",
+      dangerBorder: "rgba(215, 0, 21, 0.40)",
+      xrayText: "#5e1b99",
+      xrayBg: "rgba(123, 44, 191, 0.11)",
+      xrayBorder: "rgba(123, 44, 191, 0.40)",
+      scopeGrid: "rgba(0, 0, 0, 0.09)",
+      scopeLabel: "#515662",
+      scopeCursor: "#1d1d1f",
+      traceColors: ["#0071e3", "#1b7f37", "#b25e00", "#7b2cbf", "#d70015", "#007a72", "#8f6b00"],
+    };
+  }
+
+  return {
+    isLight: false,
+    reducedMotion,
+    textMain: "#f2f4f8",
+    textMuted: "#a0a8b8",
+    nodeCardBg: "#151923",
+    nodeHeaderBg: "#1c2230",
+    wireIdle: "#6b7589",
+    pinStroke: "#0b0d12",
+    channelBg: "#2d3548",
+    gateBar: "#a0a8b8",
+    accent: "#0a84ff",
+    accentText: "#64b5ff",
+    pfet: "#ff9f0a",
+    pfetText: "#ffd080",
+    pfetBg: "rgba(255, 159, 10, 0.16)",
+    pfetBorder: "rgba(255, 159, 10, 0.48)",
+    nfet: "#2ad4c5",
+    nfetText: "#7eece2",
+    nfetBg: "rgba(42, 212, 197, 0.15)",
+    nfetBorder: "rgba(42, 212, 197, 0.46)",
+    high: "#30d158",
+    danger: "#ff453a",
+    dangerText: "#ff9a94",
+    dangerBg: "rgba(255, 69, 58, 0.16)",
+    dangerBorder: "rgba(255, 69, 58, 0.48)",
+    xrayText: "#e2b8ff",
+    xrayBg: "rgba(191, 90, 242, 0.18)",
+    xrayBorder: "rgba(191, 90, 242, 0.48)",
+    scopeGrid: "rgba(255, 255, 255, 0.09)",
+    scopeLabel: "#a0a8b8",
+    scopeCursor: "#f2f4f8",
+    traceColors: ["#0a84ff", "#30d158", "#ff9f0a", "#bf5af2", "#ff453a", "#2ad4c5", "#ffd60a"],
+  };
+}
 
 // ---------------------------------------------------------------------------
-// Utilitários de Geometria e Cores
+// Utilitários de Geometria, Cores e Desfazer (Undo)
 // ---------------------------------------------------------------------------
 
 function svgEl(tag, attrs = {}, text = null) {
@@ -132,14 +209,15 @@ function lerpColor(c1, c2, t) {
 }
 
 function voltageToColor(v) {
-  if (v === null || v === undefined || Number.isNaN(v)) return "#475569";
+  const theme = getThemeTokens();
+  if (v === null || v === undefined || Number.isNaN(v)) return theme.wireIdle;
   const stops = [
-    [-1.5, [147, 51, 234]],  // Roxo (-1.5V)
-    [0.0, [71, 85, 105]],    // Azul-ardósia (0V)
-    [0.4, [34, 150, 120]],   // Transição
-    [0.8, [34, 197, 94]],    // Verde neon (0.8V)
-    [1.1, [34, 211, 238]],   // Ciano vivo (1.1V)
-    [1.5, [245, 158, 11]],   // Âmbar brilhante (1.5V+)
+    [-1.5, [147, 51, 234]], // Roxo (-1.5V)
+    [0.0, theme.isLight ? [126, 135, 153] : [94, 106, 128]], // Neutro (0V)
+    [0.4, [34, 150, 120]], // Transição
+    [0.8, [48, 209, 88]], // Verde lógico (0.8V)
+    [1.1, [42, 212, 197]], // Teal elétron (1.1V)
+    [1.5, [255, 159, 10]], // Âmbar alto (1.5V+)
   ];
   if (v <= stops[0][0]) return `rgb(${stops[0][1].join(",")})`;
   for (let i = 0; i < stops.length - 1; i++) {
@@ -152,8 +230,24 @@ function voltageToColor(v) {
   return `rgb(${stops[stops.length - 1][1].join(",")})`;
 }
 
-function showToast(msg, durationMs = 4500) {
-  el.toastBanner.textContent = msg;
+function showToast(msg, durationMs = 4500, allowUndo = false) {
+  el.toastBanner.innerHTML = "";
+  const txt = document.createElement("span");
+  txt.textContent = msg;
+  el.toastBanner.appendChild(txt);
+
+  if (allowUndo && state.undoStack.length) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "toast-undo-btn";
+    btn.textContent = "Desfazer (Ctrl+Z)";
+    btn.addEventListener("click", () => {
+      undoLastAction();
+      el.toastBanner.classList.add("hidden");
+    });
+    el.toastBanner.appendChild(btn);
+  }
+
   el.toastBanner.classList.remove("hidden");
   clearTimeout(showToast._timer);
   showToast._timer = setTimeout(() => {
@@ -163,6 +257,46 @@ function showToast(msg, durationMs = 4500) {
 
 function uid(prefix = "n") {
   return `${prefix}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function createCircuitSnapshot(label = "alteração") {
+  return {
+    label,
+    mode: state.mode,
+    circuit: JSON.parse(JSON.stringify(state.circuit)),
+    selectedNodeId: state.selectedNodeId,
+    selectedEdgeId: state.selectedEdgeId,
+  };
+}
+
+function pushUndo(label = "alteração") {
+  state.undoStack.push(createCircuitSnapshot(label));
+  if (state.undoStack.length > 20) {
+    state.undoStack.shift();
+  }
+  updateUndoButton();
+}
+
+function updateUndoButton() {
+  if (!el.btnUndo) return;
+  el.btnUndo.disabled = state.undoStack.length === 0;
+}
+
+function undoLastAction() {
+  if (!state.undoStack.length) return;
+  const snap = state.undoStack.pop();
+  if (snap.mode !== state.mode) {
+    state.mode = snap.mode;
+    updateModeButtons();
+    renderPalette();
+  }
+  state.circuit = snap.circuit;
+  state.selectedNodeId = snap.selectedNodeId;
+  state.selectedEdgeId = snap.selectedEdgeId;
+  updateUndoButton();
+  renderCircuitGraph();
+  renderInspector();
+  showToast(`Desfeito: ${snap.label}`, 2200, false);
 }
 
 // ---------------------------------------------------------------------------
@@ -189,25 +323,25 @@ function getNodeBox(node) {
     case "INPUT":
     case "KEY":
     case "OUTPUT":
-      return { w: 112, h: 60 };
+      return { w: 120, h: 64 };
     case "POLY_GATE": {
       const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
-      return { w: 214, h: tdef.inputs.length >= 3 ? 132 : 114 };
+      return { w: 214, h: tdef.inputs.length >= 3 ? 136 : 118 };
     }
     case "ARI_FET":
-      return { w: 126, h: 102 };
+      return { w: 152, h: 108 };
     case "VDC":
     case "VPWL":
-      return { w: 104, h: 62 };
+      return { w: 112, h: 64 };
     case "CAP":
     case "RES":
-      return { w: 86, h: 66 };
+      return { w: 92, h: 68 };
     case "GND":
-      return { w: 66, h: 46 };
+      return { w: 76, h: 48 };
     case "PROBE":
-      return { w: 94, h: 48 };
+      return { w: 108, h: 60 };
     default:
-      return { w: 100, h: 60 };
+      return { w: 112, h: 64 };
   }
 }
 
@@ -223,23 +357,23 @@ function getNodePorts(node) {
       const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
       const ports = [];
       const nIn = tdef.inputs.length;
-      const topY = 38;
-      const span = h - 68;
+      const topY = 40;
+      const span = h - 72;
       tdef.inputs.forEach((inp, idx) => {
         const ly = nIn === 1 ? topY + span / 2 : topY + (idx * span) / (nIn - 1);
         ports.push({ name: inp, dir: "in", lx: 0, ly, label: inp });
       });
       ports.push({ name: "K", dir: "in", lx: 28, ly: h, label: "Key" });
-      ports.push({ name: "Y", dir: "out", lx: w, ly: h / 2 - 4, label: "Y" });
+      ports.push({ name: "Y", dir: "out", lx: w, ly: h / 2 - 2, label: "Y" });
       return ports;
     }
     case "ARI_FET":
       return [
         { name: "d", dir: "bi", lx: w / 2, ly: 0, label: "d" },
         { name: "s", dir: "bi", lx: w / 2, ly: h, label: "s" },
-        { name: "g", dir: "bi", lx: 0, ly: 36, label: "g" },
+        { name: "g", dir: "bi", lx: 0, ly: 38, label: "g" },
         { name: "g1", dir: "bi", lx: 0, ly: 72, label: "g1" },
-        { name: "g2", dir: "bi", lx: w, ly: 52, label: "g2" },
+        { name: "g2", dir: "bi", lx: w, ly: 54, label: "g2" },
       ];
     case "VDC":
     case "VPWL":
@@ -278,14 +412,16 @@ function clientToWorld(clientX, clientY) {
 
 function applyViewportTransform() {
   el.viewportLayer.setAttribute("transform", `translate(${state.panX}, ${state.panY}) scale(${state.zoom})`);
-  el.zoomLabel.textContent = `${Math.round(state.zoom * 100)}%`;
+  const pct = Math.round(state.zoom * 100);
+  el.zoomLabel.textContent = `${pct}%`;
+  el.zoomLabel.setAttribute("aria-label", `Zoom atual ${pct}%, clique para restaurar 100%`);
 }
 
 function fitView() {
   if (!state.circuit.nodes.length) {
     state.zoom = 1.0;
-    state.panX = 40;
-    state.panY = 30;
+    state.panX = 48;
+    state.panY = 76;
     applyViewportTransform();
     return;
   }
@@ -298,14 +434,18 @@ function fitView() {
     maxX = Math.max(maxX, n.x + box.w);
     maxY = Math.max(maxY, n.y + box.h);
   }
-  const pad = 60;
-  const cw = Math.max(rect.width - pad * 2, 200);
-  const ch = Math.max(rect.height - pad * 2, 150);
+  const toolbarEl = document.querySelector(".canvas-toolbar");
+  const playerBarEl = document.querySelector(".player-bar");
+  const padX = 64;
+  const padTop = Math.max((toolbarEl?.offsetHeight || 40) + 26, 68);
+  const padBottom = Math.max((playerBarEl?.offsetHeight || 46) + 28, 76);
+  const cw = Math.max(rect.width - padX * 2, 200);
+  const ch = Math.max(rect.height - padTop - padBottom, 140);
   const bw = Math.max(maxX - minX, 100);
   const bh = Math.max(maxY - minY, 100);
   state.zoom = Math.max(0.45, Math.min(1.25, Math.min(cw / bw, ch / bh)));
   state.panX = (rect.width - bw * state.zoom) / 2 - minX * state.zoom;
-  state.panY = (rect.height - bh * state.zoom) / 2 - minY * state.zoom;
+  state.panY = padTop + (ch - bh * state.zoom) / 2 - minY * state.zoom;
   applyViewportTransform();
 }
 
@@ -335,13 +475,14 @@ function renderPalette() {
   el.paletteContainer.innerHTML = "";
   for (const item of items) {
     const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "palette-btn";
     btn.innerHTML = `
       <div>
         <span class="p-title">${item.title}</span>
         <span class="p-sub">${item.sub}</span>
       </div>
-      <span class="p-plus">+</span>
+      <span class="p-plus" aria-hidden="true">+</span>
     `;
     btn.addEventListener("click", () => addComponentToCenter(item.type));
     el.paletteContainer.appendChild(btn);
@@ -349,6 +490,7 @@ function renderPalette() {
 }
 
 function addComponentToCenter(type) {
+  pushUndo(`adicionar ${type}`);
   const rect = el.circuitCanvas.getBoundingClientRect();
   const center = clientToWorld(rect.left + rect.width / 2, rect.top + rect.height / 2);
   const jitter = ((state.circuit.nodes.length % 5) - 2) * 22;
@@ -404,13 +546,15 @@ function renderInspector() {
       el.inspectorTypeTag.textContent = "Fio";
       el.inspectorContent.innerHTML = `
         <p class="empty-hint">Fio selecionado no esquemático.</p>
-        <button id="btnDeleteEdge" class="btn-danger">Remover Fio Selecionado</button>
+        <button type="button" id="btnDeleteEdge" class="btn-danger">Remover Fio Selecionado</button>
       `;
       document.getElementById("btnDeleteEdge").addEventListener("click", () => {
+        pushUndo("remover fio");
         state.circuit.edges = state.circuit.edges.filter((e) => e.id !== state.selectedEdgeId);
         state.selectedEdgeId = null;
         renderCircuitGraph();
         renderInspector();
+        showToast("Fio removido.", 3200, true);
       });
       return;
     }
@@ -418,8 +562,8 @@ function renderInspector() {
     el.inspectorTypeTag.textContent = "Nenhum";
     el.inspectorContent.innerHTML = `
       <p class="empty-hint">
-        Clique em um bloco no circuito para configurar sua tupla polimórfica, entradas ou parâmetros.<br/><br/>
-        <strong>Fiação:</strong> clique em um pino e depois no pino de destino (ou arraste de um pino ao outro). Clique em um fio para removê-lo.
+        Selecione um bloco no circuito para ajustar sua tupla polimórfica, entradas ou parâmetros elétricos.<br/><br/>
+        <strong>Fiação:</strong> clique ou arraste entre o terminal de saída (▶) e uma entrada (● ou ◆ Key). Clique em um fio para selecioná-lo.
       </p>
     `;
     return;
@@ -432,7 +576,7 @@ function renderInspector() {
   // Campo Nome / Rótulo comum
   const lblGroup = document.createElement("div");
   lblGroup.className = "field-group";
-  lblGroup.innerHTML = `<label>Rótulo do Componente</label><input type="text" id="inpLabel" value="${node.label || ""}" />`;
+  lblGroup.innerHTML = `<label for="inpLabel">Rótulo do Componente</label><input type="text" id="inpLabel" value="${node.label || ""}" />`;
   wrap.appendChild(lblGroup);
 
   if (node.type === "POLY_GATE") {
@@ -445,13 +589,13 @@ function renderInspector() {
     const optsHtml = Object.values(state.tuples)
       .map((t) => `<option value="${t.id}" ${t.id === tupleId ? "selected" : ""}>${t.name} — ${t.core_transistors}T (${t.vdd}V)</option>`)
       .join("");
-    tupleGroup.innerHTML = `<label>Tupla Polimórfica Configurável</label><select id="inpTuple">${optsHtml}</select>`;
+    tupleGroup.innerHTML = `<label for="inpTuple">Tupla Polimórfica Configurável</label><select id="inpTuple">${optsHtml}</select>`;
     wrap.appendChild(tupleGroup);
 
     const keyGroup = document.createElement("div");
     keyGroup.className = "field-group";
     keyGroup.innerHTML = `
-      <label>Chave Local (quando pino Key está livre)</label>
+      <label for="inpLocalKey">Chave Local (quando pino Key está livre)</label>
       <select id="inpLocalKey">
         <option value="0" ${localKey === 0 ? "selected" : ""}>Key = 0 → ${tdef.key0_fn}</option>
         <option value="1" ${localKey === 1 ? "selected" : ""}>Key = 1 → ${tdef.key1_fn}</option>
@@ -469,15 +613,16 @@ function renderInspector() {
     wrap.appendChild(infoBox);
 
     const xrayBtn = document.createElement("button");
+    xrayBtn.type = "button";
     xrayBtn.className = "xray-cta-btn";
-    xrayBtn.textContent = "🔍 Abrir Raio-X (Ver Transistores ARI Internos)";
+    xrayBtn.textContent = "Abrir Raio-X (Transistores ARI Internos)";
     xrayBtn.addEventListener("click", () => openXrayModal(node.id));
     wrap.appendChild(xrayBtn);
   } else if (node.type === "INPUT") {
     const patGroup = document.createElement("div");
     patGroup.className = "field-group";
     patGroup.innerHTML = `
-      <label>Padrão de Bits ("auto" ou ex: "0110")</label>
+      <label for="inpPattern">Padrão de Bits ("auto" ou ex: "0110")</label>
       <input type="text" id="inpPattern" value="${node.props?.pattern || "auto"}" />
     `;
     wrap.appendChild(patGroup);
@@ -486,7 +631,7 @@ function renderInspector() {
     const kGroup = document.createElement("div");
     kGroup.className = "field-group";
     kGroup.innerHTML = `
-      <label>Estado da Chave (Key)</label>
+      <label for="inpKeyVal">Estado da Chave (Key)</label>
       <select id="inpKeyVal">
         <option value="0" ${val === 0 ? "selected" : ""}>0 (Modo Nominal / Key=0)</option>
         <option value="1" ${val === 1 ? "selected" : ""}>1 (Modo Alternativo / Key=1)</option>
@@ -497,7 +642,7 @@ function renderInspector() {
     const wGroup = document.createElement("div");
     wGroup.className = "field-group";
     wGroup.innerHTML = `
-      <label>Largura do Canal W (µm)</label>
+      <label for="inpWidth">Largura do Canal W (µm)</label>
       <input type="number" step="0.5" min="0.5" max="20" id="inpWidth" value="${node.props?.w ?? 1.0}" />
     `;
     wrap.appendChild(wGroup);
@@ -505,7 +650,7 @@ function renderInspector() {
     const props = node.props || {};
     const vGroup = document.createElement("div");
     vGroup.className = "field-group";
-    vGroup.innerHTML = `<label>Tensão Nominal (V)</label><input type="number" step="0.1" id="inpVdc" value="${props.voltage ?? 0.8}" />`;
+    vGroup.innerHTML = `<label for="inpVdc">Tensão Nominal (V)</label><input type="number" step="0.1" id="inpVdc" value="${props.voltage ?? 0.8}" />`;
     wrap.appendChild(vGroup);
 
     const chkKd = document.createElement("label");
@@ -517,8 +662,8 @@ function renderInspector() {
       const row = document.createElement("div");
       row.className = "field-row";
       row.innerHTML = `
-        <div class="field-group"><label>V (Key=0)</label><input type="number" step="0.1" id="inpVk0" value="${props.vKey0 ?? props.voltage ?? 0.8}" /></div>
-        <div class="field-group"><label>V (Key=1)</label><input type="number" step="0.1" id="inpVk1" value="${props.vKey1 ?? 0.0}" /></div>
+        <div class="field-group"><label for="inpVk0">V (Key=0)</label><input type="number" step="0.1" id="inpVk0" value="${props.vKey0 ?? props.voltage ?? 0.8}" /></div>
+        <div class="field-group"><label for="inpVk1">V (Key=1)</label><input type="number" step="0.1" id="inpVk1" value="${props.vKey1 ?? 0.0}" /></div>
       `;
       wrap.appendChild(row);
     }
@@ -530,21 +675,22 @@ function renderInspector() {
   } else if (node.type === "VPWL") {
     const pGroup = document.createElement("div");
     pGroup.className = "field-group";
-    pGroup.innerHTML = `<label>Pontos PWL (tempo tensão ...)</label><input type="text" id="inpPwl" value="${node.props?.pwl || ""}" />`;
+    pGroup.innerHTML = `<label for="inpPwl">Pontos PWL (tempo tensão ...)</label><input type="text" id="inpPwl" value="${node.props?.pwl || ""}" />`;
     wrap.appendChild(pGroup);
   } else if (node.type === "CAP") {
     const cGroup = document.createElement("div");
     cGroup.className = "field-group";
-    cGroup.innerHTML = `<label>Capacitância (ex: 0.3f, 1f, 10p)</label><input type="text" id="inpCap" value="${node.props?.cap || "0.3f"}" />`;
+    cGroup.innerHTML = `<label for="inpCap">Capacitância (ex: 0.3f, 1f, 10p)</label><input type="text" id="inpCap" value="${node.props?.cap || "0.3f"}" />`;
     wrap.appendChild(cGroup);
   } else if (node.type === "RES") {
     const rGroup = document.createElement("div");
     rGroup.className = "field-group";
-    rGroup.innerHTML = `<label>Resistência (ex: 10k, 1M)</label><input type="text" id="inpRes" value="${node.props?.res || "10k"}" />`;
+    rGroup.innerHTML = `<label for="inpRes">Resistência (ex: 10k, 1M)</label><input type="text" id="inpRes" value="${node.props?.res || "10k"}" />`;
     wrap.appendChild(rGroup);
   }
 
   const delBtn = document.createElement("button");
+  delBtn.type = "button";
   delBtn.className = "btn-danger";
   delBtn.textContent = "Remover Componente";
   delBtn.addEventListener("click", () => deleteSelected());
@@ -560,6 +706,7 @@ function renderInspector() {
   });
 
   document.getElementById("inpTuple")?.addEventListener("change", (e) => {
+    pushUndo("alterar tupla");
     node.props.tupleId = e.target.value;
     const allowed = new Set([...getTupleDef(node.props.tupleId).inputs, "K", "Y"]);
     state.circuit.edges = state.circuit.edges.filter(
@@ -640,13 +787,18 @@ function renderInspector() {
 function deleteSelected() {
   if (state.selectedNodeId) {
     const id = state.selectedNodeId;
+    const node = state.circuit.nodes.find((n) => n.id === id);
+    pushUndo(`remover ${node?.label || "componente"}`);
     state.circuit.nodes = state.circuit.nodes.filter((n) => n.id !== id);
     state.circuit.edges = state.circuit.edges.filter((e) => e.from !== id && e.to !== id);
     state.selectedNodeId = null;
+    showToast(`Componente "${node?.label || id}" removido.`, 4000, true);
   } else if (state.selectedEdgeId) {
     const eid = state.selectedEdgeId;
+    pushUndo("remover fio");
     state.circuit.edges = state.circuit.edges.filter((e) => e.id !== eid);
     state.selectedEdgeId = null;
+    showToast("Fio removido.", 3500, true);
   }
   renderCircuitGraph();
   renderInspector();
@@ -668,7 +820,59 @@ function bezierPath(x1, y1, x2, y2) {
   return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
 }
 
+function renderPinShape(port, isActivePin, theme) {
+  const portGroup = svgEl("g", { class: "port-group" });
+  // Hit target invisível >= 24x24px para acessibilidade motora
+  portGroup.appendChild(svgEl("circle", { cx: port.lx, cy: port.ly, r: 12, fill: "transparent" }));
+
+  if (port.dir === "out") {
+    // Pino de saída: círculo com ponta direcional (redundância forma + cor)
+    const dot = svgEl("circle", {
+      cx: port.lx,
+      cy: port.ly,
+      r: 6,
+      fill: theme.accent,
+      stroke: theme.pinStroke,
+      "stroke-width": 1.6,
+      class: `port-dot ${isActivePin ? "active-pin" : ""}`,
+    });
+    const arrow = svgEl("polygon", {
+      points: `${port.lx - 2},${port.ly - 3} ${port.lx + 3.5},${port.ly} ${port.lx - 2},${port.ly + 3}`,
+      fill: "#ffffff",
+      "pointer-events": "none",
+    });
+    portGroup.appendChild(dot);
+    portGroup.appendChild(arrow);
+  } else if (port.name === "K") {
+    // Pino Key: losango (◆) desenhado diretamente via polígono (sem conflito de transform CSS)
+    const r = 6.5;
+    const diamond = svgEl("polygon", {
+      points: `${port.lx},${port.ly - r} ${port.lx + r},${port.ly} ${port.lx},${port.ly + r} ${port.lx - r},${port.ly}`,
+      fill: theme.pfet,
+      stroke: theme.pinStroke,
+      "stroke-width": 1.6,
+      class: `port-dot ${isActivePin ? "active-pin" : ""}`,
+    });
+    portGroup.appendChild(diamond);
+  } else {
+    // Pino de entrada / bidirecional: círculo (●)
+    const dot = svgEl("circle", {
+      cx: port.lx,
+      cy: port.ly,
+      r: 5.5,
+      fill: theme.textMuted,
+      stroke: theme.pinStroke,
+      "stroke-width": 1.6,
+      class: `port-dot ${isActivePin ? "active-pin" : ""}`,
+    });
+    portGroup.appendChild(dot);
+  }
+
+  return portGroup;
+}
+
 function renderCircuitGraph() {
+  const theme = getThemeTokens();
   el.edgesLayer.innerHTML = "";
   el.nodesLayer.innerHTML = "";
   animRefs.wires = [];
@@ -690,7 +894,7 @@ function renderCircuitGraph() {
     const base = svgEl("path", {
       d,
       class: `wire-base ${state.selectedEdgeId === edge.id ? "wire-selected" : ""}`,
-      stroke: "#475569",
+      stroke: theme.wireIdle,
     });
     const flow = svgEl("path", {
       d,
@@ -725,19 +929,21 @@ function renderCircuitGraph() {
     const card = svgEl("rect", { class: "node-card", width: w, height: h });
     g.appendChild(card);
 
-    // Conteúdo visual específico de cada tipo
     const refs = { type: node.type, node };
 
     if (node.type === "POLY_GATE") {
       const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
-      const hdr = svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 24, rx: 9 });
+      const hdr = svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 26, rx: 10 });
       g.appendChild(hdr);
-      g.appendChild(svgEl("text", { x: 10, y: 17, fill: "#f1f5f9", "font-size": 11, "font-weight": 700 }, node.label || "Porta"));
+      g.appendChild(
+        svgEl("text", { x: 10, y: 18, fill: theme.textMain, "font-size": 12, "font-weight": 700 }, node.label || "Porta")
+      );
 
-      // Botão Raio-X inline no bloco
-      const xrayBtn = svgEl("g", { class: "xray-mini-btn", transform: `translate(${w - 64}, 4)` });
-      xrayBtn.appendChild(svgEl("rect", { width: 56, height: 17, rx: 5, fill: "rgba(168,85,247,0.22)", stroke: "rgba(168,85,247,0.55)", "stroke-width": 1 }));
-      xrayBtn.appendChild(svgEl("text", { x: 28, y: 12, "text-anchor": "middle", fill: "#e9d5ff", "font-size": 9.5, "font-weight": 700 }, "🔍 Raio-X"));
+      // Botão Raio-X inline no bloco (com área de clique confortável >= 24px)
+      const xrayBtn = svgEl("g", { class: "xray-mini-btn", transform: `translate(${w - 66}, 3)` });
+      xrayBtn.appendChild(svgEl("rect", { x: -2, y: -2, width: 64, height: 24, fill: "transparent" }));
+      xrayBtn.appendChild(svgEl("rect", { width: 60, height: 20, rx: 6, fill: theme.xrayBg, stroke: theme.xrayBorder, "stroke-width": 1 }));
+      xrayBtn.appendChild(svgEl("text", { x: 30, y: 14, "text-anchor": "middle", fill: theme.xrayText, "font-size": 11, "font-weight": 700 }, "Raio-X"));
       xrayBtn.addEventListener("mousedown", (ev) => ev.stopPropagation());
       xrayBtn.addEventListener("click", (ev) => {
         ev.stopPropagation();
@@ -745,43 +951,63 @@ function renderCircuitGraph() {
       });
       g.appendChild(xrayBtn);
 
-      g.appendChild(svgEl("text", { x: w / 2, y: 42, "text-anchor": "middle", fill: "#94a3b8", "font-size": 10.5, "font-weight": 600 }, `${tdef.name} · ${tdef.core_transistors}T`));
+      g.appendChild(
+        svgEl("text", { x: w / 2, y: 42, "text-anchor": "middle", fill: theme.textMuted, "font-size": 11, "font-weight": 600 }, `${tdef.name} · ${tdef.core_transistors}T`)
+      );
 
-      const modePill = svgEl("rect", { x: 24, y: 50, width: w - 48, height: 22, rx: 6, fill: "rgba(34,211,238,0.14)", stroke: "rgba(34,211,238,0.4)" });
-      const modeTxt = svgEl("text", { x: w / 2, y: 65, "text-anchor": "middle", fill: "#67e8f9", "font-size": 11, "font-weight": 800 }, `${tdef.key0_fn}`);
+      const modePill = svgEl("rect", { x: 24, y: 50, width: w - 48, height: 24, rx: 6, fill: theme.nfetBg, stroke: theme.nfetBorder });
+      const modeTxt = svgEl("text", { x: w / 2, y: 66, "text-anchor": "middle", fill: theme.nfetText, "font-size": 11, "font-weight": 700 }, `${tdef.key0_fn} · K=0`);
       g.appendChild(modePill);
       g.appendChild(modeTxt);
 
-      const vTxt = svgEl("text", { x: w - 12, y: h - 10, "text-anchor": "end", fill: "#cbd5e1", "font-size": 10, "font-family": "monospace" }, "— V");
-      const iTxt = svgEl("text", { x: 70, y: h - 10, "text-anchor": "start", fill: "#94a3b8", "font-size": 10, "font-family": "monospace" }, "— µA");
-      g.appendChild(vTxt);
+      const iTxt = svgEl("text", { x: 64, y: h - 10, "text-anchor": "start", fill: theme.textMuted, "font-size": 11, "font-family": "var(--font-mono)" }, "— µA");
+      const vDot = svgEl("circle", { cx: w - 62, cy: h - 14, r: 4, fill: theme.wireIdle });
+      const vTxt = svgEl("text", { x: w - 10, y: h - 10, "text-anchor": "end", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, "— V");
       g.appendChild(iTxt);
+      g.appendChild(vDot);
+      g.appendChild(vTxt);
 
       refs.modePill = modePill;
       refs.modeTxt = modeTxt;
+      refs.vDot = vDot;
       refs.vTxt = vTxt;
       refs.iTxt = iTxt;
       refs.tdef = tdef;
     } else if (node.type === "INPUT" || node.type === "OUTPUT" || node.type === "PROBE") {
-      const badgeColor = node.type === "INPUT" ? "#38bdf8" : "#22c55e";
-      g.appendChild(svgEl("rect", { x: 1, y: 1, width: w - 2, height: 20, rx: 8, fill: "#1b2840" }));
-      g.appendChild(svgEl("text", { x: 10, y: 15, fill: badgeColor, "font-size": 10.5, "font-weight": 700 }, node.type === "INPUT" ? "ENTRADA" : "SAÍDA"));
-      g.appendChild(svgEl("text", { x: w / 2, y: 36, "text-anchor": "middle", fill: "#f1f5f9", "font-size": 13, "font-weight": 700 }, node.label || node.type));
-      const vTxt = svgEl("text", { x: w / 2, y: 52, "text-anchor": "middle", fill: "#94a3b8", "font-size": 10.5, "font-family": "monospace" }, "0.00 V");
-      if (node.type === "PROBE") {
-        vTxt.setAttribute("y", 40);
-      }
+      const badgeColor = node.type === "INPUT" ? theme.accentText : theme.high;
+      g.appendChild(svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 20, rx: 9 }));
+      g.appendChild(svgEl("text", { x: 10, y: 15, fill: badgeColor, "font-size": 11, "font-weight": 700 }, node.type === "INPUT" ? "ENTRADA" : "SAÍDA"));
+      g.appendChild(svgEl("text", { x: w / 2, y: node.type === "PROBE" ? 36 : 38, "text-anchor": "middle", fill: theme.textMain, "font-size": 13, "font-weight": 700 }, node.label || node.type));
+
+      const readoutY = node.type === "PROBE" ? 52 : 55;
+      const vDot = svgEl("circle", { cx: w / 2 - 26, cy: readoutY - 3.5, r: 4, fill: theme.wireIdle });
+      const vTxt = svgEl("text", { x: w / 2 + 5, y: readoutY, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, "0.00 V");
+      g.appendChild(vDot);
       g.appendChild(vTxt);
+      refs.vDot = vDot;
       refs.vTxt = vTxt;
     } else if (node.type === "KEY") {
       const keyVal = Number(node.props?.value ?? 0);
-      g.appendChild(svgEl("rect", { x: 1, y: 1, width: w - 2, height: 20, rx: 8, fill: "#1b2840" }));
-      g.appendChild(svgEl("text", { x: 10, y: 15, fill: "#f59e0b", "font-size": 10.5, "font-weight": 700 }, "CHAVE KEY"));
-      g.appendChild(svgEl("text", { x: 12, y: 42, fill: "#f1f5f9", "font-size": 12, "font-weight": 700 }, node.label || "Key"));
+      g.appendChild(svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 20, rx: 9 }));
+      g.appendChild(svgEl("text", { x: 10, y: 15, fill: theme.pfetText, "font-size": 11, "font-weight": 700 }, "CHAVE KEY"));
+      g.appendChild(svgEl("text", { x: 12, y: 44, fill: theme.textMain, "font-size": 12, "font-weight": 700 }, node.label || "Key"));
 
-      const kBtn = svgEl("g", { class: "key-toggle-btn", transform: `translate(${w - 46}, 27)` });
-      const kRect = svgEl("rect", { width: 36, height: 22, rx: 6, fill: keyVal ? "rgba(244,63,94,0.25)" : "rgba(34,211,238,0.2)", stroke: keyVal ? "#f43f5e" : "#22d3ee" });
-      const kTxt = svgEl("text", { x: 18, y: 15, "text-anchor": "middle", fill: "#f8fafc", "font-size": 11, "font-weight": 800 }, `K=${keyVal}`);
+      const kBtn = svgEl("g", { class: "key-toggle-btn", transform: `translate(${w - 48}, 29)` });
+      const kRect = svgEl("rect", {
+        width: 40,
+        height: 24,
+        rx: 6,
+        fill: keyVal ? theme.dangerBg : theme.nfetBg,
+        stroke: keyVal ? theme.dangerBorder : theme.nfetBorder,
+      });
+      const kTxt = svgEl("text", {
+        x: 20,
+        y: 16,
+        "text-anchor": "middle",
+        fill: keyVal ? theme.dangerText : theme.nfetText,
+        "font-size": 11,
+        "font-weight": 700,
+      }, `K=${keyVal}`);
       kBtn.appendChild(kRect);
       kBtn.appendChild(kTxt);
       kBtn.addEventListener("mousedown", (ev) => ev.stopPropagation());
@@ -798,20 +1024,25 @@ function renderCircuitGraph() {
       refs.kRect = kRect;
       refs.kTxt = kTxt;
     } else if (node.type === "ARI_FET") {
-      g.appendChild(svgEl("text", { x: w / 2, y: 18, "text-anchor": "middle", fill: "#e2e8f0", "font-size": 11, "font-weight": 700 }, `${node.label || "ARI"} (W=${node.props?.w ?? 1})`));
-      // Símbolo do transistor BP SB-FET
-      const chBg = svgEl("line", { x1: 63, y1: 24, x2: 63, y2: 80, stroke: "#334155", "stroke-width": 5, "stroke-linecap": "round" });
-      const chGlow = svgEl("line", { x1: 63, y1: 24, x2: 63, y2: 80, stroke: "#22d3ee", "stroke-width": 4, "stroke-linecap": "round", opacity: 0.1 });
-      const gateBar = svgEl("line", { x1: 45, y1: 30, x2: 45, y2: 74, stroke: "#94a3b8", "stroke-width": 2.5 });
+      const cx = w / 2;
+      g.appendChild(
+        svgEl("text", { x: 10, y: 17, "text-anchor": "start", fill: theme.textMain, "font-size": 11, "font-weight": 700 }, node.label || "ARI")
+      );
+      g.appendChild(
+        svgEl("text", { x: w - 10, y: 17, "text-anchor": "end", fill: theme.textMuted, "font-size": 11, "font-weight": 600 }, `W=${node.props?.w ?? 1}`)
+      );
+      const chBg = svgEl("line", { x1: cx, y1: 24, x2: cx, y2: 84, stroke: theme.channelBg, "stroke-width": 5, "stroke-linecap": "round" });
+      const chGlow = svgEl("line", { x1: cx, y1: 24, x2: cx, y2: 84, stroke: theme.nfet, "stroke-width": 4, "stroke-linecap": "round", opacity: 0.15 });
+      const gateBar = svgEl("line", { x1: 50, y1: 30, x2: 50, y2: 78, stroke: theme.gateBar, "stroke-width": 2.5 });
       g.appendChild(chBg);
       g.appendChild(chGlow);
       g.appendChild(gateBar);
-      g.appendChild(svgEl("line", { x1: 0, y1: 36, x2: 45, y2: 36, stroke: "#64748b", "stroke-width": 1.6 }));
-      g.appendChild(svgEl("line", { x1: 0, y1: 72, x2: 45, y2: 72, stroke: "#64748b", "stroke-width": 1.6 }));
-      g.appendChild(svgEl("line", { x1: 63, y1: 52, x2: w, y2: 52, stroke: "#64748b", "stroke-width": 1.6 }));
+      g.appendChild(svgEl("line", { x1: 0, y1: 38, x2: 50, y2: 38, stroke: theme.wireIdle, "stroke-width": 1.6 }));
+      g.appendChild(svgEl("line", { x1: 0, y1: 72, x2: 50, y2: 72, stroke: theme.wireIdle, "stroke-width": 1.6 }));
+      g.appendChild(svgEl("line", { x1: cx, y1: 54, x2: w, y2: 54, stroke: theme.wireIdle, "stroke-width": 1.6 }));
 
-      const polBadge = svgEl("rect", { x: 70, y: 26, width: 46, height: 17, rx: 4, fill: "rgba(34,211,238,0.16)", stroke: "rgba(34,211,238,0.45)" });
-      const polTxt = svgEl("text", { x: 93, y: 38, "text-anchor": "middle", fill: "#67e8f9", "font-size": 9.5, "font-weight": 800 }, "ARI");
+      const polBadge = svgEl("rect", { x: 83, y: 25, width: 62, height: 20, rx: 5, fill: theme.nfetBg, stroke: theme.nfetBorder });
+      const polTxt = svgEl("text", { x: 114, y: 39, "text-anchor": "middle", fill: theme.nfetText, "font-size": 11, "font-weight": 700 }, "ARI");
       g.appendChild(polBadge);
       g.appendChild(polTxt);
 
@@ -819,72 +1050,65 @@ function renderCircuitGraph() {
       refs.polBadge = polBadge;
       refs.polTxt = polTxt;
     } else if (node.type === "VDC" || node.type === "VPWL") {
-      g.appendChild(svgEl("text", { x: w / 2, y: 18, "text-anchor": "middle", fill: "#f59e0b", "font-size": 10.5, "font-weight": 700 }, node.label || node.type));
+      g.appendChild(svgEl("text", { x: w / 2, y: 20, "text-anchor": "middle", fill: theme.pfetText, "font-size": 11, "font-weight": 700 }, node.label || node.type));
       const subTxt = node.type === "VDC"
         ? (node.props?.keyDependent ? `K0:${node.props.vKey0} K1:${node.props.vKey1}` : `${node.props?.voltage ?? 0} V`)
         : "PWL";
-      const vTxt = svgEl("text", { x: w / 2, y: 42, "text-anchor": "middle", fill: "#e2e8f0", "font-size": 11, "font-family": "monospace" }, subTxt);
+      const vTxt = svgEl("text", { x: w / 2, y: 44, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, subTxt);
       g.appendChild(vTxt);
       refs.vTxt = vTxt;
     } else if (node.type === "CAP") {
-      g.appendChild(svgEl("line", { x1: 28, y1: 28, x2: 58, y2: 28, stroke: "#94a3b8", "stroke-width": 2.5 }));
-      g.appendChild(svgEl("line", { x1: 28, y1: 38, x2: 58, y2: 38, stroke: "#94a3b8", "stroke-width": 2.5 }));
-      g.appendChild(svgEl("line", { x1: w / 2, y1: 0, x2: w / 2, y2: 28, stroke: "#64748b", "stroke-width": 1.6 }));
-      g.appendChild(svgEl("line", { x1: w / 2, y1: 38, x2: w / 2, y2: h, stroke: "#64748b", "stroke-width": 1.6 }));
-      g.appendChild(svgEl("text", { x: w / 2, y: 55, "text-anchor": "middle", fill: "#cbd5e1", "font-size": 10 }, `${node.label} ${node.props?.cap || "0.3f"}`));
+      const cx = w / 2;
+      g.appendChild(svgEl("line", { x1: cx - 15, y1: 26, x2: cx + 15, y2: 26, stroke: theme.gateBar, "stroke-width": 2.5 }));
+      g.appendChild(svgEl("line", { x1: cx - 15, y1: 36, x2: cx + 15, y2: 36, stroke: theme.gateBar, "stroke-width": 2.5 }));
+      g.appendChild(svgEl("line", { x1: cx, y1: 0, x2: cx, y2: 26, stroke: theme.wireIdle, "stroke-width": 1.6 }));
+      g.appendChild(svgEl("line", { x1: cx, y1: 36, x2: cx, y2: h, stroke: theme.wireIdle, "stroke-width": 1.6 }));
+      g.appendChild(svgEl("text", { x: cx, y: 56, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600 }, `${node.label} ${node.props?.cap || "0.3f"}`));
     } else if (node.type === "RES") {
-      g.appendChild(svgEl("polyline", { points: "43,0 43,16 33,22 53,28 33,34 53,40 43,46 43,66", fill: "none", stroke: "#94a3b8", "stroke-width": 2 }));
-      g.appendChild(svgEl("text", { x: w / 2, y: 58, "text-anchor": "middle", fill: "#cbd5e1", "font-size": 10 }, `${node.label} ${node.props?.res || "10k"}`));
+      const cx = w / 2;
+      g.appendChild(svgEl("polyline", { points: `${cx},0 ${cx},14 ${cx - 10},20 ${cx + 10},26 ${cx - 10},32 ${cx + 10},38 ${cx},44 ${cx},${h}`, fill: "none", stroke: theme.gateBar, "stroke-width": 2 }));
+      g.appendChild(svgEl("text", { x: cx, y: 58, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600 }, `${node.label} ${node.props?.res || "10k"}`));
     } else if (node.type === "GND") {
-      g.appendChild(svgEl("line", { x1: w / 2, y1: 0, x2: w / 2, y2: 18, stroke: "#94a3b8", "stroke-width": 2 }));
-      g.appendChild(svgEl("line", { x1: 16, y1: 18, x2: w - 16, y2: 18, stroke: "#94a3b8", "stroke-width": 2.5 }));
-      g.appendChild(svgEl("line", { x1: 23, y1: 25, x2: w - 23, y2: 25, stroke: "#94a3b8", "stroke-width": 2 }));
-      g.appendChild(svgEl("line", { x1: 29, y1: 32, x2: w - 29, y2: 32, stroke: "#94a3b8", "stroke-width": 2 }));
-      g.appendChild(svgEl("text", { x: w / 2, y: 43, "text-anchor": "middle", fill: "#94a3b8", "font-size": 9 }, "GND (0V)"));
+      const cx = w / 2;
+      g.appendChild(svgEl("line", { x1: cx, y1: 0, x2: cx, y2: 16, stroke: theme.gateBar, "stroke-width": 2 }));
+      g.appendChild(svgEl("line", { x1: cx - 18, y1: 16, x2: cx + 18, y2: 16, stroke: theme.gateBar, "stroke-width": 2.5 }));
+      g.appendChild(svgEl("line", { x1: cx - 12, y1: 23, x2: cx + 12, y2: 23, stroke: theme.gateBar, "stroke-width": 2 }));
+      g.appendChild(svgEl("line", { x1: cx - 6, y1: 30, x2: cx + 6, y2: 30, stroke: theme.gateBar, "stroke-width": 2 }));
+      g.appendChild(svgEl("text", { x: cx, y: 44, "text-anchor": "middle", fill: theme.textMuted, "font-size": 11, "font-weight": 600 }, "GND 0V"));
     }
 
     // Pinos do componente
     const ports = getNodePorts(node);
     for (const p of ports) {
       const isActivePin = state.wiringFrom && state.wiringFrom.nodeId === node.id && state.wiringFrom.portName === p.name;
-      const dotColor = p.dir === "out" ? "#22d3ee" : p.name === "K" ? "#f59e0b" : "#94a3b8";
-      const dot = svgEl("circle", {
-        cx: p.lx,
-        cy: p.ly,
-        r: 5.5,
-        fill: dotColor,
-        stroke: "#0b111b",
-        "stroke-width": 1.6,
-        class: `port-dot ${isActivePin ? "active-pin" : ""}`,
-      });
+      const portGroup = renderPinShape(p, isActivePin, theme);
 
-      // Rótulo do pino
-      let tx = p.lx + 9;
-      let ty = p.ly + 3.5;
+      let tx = p.lx + 10;
+      let ty = p.ly + 4;
       let anchor = "start";
       if (p.lx >= w - 1) {
-        tx = p.lx - 9;
+        tx = p.lx - 10;
         anchor = "end";
       } else if (p.ly === 0) {
-        tx = p.lx + 8;
-        ty = 13;
+        tx = p.lx + 9;
+        ty = 14;
       } else if (p.ly >= h - 1) {
-        tx = p.lx + 8;
+        tx = p.lx + 9;
         ty = h - 7;
       }
       if (node.type === "POLY_GATE" || node.type === "ARI_FET") {
-        g.appendChild(svgEl("text", { x: tx, y: ty, "text-anchor": anchor, fill: "#94a3b8", "font-size": 9.5, "font-weight": 600, "pointer-events": "none" }, p.label));
+        g.appendChild(svgEl("text", { x: tx, y: ty, "text-anchor": anchor, fill: theme.textMuted, "font-size": 11, "font-weight": 600, "pointer-events": "none" }, p.label));
       }
 
-      dot.addEventListener("mousedown", (ev) => {
+      portGroup.addEventListener("mousedown", (ev) => {
         ev.stopPropagation();
         handlePinMouseDown(node, p, ev);
       });
-      dot.addEventListener("mouseup", (ev) => {
+      portGroup.addEventListener("mouseup", (ev) => {
         ev.stopPropagation();
         handlePinMouseUp(node, p, ev);
       });
-      g.appendChild(dot);
+      g.appendChild(portGroup);
     }
 
     // Arrastar nó
@@ -894,7 +1118,14 @@ function renderCircuitGraph() {
       state.selectedNodeId = node.id;
       state.selectedEdgeId = null;
       const pt = clientToWorld(ev.clientX, ev.clientY);
-      state.draggingNode = { node, offsetX: pt.x - node.x, offsetY: pt.y - node.y };
+      state.draggingNode = {
+        node,
+        offsetX: pt.x - node.x,
+        offsetY: pt.y - node.y,
+        startX: node.x,
+        startY: node.y,
+        snapshot: createCircuitSnapshot(`mover ${node.label || node.type}`),
+      };
       renderCircuitGraph();
       renderInspector();
     });
@@ -918,7 +1149,6 @@ function renderCircuitGraph() {
 function handlePinMouseDown(node, port, ev) {
   const world = getPortWorldCoords(node, port.name);
   if (state.wiringFrom) {
-    // Completa conexão se clicou em um pino diferente
     if (state.wiringFrom.nodeId !== node.id || state.wiringFrom.portName !== port.name) {
       connectPorts(state.wiringFrom.nodeId, state.wiringFrom.portName, node.id, port.name);
       cancelWiring();
@@ -960,7 +1190,7 @@ function connectPorts(n1Id, p1Name, n2Id, p2Name) {
   let from = n1Id, fromPort = p1Name, to = n2Id, toPort = p2Name;
   if (state.mode === "high") {
     if (port1.dir === port2.dir) {
-      showToast("Conecte uma saída (azul) a uma entrada (cinza/âmbar).");
+      showToast("Conecte um terminal de saída (▶) a um terminal de entrada (● ou ◆ Key).");
       return;
     }
     if (port1.dir === "in" && port2.dir === "out") {
@@ -969,16 +1199,16 @@ function connectPorts(n1Id, p1Name, n2Id, p2Name) {
       to = n1Id;
       toPort = p1Name;
     }
-    // Substitui conexão anterior no mesmo pino de entrada
+    pushUndo("conectar fio");
     state.circuit.edges = state.circuit.edges.filter((e) => !(e.to === to && e.toPort === toPort));
   } else {
-    // Evita duplicata exata em baixo nível
     const exists = state.circuit.edges.some(
       (e) =>
         (e.from === from && e.fromPort === fromPort && e.to === to && e.toPort === toPort) ||
         (e.from === to && e.fromPort === toPort && e.to === from && e.toPort === fromPort)
     );
     if (exists) return;
+    pushUndo("conectar fio");
   }
 
   state.circuit.edges.push({ id: uid("e"), from, fromPort, to, toPort });
@@ -1026,6 +1256,14 @@ function setupCanvasInteractions() {
   });
 
   window.addEventListener("mouseup", () => {
+    if (state.draggingNode) {
+      const { node, startX, startY, snapshot } = state.draggingNode;
+      if (node.x !== startX || node.y !== startY) {
+        state.undoStack.push(snapshot);
+        if (state.undoStack.length > 20) state.undoStack.shift();
+        updateUndoButton();
+      }
+    }
     state.draggingNode = null;
     state.panning = null;
   });
@@ -1044,14 +1282,40 @@ function setupCanvasInteractions() {
   }, { passive: false });
 
   window.addEventListener("keydown", (ev) => {
+    const tag = document.activeElement?.tagName;
+    const inTextField = ["INPUT", "SELECT", "TEXTAREA"].includes(tag);
+
     if (ev.key === "Escape") {
       if (!el.xrayModal.classList.contains("hidden")) {
         closeXrayModal();
       } else if (state.wiringFrom) {
         cancelWiring();
       }
-    } else if ((ev.key === "Delete" || ev.key === "Backspace") && !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement?.tagName)) {
+      return;
+    }
+
+    if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "z" && !inTextField) {
+      ev.preventDefault();
+      undoLastAction();
+      return;
+    }
+
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === "Enter") {
+      ev.preventDefault();
+      simulateCircuit();
+      return;
+    }
+
+    if (inTextField) return;
+
+    if (ev.key === "Delete" || ev.key === "Backspace") {
       deleteSelected();
+    } else if (ev.code === "Space" && tag !== "BUTTON") {
+      ev.preventDefault();
+      state.isPlaying ? stopPlayback() : startPlayback();
+    } else if (ev.key.toLowerCase() === "f" && !ev.ctrlKey && !ev.metaKey) {
+      ev.preventDefault();
+      fitView();
     }
   });
 
@@ -1063,8 +1327,15 @@ function setupCanvasInteractions() {
     state.zoom = Math.max(0.35, state.zoom / 1.15);
     applyViewportTransform();
   });
+  el.zoomLabel.addEventListener("click", () => {
+    state.zoom = 1.0;
+    applyViewportTransform();
+  });
+  el.btnUndo.addEventListener("click", undoLastAction);
   el.btnFitView.addEventListener("click", fitView);
   el.btnClearCanvas.addEventListener("click", () => {
+    if (!state.circuit.nodes.length && !state.circuit.edges.length) return;
+    pushUndo("limpar tela");
     state.circuit = { nodes: [], edges: [], durationNs: 25.0 };
     state.selectedNodeId = null;
     state.selectedEdgeId = null;
@@ -1072,6 +1343,7 @@ function setupCanvasInteractions() {
     stopPlayback();
     renderCircuitGraph();
     renderInspector();
+    showToast("Tela limpa.", 4500, true);
   });
 }
 
@@ -1079,12 +1351,43 @@ function setupCanvasInteractions() {
 // Simulação no ngspice e Atualização dos Resultados
 // ---------------------------------------------------------------------------
 
+function applySimulationResult(data, showWarnings = true) {
+  state.simResult = data;
+  if (!data.compareKeys) {
+    state.activeKeyView = 0;
+  }
+  el.keyViewGroup.classList.toggle("hidden", !data.compareKeys);
+  updateKeyViewButtons();
+
+  el.simStatusBadge.className = "status-badge ok";
+  el.simStatusBadge.textContent = `ngspice-47: ${data.elapsedMs} ms`;
+  el.dockSummaryPill.textContent = `DPA Pico: ${data.metrics.dpaPeakPct}% | ${data.metrics.coreTransistors}T núcleo | ${data.elapsedMs} ms`;
+
+  if (showWarnings && data.warnings?.length) {
+    showToast(data.warnings[0], 4000);
+  }
+
+  el.timeSlider.max = String(Math.max(data.tGridNs.length - 1, 1));
+  state.frameFloat = 0;
+  el.timeSlider.value = "0";
+
+  renderTruthAndMetrics(data);
+  el.netlistCode.textContent = data.netlist || "";
+  drawOscilloscopes();
+  updateAnimationFrame();
+  if (!getThemeTokens().reducedMotion) {
+    startPlayback();
+  } else {
+    stopPlayback();
+  }
+}
+
 async function simulateCircuit() {
   if (state.isSimulating) return;
   state.isSimulating = true;
   el.btnSimulate.disabled = true;
   el.simStatusBadge.className = "status-badge running";
-  el.simStatusBadge.textContent = "Compilando & rodando ngspice...";
+  el.simStatusBadge.textContent = "Compilando no ngspice...";
 
   try {
     const resp = await fetch("/api/simulate", {
@@ -1101,30 +1404,12 @@ async function simulateCircuit() {
       throw new Error(data.error || "Falha ao simular circuito.");
     }
 
-    state.simResult = data;
-    if (!data.compareKeys) {
-      state.activeKeyView = 0;
-    }
-    el.keyViewGroup.classList.toggle("hidden", !data.compareKeys);
-    updateKeyViewButtons();
-
-    el.simStatusBadge.className = "status-badge ok";
-    el.simStatusBadge.textContent = `ngspice-47: ${data.elapsedMs} ms`;
-    el.dockSummaryPill.textContent = `DPA Pico: ${data.metrics.dpaPeakPct}% | ${data.metrics.coreTransistors}T núcleo | Simulado em ${data.elapsedMs} ms`;
-
-    if (data.warnings?.length) {
-      showToast(data.warnings[0], 4000);
-    }
-
-    el.timeSlider.max = String(Math.max(data.tGridNs.length - 1, 1));
-    state.frameFloat = 0;
-    el.timeSlider.value = "0";
-
-    renderTruthAndMetrics(data);
-    el.netlistCode.textContent = data.netlist || "";
-    drawOscilloscopes();
-    updateAnimationFrame();
-    startPlayback();
+    applySimulationResult(data, true);
+    state.savedByMode[state.mode] = {
+      circuit: JSON.parse(JSON.stringify(state.circuit)),
+      templateId: el.templateSelect.value,
+      simResult: data,
+    };
   } catch (err) {
     el.simStatusBadge.className = "status-badge error";
     el.simStatusBadge.textContent = "Erro na simulação";
@@ -1161,10 +1446,11 @@ function updateKeyViewButtons() {
 }
 
 function updateAnimationFrame() {
+  const theme = getThemeTokens();
   const res = state.simResult;
   if (!res) {
     el.timeText.textContent = "0.00 / 25.00 ns";
-    el.vectorText.textContent = "Clique em ▶ Compilar e Simular";
+    el.vectorText.textContent = "Aguardando simulação";
     return;
   }
 
@@ -1174,12 +1460,11 @@ function updateAnimationFrame() {
   el.timeSlider.value = String(idx);
   el.xrayTimeBadge.textContent = `${tNs.toFixed(2)} ns`;
 
-  // Vetor de entrada atual
   if (res.vectorLabels?.length) {
     const vec = res.vectorLabels.find((v) => tNs >= v.tStart && tNs <= v.tEnd) || res.vectorLabels[res.vectorLabels.length - 1];
     el.vectorText.textContent = `Vetor: ${vec.text}`;
   } else {
-    el.vectorText.textContent = `Modo Elétrico (${res.compareKeys ? `Key=${state.activeKeyView}` : "Simulação Única"})`;
+    el.vectorText.textContent = `Elétrico (${res.compareKeys ? `Key=${state.activeKeyView}` : "Único"})`;
   }
 
   const useK1 = res.compareKeys && state.activeKeyView === 1;
@@ -1200,15 +1485,18 @@ function updateAnimationFrame() {
     const col = voltageToColor(v);
     wref.baseEl.setAttribute("stroke", col);
 
-    // Intensidade de fluxo nos fios
-    const prevIdx = Math.max(0, idx - 1);
-    const dv = v !== null && nodeVolts?.[ed.from] ? Math.abs(v - (nodeVolts[ed.from][prevIdx] ?? v)) : 0;
-    const flowActive = Math.abs(v || 0) > 0.15 || dv > 0.03 || currentTotalUa > 0.05;
-    wref.flowEl.setAttribute("opacity", flowActive ? (dv > 0.03 || currentTotalUa > 0.2 ? "0.9" : "0.35") : "0");
-    wref.flowEl.setAttribute("stroke-dashoffset", String(-state.dashOffset));
+    if (theme.reducedMotion) {
+      wref.flowEl.setAttribute("opacity", "0");
+    } else {
+      const prevIdx = Math.max(0, idx - 1);
+      const dv = v !== null && nodeVolts?.[ed.from] ? Math.abs(v - (nodeVolts[ed.from][prevIdx] ?? v)) : 0;
+      const flowActive = Math.abs(v || 0) > 0.15 || dv > 0.03 || currentTotalUa > 0.05;
+      wref.flowEl.setAttribute("opacity", flowActive ? (dv > 0.03 || currentTotalUa > 0.2 ? "0.85" : "0.35") : "0");
+      wref.flowEl.setAttribute("stroke-dashoffset", String(-state.dashOffset));
+    }
   }
 
-  // Atualiza blocos no canvas
+  // Atualiza blocos no canvas (sem comprometer contraste de texto)
   for (const [nid, refs] of Object.entries(animRefs.nodes)) {
     if (refs.type === "POLY_GATE") {
       const gm = res.gateMetrics?.[nid];
@@ -1216,17 +1504,21 @@ function updateAnimationFrame() {
       const iGate = gateCurrs?.[nid]?.[idx];
       const activeFn = gm ? (useK1 ? gm.fnK1 : gm.fnK0) : refs.tdef.key0_fn;
       const keyLabel = useK1 ? 1 : 0;
-      refs.modeTxt.textContent = `MODO: ${activeFn} (K=${keyLabel})`;
-      refs.modePill.setAttribute("fill", useK1 ? "rgba(244,63,94,0.18)" : "rgba(34,211,238,0.14)");
-      refs.modePill.setAttribute("stroke", useK1 ? "rgba(244,63,94,0.48)" : "rgba(34,211,238,0.42)");
-      refs.modeTxt.setAttribute("fill", useK1 ? "#fda4af" : "#67e8f9");
-      if (vOut !== undefined) refs.vTxt.textContent = `${vOut.toFixed(2)} V`;
+      refs.modeTxt.textContent = `${activeFn} · Key=${keyLabel}`;
+      refs.modePill.setAttribute("fill", useK1 ? theme.dangerBg : theme.nfetBg);
+      refs.modePill.setAttribute("stroke", useK1 ? theme.dangerBorder : theme.nfetBorder);
+      refs.modeTxt.setAttribute("fill", useK1 ? theme.dangerText : theme.nfetText);
+      if (vOut !== undefined) {
+        refs.vTxt.textContent = `${vOut.toFixed(2)} V`;
+        refs.vDot?.setAttribute("fill", voltageToColor(vOut));
+      }
       if (iGate !== undefined) refs.iTxt.textContent = `|I|=${iGate.toFixed(2)} µA`;
     } else if (refs.type === "INPUT" || refs.type === "OUTPUT" || refs.type === "PROBE") {
       const v = nodeVolts?.[nid]?.[idx];
       if (v !== undefined) {
         refs.vTxt.textContent = `${v.toFixed(2)} V`;
-        refs.vTxt.setAttribute("fill", voltageToColor(v));
+        refs.vTxt.setAttribute("fill", theme.textMain);
+        refs.vDot?.setAttribute("fill", voltageToColor(v));
       }
     } else if (refs.type === "ARI_FET") {
       const tr = (useK1 ? res.transistorsK1 : res.transistorsK0)?.[nid];
@@ -1234,12 +1526,12 @@ function updateAnimationFrame() {
         const pol = tr.polarity[idx];
         const cond = tr.conduction[idx];
         const isP = pol === "p-FET";
-        refs.polTxt.textContent = pol;
-        refs.polTxt.setAttribute("fill", isP ? "#fcd34d" : "#67e8f9");
-        refs.polBadge.setAttribute("fill", isP ? "rgba(245,158,11,0.22)" : "rgba(34,211,238,0.16)");
-        refs.polBadge.setAttribute("stroke", isP ? "rgba(245,158,11,0.55)" : "rgba(34,211,238,0.45)");
-        refs.chGlow.setAttribute("stroke", isP ? "#f59e0b" : "#22d3ee");
-        refs.chGlow.setAttribute("opacity", String(0.1 + 0.9 * cond));
+        refs.polTxt.textContent = isP ? "p-FET h⁺" : "n-FET e⁻";
+        refs.polTxt.setAttribute("fill", isP ? theme.pfetText : theme.nfetText);
+        refs.polBadge.setAttribute("fill", isP ? theme.pfetBg : theme.nfetBg);
+        refs.polBadge.setAttribute("stroke", isP ? theme.pfetBorder : theme.nfetBorder);
+        refs.chGlow.setAttribute("stroke", isP ? theme.pfet : theme.nfet);
+        refs.chGlow.setAttribute("opacity", String(0.15 + 0.85 * cond));
       }
     } else if (refs.type === "VDC" || refs.type === "VPWL") {
       const v = nodeVolts?.[nid]?.[idx];
@@ -1319,10 +1611,11 @@ function setupHiDpiCanvas(canvas) {
 }
 
 function drawVoltageScope(res) {
+  const theme = getThemeTokens();
   const { ctx, w, h } = setupHiDpiCanvas(el.canvasScopeV);
   ctx.clearRect(0, 0, w, h);
 
-  const pad = { l: 42, r: 12, t: 10, b: 22 };
+  const pad = { l: 48, r: 14, t: 12, b: 24 };
   const pw = w - pad.l - pad.r;
   const ph = h - pad.t - pad.b;
 
@@ -1336,10 +1629,10 @@ function drawVoltageScope(res) {
   maxV = Math.ceil((maxV + 0.15) * 5) / 5;
 
   // Grade
-  ctx.strokeStyle = "rgba(148,163,184,0.12)";
+  ctx.strokeStyle = theme.scopeGrid;
   ctx.lineWidth = 1;
-  ctx.font = "10px monospace";
-  ctx.fillStyle = "#94a3b8";
+  ctx.font = '11px "SF Mono", ui-monospace, monospace';
+  ctx.fillStyle = theme.scopeLabel;
   for (let i = 0; i <= 4; i++) {
     const y = pad.t + (ph * i) / 4;
     const val = maxV - ((maxV - minV) * i) / 4;
@@ -1347,7 +1640,7 @@ function drawVoltageScope(res) {
     ctx.moveTo(pad.l, y);
     ctx.lineTo(pad.l + pw, y);
     ctx.stroke();
-    ctx.fillText(`${val.toFixed(1)}V`, 4, y + 3);
+    ctx.fillText(`${val.toFixed(1)}V`, 4, y + 4);
   }
 
   const tArr = res.tGridNs;
@@ -1355,14 +1648,13 @@ function drawVoltageScope(res) {
   const mapX = (t) => pad.l + (t / maxT) * pw;
   const mapY = (v) => pad.t + ph - ((v - minV) / Math.max(maxV - minV, 0.1)) * ph;
 
-  // Empilha ligeiramente entradas/saídas ou sobrepõe com legenda limpa
   const legendItems = [];
   traces.forEach((tr, ti) => {
-    const col = TRACE_COLORS[ti % TRACE_COLORS.length];
+    const col = theme.traceColors[ti % theme.traceColors.length];
     legendItems.push(`<span><i class="leg-line" style="background:${col}"></i>${tr.label}</span>`);
 
     ctx.strokeStyle = col;
-    ctx.lineWidth = tr.role === "output" ? 2.0 : 1.3;
+    ctx.lineWidth = tr.role === "output" ? 2.2 : 1.4;
     ctx.setLineDash([]);
     ctx.beginPath();
     tr.k0.forEach((v, i) => {
@@ -1375,7 +1667,7 @@ function drawVoltageScope(res) {
 
     if (res.compareKeys && tr.role === "output") {
       ctx.strokeStyle = col;
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.7;
       ctx.setLineDash([5, 4]);
       ctx.beginPath();
       tr.k1.forEach((v, i) => {
@@ -1393,22 +1685,29 @@ function drawVoltageScope(res) {
   // Eixo X e cursor de tempo
   for (let t = 0; t <= maxT; t += 5) {
     const x = mapX(t);
-    ctx.fillText(`${t}ns`, x - 10, h - 5);
+    ctx.fillText(`${t}ns`, x - 11, h - 6);
   }
   const curX = mapX(tArr[getCurrentFrameIndex()] ?? 0);
-  ctx.strokeStyle = "#f8fafc";
-  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = theme.scopeCursor;
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(curX, pad.t);
   ctx.lineTo(curX, pad.t + ph);
   ctx.stroke();
+
+  const traceNames = traces.map((t) => t.label).join(", ");
+  el.canvasScopeV.setAttribute(
+    "aria-label",
+    `Osciloscópio de tensões nodais de 0 a ${maxT} ns, faixa ${minV.toFixed(1)}V a ${maxV.toFixed(1)}V, sinais: ${traceNames || "nenhum"}.`
+  );
 }
 
 function drawCurrentScope(res) {
+  const theme = getThemeTokens();
   const { ctx, w, h } = setupHiDpiCanvas(el.canvasScopeI);
   ctx.clearRect(0, 0, w, h);
 
-  const pad = { l: 48, r: 12, t: 10, b: 22 };
+  const pad = { l: 56, r: 14, t: 12, b: 24 };
   const pw = w - pad.l - pad.r;
   const ph = h - pad.t - pad.b;
 
@@ -1421,10 +1720,10 @@ function drawCurrentScope(res) {
   }
   maxI *= 1.15;
 
-  ctx.strokeStyle = "rgba(148,163,184,0.12)";
+  ctx.strokeStyle = theme.scopeGrid;
   ctx.lineWidth = 1;
-  ctx.font = "10px monospace";
-  ctx.fillStyle = "#94a3b8";
+  ctx.font = '11px "SF Mono", ui-monospace, monospace';
+  ctx.fillStyle = theme.scopeLabel;
   for (let i = 0; i <= 4; i++) {
     const y = pad.t + (ph * i) / 4;
     const val = maxI * (1 - i / 4);
@@ -1432,7 +1731,7 @@ function drawCurrentScope(res) {
     ctx.moveTo(pad.l, y);
     ctx.lineTo(pad.l + pw, y);
     ctx.stroke();
-    ctx.fillText(`${val.toFixed(2)}µA`, 2, y + 3);
+    ctx.fillText(`${val.toFixed(2)}µA`, 2, y + 4);
   }
 
   const tArr = res.tGridNs;
@@ -1441,8 +1740,8 @@ function drawCurrentScope(res) {
   const mapY = (val) => pad.t + ph - (val / maxI) * ph;
 
   // Traço Key = 0
-  ctx.strokeStyle = "#22d3ee";
-  ctx.lineWidth = 1.8;
+  ctx.strokeStyle = theme.nfet;
+  ctx.lineWidth = 1.9;
   ctx.setLineDash([]);
   ctx.beginPath();
   i0.forEach((v, idx) => {
@@ -1455,8 +1754,8 @@ function drawCurrentScope(res) {
 
   // Traço Key = 1
   if (res.compareKeys) {
-    ctx.strokeStyle = "#f43f5e";
-    ctx.lineWidth = 1.7;
+    ctx.strokeStyle = theme.danger;
+    ctx.lineWidth = 1.8;
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
     i1.forEach((v, idx) => {
@@ -1470,18 +1769,24 @@ function drawCurrentScope(res) {
   }
 
   for (let t = 0; t <= maxT; t += 5) {
-    ctx.fillText(`${t}ns`, mapX(t) - 10, h - 5);
+    ctx.fillText(`${t}ns`, mapX(t) - 11, h - 6);
   }
   const curX = mapX(tArr[getCurrentFrameIndex()] ?? 0);
-  ctx.strokeStyle = "#f8fafc";
-  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = theme.scopeCursor;
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(curX, pad.t);
   ctx.lineTo(curX, pad.t + ph);
   ctx.stroke();
+
+  const m = res.metrics || {};
+  el.canvasScopeI.setAttribute(
+    "aria-label",
+    `Assinatura de corrente de alimentação DPA: pico Key=0 de ${Number(m.iPeakK0_uA || 0).toFixed(3)} µA, Key=1 de ${Number(m.iPeakK1_uA || 0).toFixed(3)} µA, assimetria DPA de pico ${Number(m.dpaPeakPct || 0).toFixed(2)}%.`
+  );
 }
 
-function bindScopeScrubbing(canvas, padLeft = 44, padRight = 12) {
+function bindScopeScrubbing(canvas, padLeft = 48, padRight = 14) {
   let scrubbing = false;
   const jumpToClientX = (clientX) => {
     if (!state.simResult?.tGridNs?.length) return;
@@ -1526,7 +1831,7 @@ function renderTruthAndMetrics(res) {
     .join("");
 
   if (!res.truthTable?.length) {
-    el.truthTableWrap.innerHTML = `<p class="empty-hint" style="padding:12px;">Modo Elétrico (Baixo Nível): acompanhe as tensões nodais no Osciloscópio e a polaridade p-FET/n-FET nos transistores ARI.</p>`;
+    el.truthTableWrap.innerHTML = `<p class="empty-hint" style="padding:12px;">Modo Elétrico (Baixo Nível): acompanhe as tensões nodais no Osciloscópio e a polaridade p-FET · h⁺ / n-FET · e⁻ nos transistores ARI.</p>`;
     return;
   }
 
@@ -1563,6 +1868,7 @@ function openXrayModal(gateId) {
   el.xraySubtitle.textContent = tdef.internal_schematic?.subtitle || tdef.description;
   el.xrayModal.classList.remove("hidden");
   renderXrayFrame();
+  el.btnCloseXray?.focus();
 }
 
 function closeXrayModal() {
@@ -1571,6 +1877,7 @@ function closeXrayModal() {
 }
 
 function renderXrayFrame() {
+  const theme = getThemeTokens();
   const gateId = state.xrayGateId;
   const node = state.circuit.nodes.find((n) => n.id === gateId);
   if (!node) return;
@@ -1636,17 +1943,34 @@ function renderXrayFrame() {
     const isP = pol === "p-FET";
 
     const g = svgEl("g", { transform: `translate(${tr.x}, ${tr.y})` });
-    g.appendChild(svgEl("rect", { x: -34, y: -26, width: 68, height: 52, rx: 8, fill: "#131c2e", stroke: isP ? "rgba(245,158,11,0.55)" : "rgba(34,211,238,0.55)", "stroke-width": 1.4 }));
-    g.appendChild(svgEl("line", { x1: 0, y1: -24, x2: 0, y2: 24, stroke: isP ? "#f59e0b" : "#22d3ee", "stroke-width": 3.5, opacity: 0.25 + 0.75 * cond }));
-    g.appendChild(svgEl("line", { x1: -12, y1: -16, x2: -12, y2: 16, stroke: "#cbd5e1", "stroke-width": 2 }));
-    g.appendChild(svgEl("text", { x: 0, y: -30, "text-anchor": "middle", fill: "#e2e8f0", "font-size": 10, "font-weight": 700 }, `${tr.id} W=${tr.w}`));
-    g.appendChild(svgEl("text", { x: 16, y: 4, "text-anchor": "middle", fill: isP ? "#fcd34d" : "#67e8f9", "font-size": 9.5, "font-weight": 800 }, isP ? "p" : "n"));
+    g.appendChild(svgEl("rect", {
+      x: -36,
+      y: -26,
+      width: 72,
+      height: 52,
+      rx: 8,
+      fill: theme.nodeCardBg,
+      stroke: isP ? theme.pfetBorder : theme.nfetBorder,
+      "stroke-width": 1.5,
+    }));
+    g.appendChild(svgEl("line", {
+      x1: 0,
+      y1: -24,
+      x2: 0,
+      y2: 24,
+      stroke: isP ? theme.pfet : theme.nfet,
+      "stroke-width": 3.5,
+      opacity: 0.25 + 0.75 * cond,
+    }));
+    g.appendChild(svgEl("line", { x1: -12, y1: -16, x2: -12, y2: 16, stroke: theme.gateBar, "stroke-width": 2 }));
+    g.appendChild(svgEl("text", { x: 0, y: -30, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 700 }, `${tr.id} W=${tr.w}`));
+    g.appendChild(svgEl("text", { x: 18, y: 4, "text-anchor": "middle", fill: isP ? theme.pfetText : theme.nfetText, "font-size": 11, "font-weight": 700 }, isP ? "p·h⁺" : "n·e⁻"));
     el.xraySvg.appendChild(g);
 
     if (st) {
       tableRows += `<tr>
         <td><strong>${tr.id}</strong></td>
-        <td><span class="pol-pill ${isP ? "pfet" : "nfet"}">${pol}</span></td>
+        <td><span class="pol-pill ${isP ? "pfet" : "nfet"}">${pol} · ${isP ? "h⁺" : "e⁻"}</span></td>
         <td>${cond > 0.45 ? "ON" : "OFF"} (${Math.round(cond * 100)}%)</td>
         <td>${st.v_d[idx].toFixed(2)} / ${st.v_g[idx].toFixed(2)} / ${st.v_s[idx].toFixed(2)}</td>
         <td>${st.v_g2[idx].toFixed(2)}V</td>
@@ -1662,15 +1986,22 @@ function renderXrayFrame() {
   for (const nd of sch.nodes) {
     const v = nodeVolts?.[nd.id]?.[idx];
     const col = voltageToColor(v);
-    el.xraySvg.appendChild(svgEl("circle", { cx: nd.x, cy: nd.y, r: 5.5, fill: col, stroke: "#0b111b", "stroke-width": 1.5 }));
+    el.xraySvg.appendChild(svgEl("circle", { cx: nd.x, cy: nd.y, r: 5.5, fill: col, stroke: theme.pinStroke, "stroke-width": 1.6 }));
     const labelTxt = v !== undefined ? `${nd.label} (${v.toFixed(2)}V)` : nd.label;
-    el.xraySvg.appendChild(svgEl("text", { x: nd.x, y: nd.y - 10, "text-anchor": "middle", fill: "#f1f5f9", "font-size": 10, "font-weight": 700 }, labelTxt));
+    el.xraySvg.appendChild(svgEl("text", { x: nd.x, y: nd.y - 12, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 700, class: "xray-node-label" }, labelTxt));
   }
 }
 
 // ---------------------------------------------------------------------------
-// Carregamento de Templates e Inicialização
+// Carregamento de Templates e Alternância de Modo
 // ---------------------------------------------------------------------------
+
+function updateCanvasHelpText() {
+  if (!el.canvasHelpText) return;
+  el.canvasHelpText.textContent = state.mode === "high"
+    ? "Arraste blocos · Ligue ▶ → ●/◆ · Duplo clique na porta abre Raio-X"
+    : "Arraste transistores · Ligue terminais · Clique em um fio para remover";
+}
 
 function loadTemplate(templateId) {
   const tpl = state.templates.find((t) => t.id === templateId);
@@ -1679,6 +2010,7 @@ function loadTemplate(templateId) {
   stopPlayback();
   state.mode = tpl.mode;
   updateModeButtons();
+  updateCanvasHelpText();
   state.circuit = JSON.parse(JSON.stringify({
     nodes: tpl.nodes,
     edges: tpl.edges,
@@ -1687,12 +2019,64 @@ function loadTemplate(templateId) {
   state.selectedNodeId = null;
   state.selectedEdgeId = null;
   state.simResult = null;
+  if (el.templateSelect.value !== templateId) {
+    el.templateSelect.value = templateId;
+  }
+  state.savedByMode[state.mode] = {
+    circuit: JSON.parse(JSON.stringify(state.circuit)),
+    templateId,
+    simResult: null,
+  };
 
   renderPalette();
   renderCircuitGraph();
   renderInspector();
   setTimeout(fitView, 20);
   simulateCircuit();
+}
+
+function switchAbstractionMode(targetMode) {
+  if (state.mode === targetMode) return;
+  state.savedByMode[state.mode] = {
+    circuit: JSON.parse(JSON.stringify(state.circuit)),
+    templateId: el.templateSelect.value,
+    simResult: state.simResult,
+  };
+  state.mode = targetMode;
+  updateModeButtons();
+  updateCanvasHelpText();
+  stopPlayback();
+  state.selectedNodeId = null;
+  state.selectedEdgeId = null;
+  state.simResult = null;
+  renderPalette();
+
+  const saved = state.savedByMode[targetMode];
+  if (saved && saved.circuit?.nodes?.length) {
+    state.circuit = JSON.parse(JSON.stringify(saved.circuit));
+    if (saved.templateId) {
+      el.templateSelect.value = saved.templateId;
+    }
+    renderCircuitGraph();
+    renderInspector();
+    setTimeout(fitView, 20);
+    if (saved.simResult) {
+      applySimulationResult(saved.simResult, false);
+    } else {
+      simulateCircuit();
+    }
+    return;
+  }
+
+  const fallbackTpl = state.templates.find((t) => t.mode === targetMode);
+  if (fallbackTpl) {
+    loadTemplate(fallbackTpl.id);
+    return;
+  }
+
+  state.circuit = { nodes: [], edges: [], durationNs: 25.0 };
+  renderCircuitGraph();
+  renderInspector();
 }
 
 function updateModeButtons() {
@@ -1715,34 +2099,25 @@ function populateTemplateSelect() {
 
 async function init() {
   setupCanvasInteractions();
-  bindScopeScrubbing(el.canvasScopeV, 42, 12);
-  bindScopeScrubbing(el.canvasScopeI, 48, 12);
+  bindScopeScrubbing(el.canvasScopeV, 48, 14);
+  bindScopeScrubbing(el.canvasScopeI, 56, 14);
+  updateUndoButton();
 
-  el.btnModeHigh.addEventListener("click", () => {
-    if (state.mode === "high") return;
-    state.mode = "high";
-    updateModeButtons();
-    state.circuit = { nodes: [], edges: [], durationNs: 25.0 };
-    state.selectedNodeId = null;
-    state.simResult = null;
-    stopPlayback();
-    renderPalette();
+  lightModeMedia.addEventListener("change", () => {
     renderCircuitGraph();
-    renderInspector();
+    drawOscilloscopes();
+    if (!el.xrayModal.classList.contains("hidden")) renderXrayFrame();
   });
 
-  el.btnModeLow.addEventListener("click", () => {
-    if (state.mode === "low") return;
-    state.mode = "low";
-    updateModeButtons();
-    state.circuit = { nodes: [], edges: [], durationNs: 25.0 };
-    state.selectedNodeId = null;
-    state.simResult = null;
-    stopPlayback();
-    renderPalette();
-    renderCircuitGraph();
-    renderInspector();
+  reducedMotionMedia.addEventListener("change", () => {
+    if (reducedMotionMedia.matches && state.isPlaying) {
+      stopPlayback();
+    }
+    updateAnimationFrame();
   });
+
+  el.btnModeHigh.addEventListener("click", () => switchAbstractionMode("high"));
+  el.btnModeLow.addEventListener("click", () => switchAbstractionMode("low"));
 
   el.templateSelect.addEventListener("change", (e) => loadTemplate(e.target.value));
   el.chkCompareKeys.addEventListener("change", (e) => {
@@ -1778,13 +2153,20 @@ async function init() {
   el.xrayKey0Btn.addEventListener("click", () => setActiveKeyView(0));
   el.xrayKey1Btn.addEventListener("click", () => setActiveKeyView(1));
   el.btnCloseXray.addEventListener("click", closeXrayModal);
+  el.xrayModal.addEventListener("click", (ev) => {
+    if (ev.target === el.xrayModal) closeXrayModal();
+  });
 
-  // Abas do dock inferior
+  // Abas do dock inferior com sincronização ARIA
   document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
       document.querySelectorAll(".tab-pane").forEach((p) => p.classList.remove("active"));
       btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
       const target = btn.dataset.tab;
       if (target === "scope") {
         document.getElementById("tabScope").classList.add("active");
@@ -1798,8 +2180,9 @@ async function init() {
   });
 
   el.btnToggleDock.addEventListener("click", () => {
-    el.analysisDock.classList.toggle("minimized");
-    el.btnToggleDock.textContent = el.analysisDock.classList.contains("minimized") ? "Expandir" : "Minimizar";
+    const minimized = el.analysisDock.classList.toggle("minimized");
+    el.btnToggleDock.textContent = minimized ? "Expandir" : "Minimizar";
+    el.btnToggleDock.setAttribute("aria-expanded", String(!minimized));
     setTimeout(drawOscilloscopes, 200);
   });
 

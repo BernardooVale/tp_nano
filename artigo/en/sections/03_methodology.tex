@@ -1,0 +1,144 @@
+\section{Methodology}\label{sec:methodology}
+
+\subsection{Open-Source Computational Flow and Experimental Suite Organization}\label{sec:met_flow}
+
+All experimental and numerical developments in this work were structured within a fully open-source and reproducible computational environment, eliminating the original dependency on proprietary commercial tools---namely Synopsys HSPICE with Verilog-A (\texttt{\$table\_model}) support and MATLAB---used in the reference files of Wu et al.~\cite{wu2020reconfigurable}. The adopted circuit simulation engine is \texttt{ngspice-47} (executed in batch mode via \texttt{ngspice\_con.exe}), coupled with Python routines (\texttt{numpy}, \texttt{pandas}, and \texttt{matplotlib}) responsible for parameterized SPICE netlist generation, automated metric extraction, statistical analyses, and figure plotting.
+
+To ensure traceability and continuous verification, the experiments were organized into eight self-contained modules (\texttt{00} through \texttt{07}) under \texttt{experimentos/}, executed sequentially by the master orchestrator \texttt{run\_all.py}, which re-simulates every netlist and validates the integrity of all 66 generated artifacts (libraries, netlists, CSV tables, and figures). Complementarily, an interactive web-based visual prototyping platform (\textit{BP-FET Studio}, in \texttt{simulador\_web/}) was built and directly coupled to \texttt{ngspice-47}. Table~\ref{tab:module_summary} summarizes the methodological scope of each component in the suite.
+
+\begin{table}[htbp]
+\centering
+\caption{Structure of the experimental suite in \texttt{ngspice-47} + Python and the interactive visual platform.}
+\label{tab:module_summary}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.05cm} >{\raggedright\arraybackslash}p{2.35cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{3.45cm}}
+\toprule
+\textbf{Module} & \textbf{Domain / Analysis} & \textbf{Methodological Scope} & \textbf{Main Deliverables} \\
+\midrule
+\texttt{00} & Device (DC) & 4D translation of experimental tables to native SPICE and cross-validation against HSPICE \texttt{.printtr0}. & \texttt{bp\_\allowbreak ari\_\allowbreak ngspice.lib}, 5 netlists, 2 CSVs, 4 figs. \\
+\texttt{01} & 2T Inverter (DC/Tran) & $V_{DD}$ sweeps from $1.0\ \text{V}$ down to $0.2\ \text{V}$ with and without $V_{fb}$ compensation; transient switching ($0.5\ \text{fF}$). & 2 netlists, 1 CSV, 2 figs. \\
+\texttt{02} & 4T Gates (Tran) & Dynamic runtime transmutation at $t=20\ \text{ns}$ for \texttt{NAND}$\leftrightarrow$\texttt{NOR} ($0.8\ \text{V}$) and \texttt{XOR}$\leftrightarrow$\texttt{XNOR} ($1.5\ \text{V}$). & 2 netlists, 1 CSV, 2 figs. \\
+\texttt{03} & DPA \& Noise (DC/Stat.) & Python port of DPA datasets, 3D Monte Carlo ($N=250$), and floating retention; $5\times 5$ supply sweep in \texttt{ngspice}. & 1 netlist, 3 CSVs, 4 figs. \\
+\texttt{04} & 6T SRAM (Tran/DC) & Mechanism B implementation ($30\ \text{ns}$), butterfly curves, SNM, and \textit{Wordline Read-Assist} ($0.30\ \text{V}$). & 2 netlists, 1 CSV, 2 figs. \\
+\texttt{05} & 28T Full Adder (Tran) & Multi-stage polymorphic adder with 2-bit key $(K_1, K_0)$, level shifting, and Hamming Distance. & 1 netlist, 1 CSV, 2 figs. \\
+\texttt{06} & Boundaries (Staircase) & 292-point sweep under non-standard voltages within the measured LUT domain. & 3 netlists, 2 CSVs, 3 figs. \\
+\texttt{07} & DPA Pareto \& FA (Tran) & Evaluation of 7 polymorphic tuples, Monte Carlo ($N=250$), and 3-profile Full Adder benchmark. & 4 netlists, 3 CSVs, 4 figs. \\
+\texttt{Web} & Interactive Platform & High/low-level graph-to-SPICE compiler, transistor X-Ray viewer, DPA oscilloscope, and E2E tests. & HTTP server, compiler, E2E suite \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{4D Behavioral Model Translation of the BP SB-FET to \texttt{ngspice-47}}\label{sec:met_model}
+
+In the original Verilog-A model (\texttt{bp\_ari.va}), the ambipolar black phosphorus Schottky-barrier field-effect transistor (BP SB-FET) is represented by a five-terminal \texttt{ari} block (\texttt{d, g, s, g1, g2}) parameterized by a relative width multiplier $W$, querying two four-dimensional experimental lookup tables (\texttt{BP\_ARI\_\allowbreak dataN.txt}, 1,810 rows, and \texttt{BP\_ARI\_\allowbreak dataP.txt}, 759 rows) via the \texttt{\$table\_model} directive~\cite{wu2020reconfigurable}. Because \texttt{ngspice-47} does not natively execute 4D \texttt{\$table\_model} tables, Module~\texttt{00} (\texttt{gerar\_\allowbreak modelo\_\allowbreak e\_\allowbreak validar.py}) constructs a native behavioral subcircuit \texttt{.subckt ARI d g s g1 g2 W=1.0} (\texttt{bp\_ari\_\allowbreak ngspice.lib}) in its refined \texttt{v2} (4D Surface) formulation.
+
+To support bidirectional circuits in which drain and source swap roles depending on the input vector or polarity key---such as pass-transistor \texttt{XOR}/\texttt{XNOR} gates, SRAM access transistors, and locked-mode source followers---the subcircuit defines effective bilateral source references:
+\begin{equation}\label{eq:bilateral_ref}
+V_{g,n} = V_g - \min(V_d, V_s), \quad V_{g1,n} = V_{g1} - \min(V_d, V_s),
+\end{equation}
+\begin{equation}\label{eq:bilateral_ref_p}
+V_{g,p} = V_g - \max(V_d, V_s), \quad V_{g1,p} = V_{g1} - \max(V_d, V_s).
+\end{equation}
+These expressions preserve the exact nominal biases whenever $V_{ds} \ge 0$ in the \textit{n-FET} branch and $V_{ds} \le 0$ in the \textit{p-FET} branch while maintaining current continuity upon $V_{ds}$ reversal.
+
+Over this reference frame, the full two-dimensional transfer surface $(V_{g1}, V_{g2})$ at $|V_{ds}| = 0.8\ \text{V}$ is reconstructed via bilinear interpolation using piecewise-linear (\texttt{pwl}) hat functions with flat external clamping at $\pm 1000\ \text{V}$ to prevent unphysical extrapolation and ensure MNA solver convergence:
+\begin{itemize}
+    \item \textbf{\textit{n-FET} branch:} $7 \times 4 = 28$ experimental slices spanning $V_{g1} \in [-0.1,\ 1.1]\ \text{V}$ (in $0.2\ \text{V}$ steps) and $V_{g2} \in \{0.2,\allowbreak\ 0.4,\allowbreak\ 0.8,\allowbreak\ 1.0\}\ \text{V}$, swept across $V_{g,n} \in [-0.8,\ 1.1]\ \text{V}$.
+    \item \textbf{\textit{p-FET} branch:} $8 \times 4 = 32$ experimental slices spanning $V_{g1} \in [-1.5,\ -0.1]\ \text{V}$ (in $0.2\ \text{V}$ steps) and $V_{g2} \in \{-1.5,\allowbreak\ -1.2,\allowbreak\ -1.1,\allowbreak\ -0.9\}\ \text{V}$, swept across $V_{g,p} \in [-1.5,\ 0.0]\ \text{V}$. Explicitly incorporating the measured $V_{g2} = -1.5\ \text{V}$ plane captures the actual flat-band voltage shift ($\Delta V_{fb} \approx -0.25\ \text{V}$) present in the experimental dataset, which was not captured by the preliminary 1D scalar scaling (\texttt{v1}).
+\end{itemize}
+
+To capture the triode and saturation regions as a joint function of the main gate and drain-source voltage, \texttt{v2} replaces the global analytical factor $\tanh(2.5\,V_{ds})/\tanh(2.0)$ of \texttt{v1} with gate-specific 2D experimental factors $f_{ds,n}(V_{g,n}, V_{ds})$ (6 slices over $V_{g,n} \in [0.1,\ 1.1]\ \text{V}$) and $f_{ds,p}(V_{g,p}, V_{ds})$ (5 slices over $V_{g,p} \in [-1.5,\ -0.7]\ \text{V}$), extracted from the experimental output sweeps, normalized at $|V_{ds}| = 0.8\ \text{V}$, and extended as strictly monotonic odd \texttt{pwl} functions with finite ohmic conductance at $V_{ds} = 0\ \text{V}$. The drain-source current is imposed by the behavioral current source:
+\begin{equation}\label{eq:bp_current}
+I_{ds} = W \cdot \begin{cases}
+I_n(V_{g1,n},\, V_{g2,s},\, V_{g,n}) \cdot f_{ds,n}(V_{g,n},\, V_{ds}), & \text{if } V(g2,s) > 0\ \text{V}, \\
+I_p(V_{g1,p},\, V_{g2,s},\, V_{g,p}) \cdot f_{ds,p}(V_{g,p},\, V_{ds}), & \text{if } V(g2,s) \le 0\ \text{V},
+\end{cases}
+\end{equation}
+shunted by an auxiliary resistor $R_{\mathrm{gmin}} = 10^{12}\ \Omega$ for numerical stability. It is worth noting that, identically to the original \texttt{bp\_ari.va} file, \texttt{bp\_ari\_ngspice.lib} is purely quasi-static and omits intrinsic gate and overlap capacitances ($C_{gs}, C_{gd}, C_{g2s}$); accordingly, all transient simulations reported below include explicit load and nodal capacitances ($0.05\ \text{fF}$ to $1.0\ \text{fF}$).
+
+Model validation was performed via five DC testbenches (\texttt{sim\_\allowbreak N\_\allowbreak transfer.sp}, \texttt{sim\_\allowbreak P\_\allowbreak transfer.sp}, \texttt{sim\_\allowbreak N\_\allowbreak output.sp}, \texttt{sim\_\allowbreak P\_\allowbreak output.sp}, and \texttt{sim\_\allowbreak polarity\_\allowbreak gate.sp}), directly comparing \texttt{v1} and \texttt{v2} against the official Synopsys HSPICE \texttt{.printtr0} reference outputs via root-mean-square error (RMSE), mean absolute error (MAE), maximum error, and coefficient of determination ($R^2$). Device metrics $I_{\mathrm{on}}$, $I_{\mathrm{off}}$, $I_{\mathrm{on}}/I_{\mathrm{off}}$ ratio, and minimum subthreshold swing ($SS_{\min}$) were also extracted at $|V_{ds}| = 0.8\ \text{V}$.
+
+\subsection{Ultra-Low-Voltage Inverter and Polymorphic Gate Characterization}\label{sec:met_inv_poly}
+
+In Module~\texttt{01}, the complementary BP SB-FET inverter ($W_{\mathrm{PU}} = W_{\mathrm{PD}} = 1.0$) was biased at nominal conduction operating points (\textit{n-FET} pull-down at $V_{g1,n} = 1.1\ \text{V},\ V_{g2,n} = 0.8\ \text{V}$ and \textit{p-FET} pull-up at $V_{g1,p} = V_{DD} - 1.5\ \text{V},\ V_{g2,p} = V_{DD} - 1.2\ \text{V}$). DC voltage transfer characteristic (VTC) sweeps were executed in \texttt{inv\_vtc.sp} ($0 \to V_{DD}$ in $2\ \text{mV}$ steps) for $V_{DD} \in \{1.0,\ 0.8,\ 0.6,\ 0.4,\ 0.2\}\ \text{V}$ under two configurations:
+\begin{enumerate}
+    \item \textbf{Direct coupling:} input voltage $V_{\mathrm{in}}$ applied directly to the gate terminals without offset (\texttt{off}$_n = \text{off}_p = 0$).
+    \item \textbf{Electrostatic $V_{fb}$ compensation:} controlled gate offsets $\text{off}_n = -0.02 - 0.5\,V_{DD}$ and $\text{off}_p = 0.5\,V_{DD} - 0.58$, aligning both branches at their peak subthreshold gain point ($V_{gs,n,\mathrm{eff}} = -0.02\ \text{V}$ and $V_{gs,p,\mathrm{eff}} = -0.58\ \text{V}$) when $V_{\mathrm{in}} = V_{DD}/2$.
+\end{enumerate}
+From the VTC curves, percentage output swing $(V_{\mathrm{out}}(0)-V_{\mathrm{out}}(V_{DD}))/V_{DD}$, switching threshold $V_M$, peak differential gain $|A_v|_{\max} = \max|dV_{\mathrm{out}}/dV_{\mathrm{in}}|$, and static noise margins $NM_L$ and $NM_H$ (at unity-slope points $dV_{\mathrm{out}}/dV_{\mathrm{in}} = -1$) were extracted. Additionally, \texttt{inv\_tran.sp} evaluated transient switching ($14\ \text{ns}$) with $C_{\mathrm{load}} = 0.5\ \text{fF}$ at $V_{DD} = 1.0\ \text{V}$ and $0.6\ \text{V}$.
+
+In Module~\texttt{02}, transient simulations ($40\ \text{ns}$, $20\ \text{ps}$ time step, $C_{\mathrm{out}} = 0.3\ \text{fF}$) were performed on the two 4-transistor polymorphic primitives introduced in~\cite{wu2020reconfigurable}, sweeping all input vectors $(A,B) \in \{00, 01, 10, 11\}$ in $5\ \text{ns}$ windows with runtime key switching at $t = 20\ \text{ns}$:
+\begin{itemize}
+    \item \textbf{\texttt{NAND} $\leftrightarrow$ \texttt{NOR} (\texttt{poly\_nand\_nor.sp}, $V_{DD} = 0.8\ \text{V}$):} parallel top network ($W=1.0$) tied to \texttt{rtop}/\texttt{gtop} and series bottom network ($W=2.0$, intermediate node capacitance $C_{n1}=0.1\ \text{fF}$) tied to \texttt{rbot}/\texttt{gbot}. Under $\text{Key}=0$ (\texttt{NAND}), biases are set to $(r_{\mathrm{top}}, g_{\mathrm{top}}, r_{\mathrm{bot}}, g_{\mathrm{bot}}) = (0.8,\ -0.4,\ 0.0,\ 0.8)\ \text{V}$; under $\text{Key}=1$ (\texttt{NOR}), supply rails and polarities permute to $(0.0,\ 0.8,\ 0.8,\ -0.7)\ \text{V}$.
+    \item \textbf{\texttt{XOR} $\leftrightarrow$ \texttt{XNOR} (\texttt{poly\_xor\_xnor.sp}, $V_{DD} = 1.5\ \text{V}$, $V_{\mathrm{in}} = 1.1\ \text{V}$):} four identical transistors ($W=1.0$) in a symmetric bridge driven by differential inputs $(A,\overline{A})$ on terminals \texttt{g} and $(B,\overline{B})$ on auxiliary terminals \texttt{g1}, alternating $(r_{\mathrm{top}}, g_{\mathrm{top}}, r_{\mathrm{bot}}, g_{\mathrm{bot}})$ between $(1.5,\ 0.0,\ 0.0,\ 0.8)\ \text{V}$ ($\text{Key}=0$, \texttt{XOR}) and $(0.0,\ 0.8,\ 1.5,\ 0.0)\ \text{V}$ ($\text{Key}=1$, \texttt{XNOR}).
+\end{itemize}
+
+\subsection{DPA Security, Statistical Robustness, and Voltage Boundaries}\label{sec:met_dpa_boundary}
+
+In Module~\texttt{03}, the proprietary MATLAB scripts of~\cite{wu2020reconfigurable} were fully ported to Python (\texttt{analisar\_\allowbreak dpa\_\allowbreak e\_\allowbreak robustez.py}) to process transient supply current waveforms $|I(V_{DD})|$ of the \texttt{NAND}/\texttt{NOR} and \texttt{XOR}/\texttt{XNOR} families ($0\text{--}30\ \mu\text{s}$ window), 250-sample Monte Carlo datasets of simultaneous $V_{DD}$ and $V_{SS}$ rail noise per gate (classifying logic levels around a $0.40\ \text{V}$ threshold), and floating-node retention traces (\texttt{bblc1}) up to $111\ \mu\text{s}$ following $100\ \text{ns}$, $250\ \text{ns}$, and $500\ \text{ns}$ pulses. As an independent parametric verification of the translated model, \texttt{sim\_\allowbreak supply\_\allowbreak noise.sp} executed a $5 \times 5$ grid in \texttt{ngspice-47} sweeping $V_{DD} \in [0.65,\ 0.95]\ \text{V}$ and $V_{SS} \in [-0.10,\ +0.10]\ \text{V}$ on the 4T \texttt{NAND} gate to measure the static differential margin $V_{\mathrm{out}}(00) - V_{\mathrm{out}}(11)$.
+
+In Module~\texttt{06}, circuit behavior under non-standard operating voltages was investigated via staircase PWL sweeps using four parallel cells representing \texttt{00}, \texttt{01}, \texttt{10}, and \texttt{11}. Methodologically, all terminal biases were strictly constrained within the experimentally measured LUT domain: $V(g2,s)_n \in [+0.20,\ +1.00]\ \text{V}$ and $V(g2,s)_p \in [-1.50,\ -0.90]\ \text{V}$, deliberately avoiding the unmeasured gap $(-0.90,\ +0.20)\ \text{V}$. In total, 292 operating points were simulated across three experiments:
+\begin{enumerate}
+    \item \textbf{\texttt{NAND}/\texttt{NOR} ($V_{DD} \times$ Polarity, 70 points):} 7 supply levels $V_{DD} \in \{0.25,\allowbreak\ 0.35,\allowbreak\ 0.50,\allowbreak\ 0.65,\allowbreak\ 0.80,\allowbreak\ 0.95,\allowbreak\ 1.10\}\ \text{V}$ crossed with 5 polarity pairs inside the LUT ($\text{Sub-pol Min}\ +0.2/-0.9\ \text{V}$, $\text{Sub-pol Mod}\ +0.4/-1.1\ \text{V}$, $\text{Nom.\ NAND}\ +0.8/-1.2\ \text{V}$, $\text{Nom.\ NOR}\ +0.8/-1.5\ \text{V}$, and $\text{Over-pol}\ +1.0/-1.5\ \text{V}$) for $\text{Key} \in \{0, 1\}$.
+    \item \textbf{\texttt{NAND}/\texttt{NOR} ($V(g2,s)_n \times V(g2,s)_p$ Asymmetry, 72 points):} $6 \times 6$ grid at $V_{DD} = 0.80\ \text{V}$ sweeping $V(g2,s)_n \in \{0.20,\allowbreak\ 0.30,\allowbreak\ 0.40,\allowbreak\ 0.60,\allowbreak\ 0.80,\allowbreak\ 1.00\}\ \text{V}$ and $V(g2,s)_p \in \{-0.90,\allowbreak\ -1.00,\allowbreak\ -1.10,\allowbreak\ -1.20,\allowbreak\ -1.35,\allowbreak\ -1.50\}\ \text{V}$ for $\text{Key} \in \{0, 1\}$.
+    \item \textbf{\texttt{XOR}/\texttt{XNOR} ($V_{DD} \times V_{\mathrm{in}}$ and fixed gate, 150 points):} 5 supply levels $V_{DD} \in \{0.60,\allowbreak\ 0.80,\allowbreak\ 1.00,\allowbreak\ 1.20,\allowbreak\ 1.50\}\ \text{V}$ $\times$ 5 input amplitudes $V_{\mathrm{in}} \in \{0.40,\allowbreak\ 0.60,\allowbreak\ 0.80,\allowbreak\ 1.10,\allowbreak\ 1.30\}\ \text{V}$ under nominal ($+0.8/-1.5\ \text{V}$) and sub-polarized ($+0.2/-0.9\ \text{V}$) bias for both keys (100 points), plus 50 points evaluating fixed $V_{g,\mathrm{top}} = 0\ \text{V}$ over $V_{DD} \in [0.90,\ 1.50]\ \text{V}$.
+\end{enumerate}
+Each normalized output $V_{\mathrm{out}}/V_{DD}$ was discretized into \texttt{'1'} ($\ge 0.75$), \texttt{'0'} ($\le 0.25$), or \texttt{'X'} ($0.25 < V_{\mathrm{out}}/V_{DD} < 0.75$), categorizing each operating point as \texttt{CORRETA} (target Boolean function), \texttt{OUTRA\_\allowbreak FUNCAO} (valid digital levels realizing a different Boolean function), or \texttt{INDEFINIDO\_\allowbreak ANALOGICO} (at least one output settling in the analog transition region \texttt{'X'}).
+
+\subsection{6T SRAM Cell with Polarity-Controlled Retention Locking (Mechanism B)}\label{sec:met_sram}
+
+In Module~\texttt{04}, a 6T SRAM cell implementing polarity-inversion retention locking (\textit{Mechanism B}) was modeled and simulated in \texttt{ngspice-47} (\texttt{ARI\_sram\_mecB\_ngspice.sp}). Unlike polymorphic logic gates that permute supply rails, Mechanism B keeps the power rails strictly fixed at $V_{DD} = 1.0\ \text{V}$ and $V_{SS} = 0.0\ \text{V}$, using the security key exclusively to dynamically invert the conduction polarity of the transistors inside the cross-coupled inverters.
+
+The six \texttt{ARI} transistors adopt width ratios sized to balance read stability and writeability: pull-up devices \texttt{XPU1}, \texttt{XPU2} with $W = 1.0$; pull-down devices \texttt{XPD1}, \texttt{XPD2} with $W = 2.0$; and access pass-gates \texttt{XPG1}, \texttt{XPG2} with $W = 1.5$, with storage node capacitances $C_q = C_{qb} = 1.0\ \text{fF}$. Table~\ref{tab:sram_biases} details the exact biasing scheme for both key states. Under $\text{Key} = 0$ (authorized mode), $V_{g2,\mathrm{PU}}$ was tuned to $-0.2\ \text{V}$ ($V_{g2,s} = -1.2\ \text{V}$), avoiding the flat-band degradation at $V_{g2,s} = -1.5\ \text{V}$ revealed by \texttt{v2}. Under $\text{Key} = 1$ (locked mode), \texttt{XPU1}/\texttt{XPU2} switch to \textit{n-FET} mode while \texttt{XPD1}/\texttt{XPD2} switch to \textit{p-FET} mode, turning the regenerative inverters into degraded source followers and destroying bistability.
+
+\begin{table}[htbp]
+\centering
+\caption{Biasing scheme of Mechanism B in the 6T SRAM cell ($V_{DD}=1.0\ \text{V}$, $V_{SS}=0.0\ \text{V}$).}
+\label{tab:sram_biases}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.9cm} >{\raggedright\arraybackslash}p{2.9cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Key State} & \textbf{Pull-Up ($W=1.0$)} & \textbf{Pull-Down ($W=2.0$)} & \textbf{Pass-Gates ($W=1.5$)} & \textbf{Resulting Physical Regime} \\
+\midrule
+$\text{Key}=0$ (Authorized) & \textit{p-FET}: $V_{g1}=-0.5\ \text{V}$, $V_{g2}=-0.2\ \text{V}$ ($V_{g2,s}=-1.2\ \text{V}$) & \textit{n-FET}: $V_{g1}=+0.8\ \text{V}$, $V_{g2}=+1.1\ \text{V}$ & \textit{n-FET}: $V_{g1}=+1.8\ \text{V}$, $V_{g2}=+2.1\ \text{V}$ & Bistable complementary CMOS inverters \\
+$\text{Key}=1$ (Locked) & \textit{n-FET}: $V_{g1}=+1.8\ \text{V}$, $V_{g2}=+2.1\ \text{V}$ ($V_{g2,s}=+1.1\ \text{V}$) & \textit{p-FET}: $V_{g1}=-1.5\ \text{V}$, $V_{g2}=-1.5\ \text{V}$ & \textit{n-FET}: $V_{g1}=+1.8\ \text{V}$, $V_{g2}=+2.1\ \text{V}$ & Cross-coupled source followers (monostable collapse) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The $30\ \text{ns}$ transient verification protocol comprises four phases: (1)~writing logic \texttt{'1'} over $0\text{--}6\ \text{ns}$ with $\text{Key}=0$ ($\mathrm{WL}=1.0\ \text{V}$ during $2\text{--}6\ \text{ns}$, $\mathrm{BL}=1.0\ \text{V}$, $\mathrm{BLB}=0.0\ \text{V}$); (2)~active retention over $6\text{--}15\ \text{ns}$ ($\mathrm{WL}=0\ \text{V}$, acceptance criterion $\Delta V_{\mathrm{Key0}} = |V(q)-V(qb)| > 0.80\ \text{V}$ at $t=12\ \text{ns}$); (3)~wrong-key activation at $t=15\ \text{ns}$ ($\text{Key}=1$, collapse checked at $t=18\ \text{ns}$ with criterion $\Delta V_{\mathrm{Collapse1}} < 0.15\ \text{V}$); and (4)~attempted overwrite of the opposite bit during $20\text{--}24\ \text{ns}$ under $\text{Key}=1$, followed by $\mathrm{WL}$ turn-off and retention-failure verification at $t=28\ \text{ns}$ ($\Delta V_{\mathrm{Key1}} < 0.15\ \text{V}$).
+
+Furthermore, \texttt{sram\_\allowbreak butterfly\_\allowbreak snm.sp} performs half-cell DC sweeps ($V_{\mathrm{in}} \in [0,\ 1.0]\ \text{V}$, $5\ \text{mV}$ step) via \texttt{alterparam} across six conditions combining $\text{Key} \in \{0, 1\}$ and $\mathrm{WL} \in \{0.0\ \text{V}\ (\text{Hold}),\allowbreak\ 0.30\ \text{V}\ (\text{Wordline Underdrive Read-Assist}),\allowbreak\ 1.0\ \text{V}\ (\text{Unassisted Read})\}$ at $\mathrm{BL}=1.0\ \text{V}$. The Static Noise Margin (SNM) is extracted geometrically as the largest inscribed square within the butterfly curve lobe in the $45^\circ$-rotated frame:
+\begin{equation}\label{eq:snm_45}
+u = \frac{V_{qb} - V_q}{\sqrt{2}}, \quad v = \frac{V_{qb} + V_q}{\sqrt{2}}, \quad \mathrm{SNM} = \max_{u < 0} \frac{v_1(u) - v_2(u)}{\sqrt{2}},
+\end{equation}
+evaluated over a uniform 2,000-point grid.
+
+\subsection{Cryptographic Combinational Circuits and Polymorphic Tuple Mapping}\label{sec:met_comb_tuples}
+
+In Module~\texttt{05}, multi-stage scalability was demonstrated through a 28-transistor 1-bit Polymorphic Full Adder (\texttt{full\_adder\_polimorfico.sp}) controlled by a 2-bit key $(K_1, K_0)$: (i)~stage \texttt{XXOR1} (4T at $1.5\ \text{V}$) controlled by $K_0$, computing $P = A \oplus B$ ($K_0=0$) or $P = A \odot B$ ($K_0=1$); (ii)~signal conditioning and level-conversion block comprising four inverters (\texttt{2}$\times$ \texttt{BP\_INV08} at $0.8\ \text{V}$ and \texttt{2}$\times$ \texttt{BP\_INV11} at $1.1\ \text{V}$, totaling 8T with $-0.27\ \text{V}$ internal gate shifting) to regenerate $(P, \overline{P})$ across both voltage domains; (iii)~stage \texttt{XXOR2} (4T at $1.5\ \text{V}$) generating $\mathrm{Sum} = P \oplus C_{\mathrm{in}}$; and (iv)~carry tree \texttt{Cout} built with three polymorphic gates \texttt{XG1}--\texttt{XG3} (12T at $0.8\ \text{V}$) switched by $K_1$ (\texttt{NAND} at $K_1=0$ and \texttt{NOR} at $K_1=1$). All four keys $K_1 K_0 \in \{00, 01, 10, 11\}$ were simulated over $40\ \text{ns}$ across all eight minterms ($000 \to 111$, $5\ \text{ns}$ per vector), sampling settled outputs over $[5i+3.5,\ 5i+4.8]\ \text{ns}$ with binarization thresholds at $0.75\ \text{V}$ (\texttt{Sum}) and $0.40\ \text{V}$ (\texttt{Cout}) to compute Hamming Distance (HD).
+
+In Module~\texttt{07}, a systematic trade-off mapping between DPA current asymmetry, hardware area cost, dynamic performance, energy efficiency, and statistical robustness was conducted across seven polymorphic tuples under a standardized load capacitance $C_{\mathrm{load}} = 0.3\ \text{fF}$:
+\begin{itemize}
+    \item \textbf{Five 2-input tuples (\texttt{tuplas\_\allowbreak 2entradas.sp}, $25\ \text{ns}$ cycle traversing \texttt{00} $\to$ \texttt{01} $\to$ \texttt{10} $\to$ \texttt{11} $\to$ \texttt{00}):} \texttt{(NAND, NOR)} (4T, $V_{DD}=0.8\ \text{V}$), \texttt{(XOR, XNOR)} (4T core / 8T total with input inverters, $1.5\ \text{V}$/$1.1\ \text{V}$), \texttt{(AND, OR)} (6T = 4T \texttt{NAND/NOR} core plus isolating inverter \texttt{BP\_INV08} 2T, $0.8\ \text{V}$), \texttt{(NAND, XNOR)}, and \texttt{(NOR, XOR)} (mixed 6T-core / 10T-total cells at $1.5\ \text{V}$/$1.1\ \text{V}$ combining pass-transistor bridges and key-gated branches).
+    \item \textbf{Two 3-input tuples (\texttt{tuplas\_\allowbreak 3entradas.sp}, $45\ \text{ns}$ cycle traversing \texttt{000} to \texttt{111} $\to$ \texttt{000}):} \texttt{(AOI21, OAI21)} (6T complementary series-parallel compound topology, $0.8\ \text{V}$) and \texttt{(MAJ3, XOR3)} (10T quad-symmetric polymorphic stage with local transistor-level multiplexing between majority and 3-input parity at $1.5\ \text{V}$, totaling 18T when including the $P = A \oplus B$ generator and conditioning inverters).
+\end{itemize}
+
+Relative DPA asymmetry between the two key-selected modes of each tuple was standardized as:
+\begin{equation}\label{eq:dpa_asym}
+\mathrm{DPA}_{\mathrm{asym}} = \frac{|I_{\mathrm{Mode\ 0}} - I_{\mathrm{Mode\ 1}}|}{\min(I_{\mathrm{Mode\ 0}},\, I_{\mathrm{Mode\ 1}})} \times 100\%,
+\end{equation}
+evaluated over supply current peaks, time-averaged currents, and specific $0\to 1$ and $1\to 0$ switching windows. Total device width $\sum W$, average propagation delay $t_p = (t_{pLH} + t_{pHL})/2$ at $50\%$ swing, average and static power ($P_{\mathrm{avg}}$, $P_{\mathrm{stat}}$), switching energy $E_{\mathrm{sw}}$, and power-delay product ($\mathrm{PDP} = P_{\mathrm{avg}} \cdot t_p$) were also extracted. For statistical evaluation, \texttt{sim\_\allowbreak robustez\_\allowbreak tuplas.sp} swept a $3 \times 3$ rail-noise grid in \texttt{ngspice-47} ($\Delta V_{DD} \in \{-10\%, 0\%, +10\%\}$ and $\Delta V_{SS} \in \{-50, 0, +50\}\ \text{mV}$), feeding $N = 250$ Gaussian Monte Carlo samples ($\sigma_{V_{DD}} = 3.5\%$, $\sigma_{V_{SS}} = 18\ \text{mV}$).
+
+Finally, system-level architectural impact was benchmarked on a 1-bit Full Adder (\texttt{full\_\allowbreak adder\_\allowbreak perfis\_\allowbreak dpa.sp}, $40\ \text{ns}$, $C_{\mathrm{load}} = 0.3\ \text{fF}$) across three profiles: \textbf{Profile 1 (Common Baseline)}, with 20T core (\texttt{2}$\times$ \texttt{XOR} 4T + \texttt{4}$\times$ \texttt{INV} 2T + fixed \texttt{MAJ3} 4T, without logic locking); \textbf{Profile 2 (Cost/Performance)}, with 28T implementing carry via three 4T \texttt{(NAND, NOR)} gates; and \textbf{Profile 3 (Low DPA Asymmetry)}, with 26T replacing the \texttt{NAND}/\texttt{NOR} tree by a single 10T \texttt{(MAJ3, XOR3)} polymorphic gate.
+
+\subsection{Interactive Visual Prototyping and Simulation Platform (\textit{BP-FET Studio})}\label{sec:met_web}
+
+To enable interactive exploration of reconfigurable BP SB-FET circuits without manual netlist authoring, the web environment \textit{BP-FET Studio} (\texttt{simulador\_web/}) was developed. It comprises a local Python HTTP/REST server (\texttt{server.py} built on \texttt{ThreadingHTTPServer}, exposing \texttt{/api/health}, \texttt{/api/tuples}, \texttt{/api/templates}, and \texttt{/api/simulate}), a graph-to-SPICE compiler (\texttt{spice\_compiler.py}), a catalog of eight circuit templates (\texttt{templates\_catalog.py}), and an SVG/Canvas graphical editor in HTML5/JavaScript.
+
+The compiler supports two abstraction levels over \texttt{bp\_ari\_ngspice.lib}:
+\begin{itemize}
+    \item \textbf{High Level (Polymorphic Gates):} users wire blocks selectable among the seven mapped tuples and \texttt{INV}. The compiler automatically inserts differential input generators $(A, \overline{A})$ and level-shifting inverters (\texttt{BP\_INV08} and \texttt{BP\_INV11}) whenever $0.8\ \text{V}$ and $1.5\ \text{V}$ domains are cascaded.
+    \item \textbf{Low Level (\texttt{ARI} Transistors):} enables schematic capture directly with 5-terminal \texttt{(d, g, s, g1, g2)} transistor instances, key-dependent or fixed DC/PWL sources, capacitors, and voltage probes.
+\end{itemize}
+Upon executing comparative simulation ($\text{Key}=0$ vs.\ $\text{Key}=1$), the backend returns resampled nodal voltage waveforms (animated on the schematic), $|I_{V_{DD}}(t)|$ traces for DPA inspection, binarized truth tables, and per-transistor internal states for the \textit{X-Ray} modal (classifying active polarity as \textit{n-FET} or \textit{p-FET} via $V(g2,s) > 0\ \text{V}$ and normalized conduction). The full stack is verified by the automated test suite \texttt{test\_simulator.py}.

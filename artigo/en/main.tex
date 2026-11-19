@@ -1,0 +1,66 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\usepackage{url}
+% Optional (uncomment on Overleaf or if pdfescape is installed in MiKTeX):
+% \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figures/}}
+
+% Helper macros for clean academic table rules
+\newcommand{\toprule}{\noalign{\hrule height 0.9pt}\noalign{\vskip 2pt}}
+\newcommand{\midrule}{\noalign{\vskip 2pt}\noalign{\hrule height 0.45pt}\noalign{\vskip 2pt}}
+\newcommand{\bottomrule}{\noalign{\vskip 2pt}\noalign{\hrule height 0.9pt}}
+\renewcommand{\arraystretch}{1.18}
+
+% Section heading spacing
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\itshape\bfseries}{\thesubsubsection}{0.6em}{}
+
+\title{\textbf{4D Behavioral Modeling, Hardware Security, and Visual Prototyping of Polymorphic Circuits Based on BP SB-FET Transistors in an Open-Source Environment}}
+
+% TODO: Fill in authors, affiliations, and emails in the final version
+\author{
+  Author 1\thanks{Department / Institution --- E-mail: \texttt{author1@institution.edu}} \and
+  Author 2\thanks{Department / Institution --- E-mail: \texttt{author2@institution.edu}}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent\textit{[Abstract reserved for final drafting after completing the Introduction and Theoretical Background sections. This work documents the 4D behavioral translation of the ambipolar 2D black phosphorus Schottky-barrier FET (BP SB-FET) to \texttt{ngspice-47}, its cross-validation against HSPICE, ultra-low-voltage inverter characterization, polymorphic logic primitives, polarity-locked 6T SRAM retention collapse, cryptographic full adder design, non-standard voltage operating boundaries, DPA asymmetry-versus-cost trade-offs across seven polymorphic tuples, and the interactive web platform BP-FET Studio.]}
+\end{abstract}
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} 2D Transistors; Black Phosphorus; Polymorphic Logic; Hardware Security; Differential Power Analysis; 6T SRAM; \texttt{ngspice-47}.
+
+\input{sections/01_introduction}
+\input{sections/02_theoretical_background}
+\input{sections/03_methodology}
+\input{sections/04_results}
+\input{sections/05_conclusion}
+
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\end{document}
