@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRAM 6T Polimórfica com Transistores 2D — Versão Clássica</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Barra de Navegação e Exportação (Oculta automaticamente no PDF/Impressão) -->
+  <nav class="toolbar" aria-label="Controles da Apresentação">
+    <span class="toolbar-brand">UFMG · Versão 1 (Clássica)</span>
+    <button class="toolbar-btn" id="btn-prev" type="button" title="Slide anterior (←)">◀ Anterior</button>
+    <span class="slide-counter" id="slide-counter">1 / 12</span>
+    <button class="toolbar-btn" id="btn-next" type="button" title="Próximo slide (→)">Próximo ▶</button>
+    <span class="toolbar-sep"></span>
+    <button class="toolbar-btn" id="btn-overview" type="button" title="Alternar grade de slides (G)">Grade (G)</button>
+    <button class="toolbar-btn" id="btn-fullscreen" type="button" title="Tela cheia (F)">Tela Cheia (F)</button>
+    <a class="toolbar-btn" href="../v2_apple_design/index.html" title="Abrir versão 2 (Apple Design)">Versão Apple HIG</a>
+    <span class="toolbar-sep"></span>
+    <a class="toolbar-btn emerald" href="apresentacao_sram_2d.pdf" download="apresentacao_sram_2d.pdf" title="Baixar arquivo PDF pronto em 16:9">
+      ⬇ Baixar PDF Pronto
+    </a>
+    <button class="toolbar-btn primary" id="btn-print" type="button" title="Imprimir ou Salvar como PDF via navegador">
+      🖨 Imprimir / Salvar PDF
+    </button>
+  </nav>
+
+  <main class="deck-stage">
+    <div class="slides-wrapper">
+
+      <!-- ===================================================================
+           SLIDE 1: CAPA & ROTEIRO DAS 4 SEÇÕES
+           =================================================================== -->
+      <section class="slide title-slide active" id="slide-1">
+        <div class="title-accent-bar"></div>
+        <div class="title-grid-deco"></div>
+
+        <div class="cover-pill-row">
+          <span class="cover-pill">Fósforo Negro (BP SB-FET 2D)</span>
+          <span class="cover-pill alt">Fluxo Open-Source · ngspice-47 + Python</span>
+          <span class="cover-pill green">Retention Locking (Mecanismo B)</span>
+        </div>
+
+        <h1 class="cover-title" style="font-size: 36px;">
+          SRAM 6T Polimórfica com Transistores 2D para Segurança de Hardware
+        </h1>
+        <p class="cover-en-sub" style="margin-bottom: 16px;">
+          Polymorphic SRAM Using 2D Transistors for Enhanced Hardware Security
+        </p>
+
+        <div class="cover-authors-box">
+          <span class="cover-inst">UFMG</span>
+          <span class="cover-names">Bernardo Vale · Danilio Costa · Felipe Melo · Gabriel Ferreira</span>
+        </div>
+
+        <div class="cover-roadmap">
+          <div class="roadmap-item">
+            <div class="roadmap-num">Seção 1 · Slides 2–3</div>
+            <div class="roadmap-title">Introdução e Background</div>
+            <div class="roadmap-sub">Ameaças SRAM &amp; Física BP SB-FET</div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">Seção 2 · Slide 4</div>
+            <div class="roadmap-title">Trabalhos Relacionados</div>
+            <div class="roadmap-sub">RFETs 1D/2D &amp; Segurança Polimórfica</div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">Seção 3 · Slides 5–6</div>
+            <div class="roadmap-title">Metodologia</div>
+            <div class="roadmap-sub">Modelo 4D ngspice-47 &amp; Mecanismo B</div>
+          </div>
+          <div class="roadmap-item">
+            <div class="roadmap-num">Seção 4 · Slides 7–12</div>
+            <div class="roadmap-title">Resultados e Conclusão</div>
+            <div class="roadmap-sub">HSPICE, 30 ns, SNM &amp; Fechamento</div>
+          </div>
+        </div>
+
+        <div class="cover-kpi-grid" style="margin-bottom: 12px;">
+          <div class="cover-kpi" style="padding: 13px 15px;">
+            <div class="cover-kpi-val" style="font-size: 25px;">R² ≥ 0,99977</div>
+            <div class="cover-kpi-lbl">Paridade HSPICE (196×)</div>
+          </div>
+          <div class="cover-kpi teal" style="padding: 13px 15px;">
+            <div class="cover-kpi-val" style="font-size: 25px;">167,12 mV</div>
+            <div class="cover-kpi-lbl">SNM Hold (Key = 0)</div>
+          </div>
+          <div class="cover-kpi purple" style="padding: 13px 15px;">
+            <div class="cover-kpi-val" style="font-size: 25px;">&lt; 3 ns</div>
+            <div class="cover-kpi-lbl">Auto-Destruição (Key = 1)</div>
+          </div>
+          <div class="cover-kpi emerald" style="padding: 13px 15px;">
+            <div class="cover-kpi-val" style="font-size: 25px;">66,23 mV</div>
+            <div class="cover-kpi-lbl">Read-Assist (WL = 0,30 V)</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span>Artigo Final: <strong>Seções I–VI · Modelagem 4D (M00) + SRAM 6T Polimórfica (M04)</strong></span>
+          <span>Slide <strong>1 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 2: SEÇÃO 1 — INTRODUÇÃO E BACKGROUND (1.1)
+           =================================================================== -->
+      <section class="slide" id="slide-2">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag">Seção 1 · Introdução e Background (1.1)</span>
+            <h2 class="slide-title">Problema, Proposta Polimórfica e Contribuições</h2>
+          </div>
+          <p class="slide-subtitle">Proteção de memória no nível do dispositivo com zero transistores extras</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2-asym-right" style="flex: 1;">
+            <div class="col-stack" style="justify-content: space-between;">
+              <div class="card-title" style="margin-bottom: 2px;"><span class="dot red"></span>3 Ameaças à SRAM CMOS Embarcada</div>
+              <div class="threat-stack" style="flex: 1; justify-content: space-between;">
+                <div class="threat-card">
+                  <span class="threat-icon">1</span>
+                  <div>
+                    <div class="threat-title">Remanência &amp; Cold-Boot</div>
+                    <div class="threat-desc">Chaves criptográficas permanecem extraíveis via resfriamento ou microprobing.</div>
+                  </div>
+                </div>
+                <div class="threat-card">
+                  <span class="threat-icon">2</span>
+                  <div>
+                    <div class="threat-title">Delayering Óptico / SEM</div>
+                    <div class="threat-desc">Dopagem química permanente revela o papel lógico do circuito CMOS.</div>
+                  </div>
+                </div>
+                <div class="threat-card">
+                  <span class="threat-icon">3</span>
+                  <div>
+                    <div class="threat-title">Supply-Pin Clamping</div>
+                    <div class="threat-desc">Grampear pinos <span class="math">V<sub>DD</sub>/V<sub>SS</sub></span> anula zeroização por <em>power-gating</em>.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-stack">
+              <div class="card-title" style="margin-bottom: 2px;"><span class="dot"></span>CMOS Convencional vs. SRAM 6T 2D (Mecanismo B)</div>
+              <table class="data-table" style="flex: 1;">
+                <thead>
+                  <tr>
+                    <th>Critério</th>
+                    <th>CMOS Convencional</th>
+                    <th>SRAM 6T BP SB-FET 2D</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Polaridade</strong></td>
+                    <td>Fixa na fábrica (dopagem)</td>
+                    <td><span class="badge info">Dinâmica via porta g<sub>2</sub></span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Trilhos V<sub>DD</sub> / V<sub>SS</sub></strong></td>
+                    <td>Cortados ou comutados</td>
+                    <td><span class="badge pass">Estritamente Fixos (1,0 V / 0 V)</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Área / Transistores</strong></td>
+                    <td>+Wrappers / células de corte</td>
+                    <td><span class="badge pass">Zero overhead (mesmos 6T)</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Layout Físico</strong></td>
+                    <td>Visível sob delayering</td>
+                    <td><span class="badge pass">Camuflagem intrínseca</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="contrib-strip">
+            <div class="contrib-pill">
+              <div class="contrib-num">1</div>
+              <div>
+                <div class="contrib-title">Modelo 4D ngspice-47</div>
+                <div class="contrib-desc"><code>bp_ari_ngspice.lib v2</code> · <span class="math">R²</span> ≥ 0,99977 e erro ≤ 0,062%</div>
+              </div>
+            </div>
+            <div class="contrib-pill">
+              <div class="contrib-num">2</div>
+              <div>
+                <div class="contrib-title">Retention Locking 6T</div>
+                <div class="contrib-desc"><span class="math">ΔV</span> = 0,975 V (<code>Key=0</code>) vs. colapso &lt; 3 ns (<code>Key=1</code>)</div>
+              </div>
+            </div>
+            <div class="contrib-pill">
+              <div class="contrib-num">3</div>
+              <div>
+                <div class="contrib-title">Banda Plana &amp; Read-Assist</div>
+                <div class="contrib-desc">SNM<sub>Hold</sub> = 167,1 mV · SNM<sub>Read</sub> = 66,2 mV (<span class="math">WL</span>=0,30 V)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 1 — Introdução e Background</strong> · Subdivisão 1.1: Motivação e Contribuições</span>
+          <span>Slide <strong>2 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 3: SEÇÃO 1 — INTRODUÇÃO E BACKGROUND (1.2)
+           =================================================================== -->
+      <section class="slide" id="slide-3">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag">Seção 1 · Introdução e Background (1.2)</span>
+            <h2 class="slide-title">Física do SB-FET 2D Ambipolar e Colapso na SRAM 6T</h2>
+          </div>
+          <p class="slide-subtitle">Tunelamento Schottky (WKB) controlado por <span class="math">V<sub>g2</sub></span> e perda de biestabilidade</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <!-- Coluna Esquerda: Diagrama SVG do Dispositivo BP SB-FET 5 terminais -->
+            <div class="svg-panel">
+              <div class="card-title" style="margin-bottom: 0;"><span class="dot"></span>Dispositivo BP SB-FET 2D de 5 Terminais (<code>ARI</code>)</div>
+              <svg viewBox="0 0 540 275" width="100%" height="auto" role="img" aria-label="Estrutura esquemática do BP SB-FET com contatos Cr/Au e portas g, g1 e g2">
+                <rect x="0" y="0" width="540" height="275" rx="10" fill="#f8fafc"/>
+                <!-- Porta de Polaridade g2 e Auxiliar g1 (inferiores) -->
+                <rect x="95" y="196" width="165" height="26" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+                <text x="177" y="213" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#92400e" text-anchor="middle">Porta Auxiliar (g1 · Vfb / Ion)</text>
+                <rect x="275" y="196" width="170" height="26" rx="5" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+                <text x="360" y="213" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="middle">Porta Polaridade (g2 · dreno)</text>
+
+                <!-- Dielétrico inferior HfO2 -->
+                <rect x="85" y="166" width="370" height="24" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+                <text x="270" y="182" font-family="system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#334155" text-anchor="middle">Óxido Inferior (HfO₂ 7 nm) — Curvatura de Banda Schottky</text>
+
+                <!-- Contatos Fonte e Dreno Cr/Au -->
+                <rect x="40" y="100" width="85" height="66" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+                <text x="82" y="129" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">Fonte (s)</text>
+                <text x="82" y="147" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#fef3c7" text-anchor="middle">Cr / Au</text>
+
+                <rect x="415" y="100" width="85" height="66" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+                <text x="457" y="129" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">Dreno (d)</text>
+                <text x="457" y="147" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#fef3c7" text-anchor="middle">Cr / Au</text>
+
+                <!-- Canal Fósforo Negro 2D -->
+                <rect x="125" y="114" width="290" height="52" rx="3" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+                <text x="270" y="137" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#f8fafc" text-anchor="middle">Canal 2D Fósforo Negro Intrínseco (BP)</text>
+                <text x="270" y="154" font-family="system-ui, sans-serif" font-size="11" fill="#93c5fd" text-anchor="middle">Tunelamento WKB Ambipolar (Eg ≈ 0,35–0,7 eV)</text>
+
+                <!-- Barreiras Schottky destacadas -->
+                <line x1="125" y1="114" x2="125" y2="166" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4 2"/>
+                <line x1="415" y1="114" x2="415" y2="166" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4 2"/>
+
+                <!-- Óxido superior Al2O3 e Porta Principal g -->
+                <rect x="135" y="88" width="270" height="22" rx="4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+                <text x="270" y="103" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#334155" text-anchor="middle">Al₂O₃ (4 nm)</text>
+
+                <rect x="170" y="50" width="200" height="32" rx="6" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5"/>
+                <text x="270" y="70" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">Porta Principal (g)</text>
+                <text x="270" y="34" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#334155" text-anchor="middle">Sem dopagem química: polaridade definida por V(g2, s)</text>
+                <text x="270" y="254" font-family="system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#475569" text-anchor="middle">vs. MOSFET Si: dopagem química fixa polaridade para sempre na fábrica</text>
+              </svg>
+
+              <div class="mode-pills">
+                <div class="mode-pill nfet">
+                  <strong>V(g2, s) &gt; 0 ⇒ n-FET (e⁻)</strong><br />
+                  Bloqueia lacunas e conduz elétrons
+                </div>
+                <div class="mode-pill pfet">
+                  <strong>V(g2, s) ≤ 0 ⇒ p-FET (h⁺)</strong><br />
+                  Bloqueia elétrons e conduz lacunas
+                </div>
+              </div>
+            </div>
+
+            <!-- Coluna Direita: Contraste Direto Key=0 vs Key=1 na SRAM 6T -->
+            <div class="col-stack">
+              <div class="card green" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div class="card-title"><span class="dot green"></span>Key = 0 (Autorizado) — Inversores Biestáveis</div>
+                  <ul class="clean-list green">
+                    <li><strong>Configuração:</strong> <code>PU</code> = <em>p-FET</em> · <code>PD</code> = <em>n-FET</em> (<span class="math">|A<sub>v</sub>|</span> &gt; 1).</li>
+                    <li><strong>Retenção:</strong> Lóbulos abertos na curva borboleta (<strong>SNM &gt; 0</strong>).</li>
+                  </ul>
+                </div>
+                <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 8px 11px; font-size: 12.2px; color: #78350f;">
+                  <strong>⚠ Risco de <em>Read Disturb</em>:</strong> Com <span class="math">WL</span>=1,0 V, divisor <code>PG/PD</code> eleva o nó baixo → resolvido por <em>WL Underdrive</em> (<span class="math">WL</span>=0,30 V).
+                </div>
+              </div>
+
+              <div class="card red" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div class="card-title"><span class="dot red"></span>Key = 1 (Bloqueado) — Colapso Monostável</div>
+                  <ul class="clean-list red">
+                    <li><strong>Inversão no Núcleo:</strong> <code>PU</code> → <em>n-FET</em> · <code>PD</code> → <em>p-FET</em> (<span class="math">V<sub>DD</sub>, V<sub>SS</sub></span> fixos).</li>
+                    <li><strong>Seguidores de Fonte:</strong> <code>PU</code> só passa <span class="math">V<sub>DD</sub> − V<sub>th,n</sub></span>; <code>PD</code> não cai abaixo de <span class="math">|V<sub>th,p</sub>|</span>.</li>
+                    <li><strong>Perda de Memória:</strong> <span class="math">|A<sub>v</sub>|</span> &lt; 1 ⇒ ambos os lóbulos fecham (<strong>SNM = 0 mV</strong>).</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 1 — Introdução e Background</strong> · Subdivisão 1.2: Física do Dispositivo e Estabilidade 6T</span>
+          <span>Slide <strong>3 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 4: SEÇÃO 2 — TRABALHOS RELACIONADOS (2.1 e 2.2)
+           =================================================================== -->
+      <section class="slide" id="slide-4">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag purple">Seção 2 · Trabalhos Relacionados (2.1 &amp; 2.2)</span>
+            <h2 class="slide-title">Evolução de RFETs 1D/2D e Lacunas Preenchidas</h2>
+          </div>
+          <p class="slide-subtitle">Do estado da arte em memórias polimórficas ao avanço sobre Wu et al.</p>
+        </header>
+
+        <div class="slide-body">
+          <!-- Evolução em 3 etapas -->
+          <div class="timeline-3">
+            <div class="timeline-card">
+              <div class="timeline-kicker">2.1 · Origem em 1D</div>
+              <div class="timeline-title">CNTFETs &amp; Nanofios RFET</div>
+              <div class="timeline-desc">Provaram tunelamento Schottky controlável (Si, Ge, III–V), mas sofrem com <strong>alinhamento e variabilidade de contatos</strong> em memórias densas.</div>
+            </div>
+            <div class="timeline-card t2">
+              <div class="timeline-kicker">2.1 · Materiais &amp; SRAM 2D</div>
+              <div class="timeline-title">TMDs, BP &amp; Integração 3D</div>
+              <div class="timeline-desc">Sem <em>dangling bonds</em> (WSe<sub>2</sub>, MoTe<sub>2</sub>, BP); avanços em SRAM 3D (Sadaf 2025), variabilidade por defeitos (Zhao 2026) e Fe-2D.</div>
+            </div>
+            <div class="timeline-card t3">
+              <div class="timeline-kicker">2.2 · Segurança Polimórfica</div>
+              <div class="timeline-title">Logic Locking + Camuflagem</div>
+              <div class="timeline-desc">Portas 2D e SRAMs antirreversa (Nemati 2023) unem proteção contra <strong>SAT, delayering óptico/SEM e DPA</strong> com área mínima.</div>
+            </div>
+          </div>
+
+          <!-- Matriz Comparativa Direta -->
+          <table class="data-table" style="flex: 1;">
+            <thead>
+              <tr>
+                <th style="width: 28%;">Aspecto Técnico (Seção III)</th>
+                <th style="width: 34%;">Wu et al. (Nature Electronics) / Literatura</th>
+                <th style="width: 38%;">Este Trabalho (Contribuição Direta)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Fluxo de Simulação</strong></td>
+                <td><span class="badge lock">✗ Proprietário</span> Synopsys HSPICE / Verilog-A</td>
+                <td><span class="badge pass">✓ Open-Source</span> <code>ngspice-47</code> + Python reprodutível</td>
+              </tr>
+              <tr>
+                <td><strong>Modelo 4D (<span class="math">V<sub>g2</sub></span>=−1,5 V)</strong></td>
+                <td><span class="badge warn">Parcial</span> Extrapolação <code>"1LL"</code> com inversão de sinal</td>
+                <td><span class="badge pass">✓ Completo (v2)</span> Superfície 4D bilinear (<strong>196×</strong> menos erro)</td>
+              </tr>
+              <tr>
+                <td><strong>SRAM 6T Trilhos Fixos</strong></td>
+                <td><span class="badge warn">Inicial</span> Conceito de inversão com transiente curto</td>
+                <td><span class="badge pass">✓ Validado 4 Fases</span> Retenção, colapso &lt; 3 ns e bloqueio de escrita</td>
+              </tr>
+              <tr>
+                <td><strong>Análise Estática SNM</strong></td>
+                <td><span class="badge lock">✗ Ausente</span> Sem análise de deslocamento <span class="math">ΔV<sub>fb</sub></span></td>
+                <td><span class="badge pass">✓ Quantificada</span> Sintonia <span class="math">V<sub>g2,PU</sub></span>=−0,2 V (<strong>167,12 mV</strong>)</td>
+              </tr>
+              <tr>
+                <td><strong>Mitigação de Read Disturb</strong></td>
+                <td><span class="badge lock">✗ Ausente</span> Leitura sem assistência não avaliada</td>
+                <td><span class="badge pass">✓ Resolvido</span> <em>WL Underdrive</em> 0,30 V (<strong>66,23 mV</strong>, zero área)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 2 — Trabalhos Relacionados</strong> · Subdivisões 2.1 (1D/2D RFETs) e 2.2 (Segurança &amp; Posicionamento)</span>
+          <span>Slide <strong>4 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 5: SEÇÃO 3 — METODOLOGIA (3.1 MODELO 4D NGSPICE-47)
+           =================================================================== -->
+      <section class="slide" id="slide-5">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag">Seção 3 · Metodologia (3.1)</span>
+            <h2 class="slide-title">Pipeline de Tradução do Modelo 4D para <code>ngspice-47</code></h2>
+          </div>
+          <p class="slide-subtitle">Substituição do <code>$table_model</code> proprietário pelo subcircuito nativo <code>ARI v2</code></p>
+        </header>
+
+        <div class="slide-body">
+          <!-- Pipeline Visual em 4 Passos -->
+          <div class="pipe-4">
+            <div class="pipe-step">
+              <div class="pipe-num">Passo 1 · Entrada</div>
+              <div class="pipe-title">LUTs Experimentais 4D</div>
+              <div class="pipe-desc"><code>BP_ARI_dataN.txt</code> (1.810 linhas) e <code>BP_ARI_dataP.txt</code> (759 linhas).</div>
+            </div>
+            <div class="pipe-step p2">
+              <div class="pipe-num">Passo 2 · Simetria</div>
+              <div class="pipe-title">Referência Bilateral</div>
+              <div class="pipe-desc">Normaliza fonte dinâmica via <span class="math">min(V<sub>d</sub>,V<sub>s</sub>)</span> e <span class="math">max(V<sub>d</sub>,V<sub>s</sub>)</span>.</div>
+            </div>
+            <div class="pipe-step p3">
+              <div class="pipe-num">Passo 3 · Superfície</div>
+              <div class="pipe-title">28 n-FET + 32 p-FET</div>
+              <div class="pipe-desc">Interpolação bilinear em <span class="math">|V<sub>ds</sub>|</span>=0,8 V (inclui <span class="math">V<sub>g2</sub></span>=−1,5 V) + <span class="math">f<sub>ds</sub></span>.</div>
+            </div>
+            <div class="pipe-step p4">
+              <div class="pipe-num">Passo 4 · Saída SPICE</div>
+              <div class="pipe-title"><code>.subckt ARI v2</code></div>
+              <div class="pipe-desc">Clamping ±1000 V, <span class="math">R<sub>gmin</sub></span>=10¹² Ω e validação vs. <code>.printtr0</code>.</div>
+            </div>
+          </div>
+
+          <div class="grid-2-asym" style="flex: 1;">
+            <div class="col-stack" style="justify-content: space-between;">
+              <div class="formula-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <span class="label">Referência Bilateral de Fonte (Eqs. 1–2)</span>
+                <div><span class="math">V<sub>g,n</sub> = V<sub>g</sub> − min(V<sub>d</sub>, V<sub>s</sub>) , &nbsp; V<sub>g1,n</sub> = V<sub>g1</sub> − min(V<sub>d</sub>, V<sub>s</sub>)</span></div>
+                <div style="margin-top: 5px;"><span class="math">V<sub>g,p</sub> = V<sub>g</sub> − max(V<sub>d</sub>, V<sub>s</sub>) , &nbsp; V<sub>g1,p</sub> = V<sub>g1</sub> − max(V<sub>d</sub>, V<sub>s</sub>)</span></div>
+              </div>
+
+              <div class="formula-box" style="border-left-color: #a855f7; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <span class="label">Corrente Dreno–Fonte Imposta (Eq. 3)</span>
+                <div><span class="math">I<sub>ds</sub> = W · I<sub>n</sub>(V<sub>g1,n</sub>, V<sub>g2,s</sub>, V<sub>g,n</sub>) · f<sub>ds,n</sub>(V<sub>g,n</sub>, V<sub>ds</sub>)</span> &nbsp; (<span class="math">V<sub>g2,s</sub></span> &gt; 0)</div>
+                <div style="margin-top: 5px;"><span class="math">I<sub>ds</sub> = W · I<sub>p</sub>(V<sub>g1,p</sub>, V<sub>g2,s</sub>, V<sub>g,p</sub>) · f<sub>ds,p</sub>(V<sub>g,p</sub>, V<sub>ds</sub>)</span> &nbsp; (<span class="math">V<sub>g2,s</sub></span> ≤ 0)</div>
+              </div>
+            </div>
+
+            <div class="col-stack" style="justify-content: space-between;">
+              <div class="card blue">
+                <div class="card-title"><span class="dot"></span>Condução Bidirecional nos Pass-Gates</div>
+                <div style="font-size: 12.5px; color: var(--ink-secondary);"><code>XPG1/2</code> e seguidores de fonte trocam dreno e fonte entre leitura e escrita sem descontinuidade.</div>
+              </div>
+              <div class="card teal">
+                <div class="card-title"><span class="dot teal"></span>Captura Real do Plano V<sub>g2</sub> = −1,5 V</div>
+                <div style="font-size: 12.5px; color: var(--ink-secondary);">Substitui o escalamento 1D da <code>v1</code> e captura o deslocamento de banda plana <span class="math">ΔV<sub>fb</sub></span> ≈ −0,25 V.</div>
+              </div>
+              <div class="card purple">
+                <div class="card-title"><span class="dot purple"></span>Estabilidade Numérica &amp; Capacitâncias</div>
+                <div style="font-size: 12.5px; color: var(--ink-secondary);">Travamento monotônico evita divergência MNA; modelo quase-estático usa <span class="math">C<sub>q</sub>=C<sub>qb</sub></span>=1,0 fF externos.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 3 — Metodologia</strong> · Subdivisão 3.1: Modelagem 4D <code>bp_ari_ngspice.lib v2</code></span>
+          <span>Slide <strong>5 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 6: SEÇÃO 3 — METODOLOGIA (3.2 SRAM 6T E PROTOCOLOS)
+           =================================================================== -->
+      <section class="slide" id="slide-6">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag teal">Seção 3 · Metodologia (3.2)</span>
+            <h2 class="slide-title">Arquitetura da SRAM 6T (Mecanismo B) e Protocolos de Teste</h2>
+          </div>
+          <p class="slide-subtitle">Topologia, polarizações com trilhos fixos e extração de SNM a 45°</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2-asym">
+            <div class="fig-frame">
+              <img src="../figuras/sram6t_polimorfica.png" alt="Esquemático da célula SRAM 6T polimórfica com transistores BP SB-FET" />
+              <div class="fig-caption">Fig. 1: Célula SRAM 6T (<code>XPU1/2</code> <span class="math">W</span>=1,0; <code>XPD1/2</code> <span class="math">W</span>=2,0; <code>XPG1/2</code> <span class="math">W</span>=1,5; <span class="math">C<sub>q</sub>=C<sub>qb</sub></span>=1,0 fF; <span class="math">V<sub>DD</sub></span>=1,0 V, <span class="math">V<sub>SS</sub></span>=0,0 V).</div>
+            </div>
+
+            <div class="col-stack">
+              <table class="data-table compact">
+                <thead>
+                  <tr>
+                    <th>Chave</th>
+                    <th>Pull-Up (<span class="math">W</span>=1,0)</th>
+                    <th>Pull-Down (<span class="math">W</span>=2,0)</th>
+                    <th>Regime</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge pass">Key=0</span></td>
+                    <td><strong>p-FET</strong> (<span class="math">V<sub>g1</sub></span>=−0,5 V, <span class="math">V<sub>g2</sub></span>=−0,2 V)</td>
+                    <td><strong>n-FET</strong> (<span class="math">V<sub>g1</sub></span>=+0,8 V, <span class="math">V<sub>g2</sub></span>=+1,1 V)</td>
+                    <td>CMOS Biestável</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge lock">Key=1</span></td>
+                    <td><strong>n-FET</strong> (<span class="math">V<sub>g1</sub></span>=+1,8 V, <span class="math">V<sub>g2</sub></span>=+2,1 V)</td>
+                    <td><strong>p-FET</strong> (<span class="math">V<sub>g1</sub></span>=−1,5 V, <span class="math">V<sub>g2</sub></span>=−1,5 V)</td>
+                    <td>Seguidores de Fonte</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="card blue">
+                <div class="card-title"><span class="dot"></span>Protocolo Transiente de 30 ns (4 Fases)</div>
+                <ul class="clean-list">
+                  <li><strong>0–6 ns (<code>Key=0</code>):</strong> Escrita `'1'` (<span class="math">WL</span>=1 V, <span class="math">BL</span>=1 V, <span class="math">BLB</span>=0 V).</li>
+                  <li><strong>6–15 ns (<code>Key=0</code>):</strong> Retenção ativa (<span class="math">WL</span>=0 V; meta <span class="math">ΔV</span> &gt; 0,80 V em 12 ns).</li>
+                  <li><strong>15–20 ns (<code>Key=1</code>):</strong> Autodestruição em 15 ns (meta <span class="math">ΔV</span> &lt; 0,15 V em 18 ns).</li>
+                  <li><strong>20–30 ns (<code>Key=1</code>):</strong> Tentativa de sobrescrita bloqueada (<span class="math">ΔV</span> &lt; 0,15 V em 28 ns).</li>
+                </ul>
+              </div>
+
+              <div class="formula-box" style="padding: 9px 13px;">
+                <span class="label">Varredura Borboleta DC (6 Regimes: Key ∈ {0,1} × WL ∈ {0; 0,30; 1,0} V)</span>
+                <div style="font-size: 13.5px;"><span class="math">u = (V<sub>qb</sub> − V<sub>q</sub>)/√2, &nbsp; v = (V<sub>qb</sub> + V<sub>q</sub>)/√2 &nbsp;⇒&nbsp; SNM = max<sub>u&lt;0</sub> [v<sub>1</sub>(u) − v<sub>2</sub>(u)]/√2</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 3 — Metodologia</strong> · Subdivisão 3.2: Arquitetura 6T e Protocolos de Verificação</span>
+          <span>Slide <strong>6 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 7: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.1 VALIDAÇÃO HSPICE)
+           =================================================================== -->
+      <section class="slide" id="slide-7">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag green">Seção 4 · Resultados e Conclusão (4.1)</span>
+            <h2 class="slide-title">Validação Cruzada 4D: <code>ngspice-47</code> vs. Synopsys HSPICE</h2>
+          </div>
+          <p class="slide-subtitle">Redução de 196× no erro RMSE da saída <em>p-FET</em> ao capturar <span class="math">V<sub>g2</sub></span> = −1,5 V</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2-asym-right">
+            <div class="col-stack">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Regime (<code>.printtr0</code>)</th>
+                    <th>RMSE v1 (μA)</th>
+                    <th>RMSE v2 (μA)</th>
+                    <th>Redução</th>
+                    <th>R²<sub>v2</sub></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>N_transfer</code> (7 curvas)</td>
+                    <td>0,001910</td>
+                    <td><strong>0,001899</strong></td>
+                    <td>−0,6%</td>
+                    <td><strong>0,999972</strong></td>
+                  </tr>
+                  <tr>
+                    <td><code>P_transfer</code> (4 curvas)</td>
+                    <td>0,000947</td>
+                    <td><strong>0,000947</strong></td>
+                    <td>0,0%</td>
+                    <td><strong>0,999944</strong></td>
+                  </tr>
+                  <tr>
+                    <td><code>N_output</code> (6 curvas)</td>
+                    <td>0,196416</td>
+                    <td><strong>0,130430</strong></td>
+                    <td><span class="badge info">−33,6%</span></td>
+                    <td>0,927855</td>
+                  </tr>
+                  <tr>
+                    <td><code>P_output</code> (−1,5 V)</td>
+                    <td>0,590087</td>
+                    <td><strong>0,003013</strong></td>
+                    <td><span class="badge pass">−99,5% (196×)</span></td>
+                    <td><strong>0,999774</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="card green">
+                <div class="card-title"><span class="dot green"></span>Correção Crítica de 196× em <code>P_output</code></div>
+                <ul class="clean-list green">
+                  <li>A versão preliminar <code>v1</code> (1D + <code>tanh</code>) superestimava a corrente em <span class="math">V<sub>g2</sub></span> = −1,5 V (<span class="math">R²</span> = −7,6723).</li>
+                  <li>Ao incorporar explicitamente a superfície medida para −1,5 V, o modelo <code>v2</code> derruba o RMSE para <strong>0,003013 μA/μm</strong> e eleva <span class="math">R²</span> para <strong>0,999774</strong>.</li>
+                </ul>
+              </div>
+
+              <div class="card blue">
+                <div class="card-title"><span class="dot"></span>Robustez Frente à Extrapolação</div>
+                <ul class="clean-list">
+                  <li>O travamento plano ±1000 V evita inversões não físicas e garante convergência rápida nos transientes da SRAM.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="fig-frame">
+              <img src="../figuras/m00_validacao_cruzada_hspice.png" alt="Validação cruzada quantitativa entre ngspice v1, v2 e HSPICE .printtr0" />
+              <div class="fig-caption">Fig. 2: Comparação quantitativa entre modelo 1D (<code>v1</code>), modelo 4D refinado (<code>v2</code>) em <code>ngspice-47</code> e referências <code>.printtr0</code> do Synopsys HSPICE.</div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.1: Validação Cruzada do Modelo (Tabela II &amp; Fig. 2)</span>
+          <span>Slide <strong>7 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 8: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.2 PORTA DE POLARIDADE)
+           =================================================================== -->
+      <section class="slide" id="slide-8">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag purple">Seção 4 · Resultados e Conclusão (4.2)</span>
+            <h2 class="slide-title">Caracterização Física de <span class="math">V<sub>g2</sub></span> e Banda Plana (<span class="math">ΔV<sub>fb</sub></span>)</h2>
+          </div>
+          <p class="slide-subtitle">Métricas experimentais a <span class="math">|V<sub>ds</sub>|</span> = 0,8 V e impacto no <em>pull-up</em> da SRAM</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="col-stack">
+              <div class="fig-frame" style="flex: 1;">
+                <img src="../figuras/m00_efeito_porta_polaridade.png" alt="Efeito da porta de polaridade Vg2 nos modos n-FET e p-FET" />
+                <div class="fig-caption">Fig. 3: Modulação eletrostática por <span class="math">V<sub>g2</sub></span> — deslocamento de banda plana (<span class="math">ΔV<sub>fb</sub></span> ≈ −0,25 V) em <span class="math">V<sub>g2</sub></span> = −1,5 V no <em>p-FET</em>.</div>
+              </div>
+
+              <div class="card amber">
+                <div class="card-title"><span class="dot amber"></span>Impacto Direto no Projeto 6T</div>
+                <ul class="clean-list">
+                  <li>Em <span class="math">V<sub>g2</sub></span> = −1,5 V, o desvio <span class="math">ΔV<sub>fb</sub></span> ≈ −0,25 V reduz a corrente do <em>p-FET</em> de <strong>1,79 μA para 0,37 μA</strong> (em <span class="math">V<sub>gp</sub></span> = −1,0 V), governando o <em>pull-up</em> da célula.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-stack">
+              <div class="kpi-row">
+                <div class="kpi-mini">
+                  <div class="kpi-mini-val">0,0621%</div>
+                  <div class="kpi-mini-lbl">Erro Médio n-FET vs. LUT</div>
+                </div>
+                <div class="kpi-mini purple">
+                  <div class="kpi-mini-val">0,0032%</div>
+                  <div class="kpi-mini-lbl">Erro Médio p-FET vs. LUT</div>
+                </div>
+                <div class="kpi-mini teal">
+                  <div class="kpi-mini-val">2,77 × 10³</div>
+                  <div class="kpi-mini-lbl">Razão I<sub>on</sub>/I<sub>off</sub> (n-FET)</div>
+                </div>
+              </div>
+
+              <table class="data-table compact">
+                <thead>
+                  <tr>
+                    <th>Modo (<span class="math">|V<sub>ds</sub>|</span> = 0,8 V)</th>
+                    <th>I<sub>on</sub> (μA/μm)</th>
+                    <th>I<sub>off</sub> (nA/μm)</th>
+                    <th>I<sub>on</sub>/I<sub>off</sub></th>
+                    <th>SS<sub>min</sub> (mV/dec)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>n-FET</strong> (<span class="math">V<sub>g1</sub></span>=1,1 V, <span class="math">V<sub>g2</sub></span>=0,8 V)</td>
+                    <td>1,650</td>
+                    <td>0,596</td>
+                    <td>2,77 × 10³</td>
+                    <td>106,59</td>
+                  </tr>
+                  <tr>
+                    <td><strong>p-FET</strong> (<span class="math">V<sub>g1</sub></span>=−1,5 V, <span class="math">V<sub>g2</sub></span>=−1,2 V)</td>
+                    <td>1,790</td>
+                    <td>2,811</td>
+                    <td>6,37 × 10²</td>
+                    <td>148,08</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="fig-frame" style="flex: 1;">
+                <img src="../figuras/m00_transfer_NP_log_lin.png" alt="Curvas de transferência linear e logarítmica n-FET e p-FET" />
+                <div class="fig-caption">Curvas <span class="math">I<sub>d</sub> × V<sub>g</sub></span> em escala linear e logarítmica: dados experimentais vs. <code>ngspice-47 v2</code>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.2: Física do Dispositivo BP SB-FET</span>
+          <span>Slide <strong>8 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 9: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.3 TRANSIENTE 30 NS)
+           =================================================================== -->
+      <section class="slide" id="slide-9">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag green">Seção 4 · Resultados e Conclusão (4.3)</span>
+            <h2 class="slide-title">Resultados Transientes (30 ns): Retenção e Auto-Destruição</h2>
+          </div>
+          <p class="slide-subtitle">Apagamento &gt; 91% em &lt; 3 ns e imunidade a re-escrita não autorizada</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-num">Fase 1 · 0–6 ns (Key=0)</div>
+              <div class="flow-step-title">Escrita Autorizada ('1')</div>
+              <p><span class="math">WL</span> = 1,0 V (2–6 ns), <span class="math">BL</span> = 1,0 V, <span class="math">BLB</span> = 0,0 V gravam o estado complementar.</p>
+            </div>
+            <div class="flow-step f2">
+              <div class="flow-step-num">Fase 2 · 6–15 ns (Key=0)</div>
+              <div class="flow-step-title">Retenção Estável</div>
+              <p><span class="math">WL</span> = 0,0 V. Em 12 ns: <span class="math">V(q)</span>=0,9768 V, <span class="math">V(qb)</span>=0,0020 V e <strong><span class="math">ΔV<sub>Key0</sub></span> = 0,9747 V</strong>.</p>
+            </div>
+            <div class="flow-step f3">
+              <div class="flow-step-num">Fase 3 · 15–20 ns (Key=1)</div>
+              <div class="flow-step-title">Auto-Destruição Instantânea</div>
+              <p>Chave comuta em 15 ns; diferencial colapsa &gt; 91% em 3 ns: <strong><span class="math">ΔV<sub>Collapse1</sub></span> = 0,0841 V</strong>.</p>
+            </div>
+            <div class="flow-step f4">
+              <div class="flow-step-num">Fase 4 · 20–30 ns (Key=1)</div>
+              <div class="flow-step-title">Imunidade a Re-escrita</div>
+              <p>Estímulo oposto com <span class="math">WL</span> = 1,0 V (20–24 ns) colapsa ao fechar <span class="math">WL</span>: <strong><span class="math">ΔV<sub>Key1</sub></span> = 0,0762 V</strong>.</p>
+            </div>
+          </div>
+
+          <div class="fig-frame" style="flex: 1;">
+            <img src="../figuras/m04_sram_transiente_30ns.png" alt="Simulação transiente de 30 ns em 4 fases da SRAM 6T polimórfica" />
+            <div class="fig-caption">Fig. 4: Simulação transiente completa de 30 ns com <span class="math">V<sub>DD</sub></span> = 1,0 V e <span class="math">V<sub>SS</sub></span> = 0,0 V fixos no <code>ngspice-47</code>.</div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.3: Verificação Transiente (Fig. 4)</span>
+          <span>Slide <strong>9 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 10: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.4 CURVAS BORBOLETA)
+           =================================================================== -->
+      <section class="slide" id="slide-10">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag purple">Seção 4 · Resultados e Conclusão (4.4)</span>
+            <h2 class="slide-title">Curvas Borboleta, SNM e Mitigação via <em>Wordline Read-Assist</em></h2>
+          </div>
+          <p class="slide-subtitle">Sintonia de banda plana e eliminação do <em>Read Disturb</em> sem área extra</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2-asym">
+            <div class="fig-frame">
+              <img src="../figuras/m04_sram_curva_borboleta_snm.png" alt="Curvas borboleta e quadrados máximos inscritos SNM para Key=0 e Key=1" />
+              <div class="fig-caption">Fig. 5: Curvas borboleta e quadrados máximos inscritos em <code>Key=0</code> (Hold, Read-Assist e Read sem assistência) vs. colapso monostável em <code>Key=1</code> (<span class="math">SNM</span> = 0,00 mV).</div>
+            </div>
+
+            <div class="col-stack">
+              <div class="card green" style="flex: 1;">
+                <div class="card-title"><span class="dot green"></span>1. Sintonia de Polaridade de Banda Plana (<span class="math">V<sub>g2,PU</sub></span>)</div>
+                <ul class="clean-list green">
+                  <li>Sob <span class="math">V<sub>g2,PU</sub></span> = −0,5 V (<span class="math">V<sub>g2,s</sub></span> = −1,5 V), o desvio <span class="math">ΔV<sub>fb</sub></span> ≈ −0,25 V reduz a corrente <em>p-FET</em> para 0,37 μA e degrada <span class="math">SNM<sub>Hold</sub></span> para apenas <strong>49,4 mV</strong>.</li>
+                  <li>Ajustar <span class="math">V<sub>g2,PU</sub></span> para <strong>−0,2 V</strong> (<span class="math">V<sub>g2,s</sub></span> = −1,2 V) sem redimensionar larguras <span class="math">W</span> restaura a simetria: <strong><span class="math">SNM<sub>Hold</sub></span> = 167,12 mV</strong> (16,7% de <span class="math">V<sub>DD</sub></span>).</li>
+                </ul>
+              </div>
+
+              <div class="card blue" style="flex: 1;">
+                <div class="card-title"><span class="dot"></span>2. Mitigação de <em>Read Disturb</em> via <em>WL Underdrive</em></div>
+                <ul class="clean-list">
+                  <li>Leitura sem assistência (<span class="math">WL</span> = 1,0 V) fecha o olho da curva devido aos <em>pass-gates</em> fortes (<span class="math">W<sub>PG</sub></span> = 1,5), gerando <em>Read Disturb</em> destrutivo (<strong><span class="math">SNM</span> = 0,00 mV</strong>).</li>
+                  <li>Aplicar <strong><em>Wordline Underdrive Read-Assist</em> (<span class="math">WL</span> = 0,30 V)</strong> enfraquece a contenção e recupera <strong><span class="math">SNM<sub>Read,Assist</sub></span> = 66,23 mV</strong>; em <code>Key=1</code> todos os regimes ficam em 0,00 mV.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.4: Estabilidade Estática e Read-Assist (Fig. 5)</span>
+          <span>Slide <strong>10 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 11: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.5 SÍNTESE TABELA III)
+           =================================================================== -->
+      <section class="slide" id="slide-11">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag">Seção 4 · Resultados e Conclusão (4.5)</span>
+            <h2 class="slide-title">Matriz dos 11 Critérios e Vantagens em Segurança de Hardware</h2>
+          </div>
+          <p class="slide-subtitle">Conformidade integral e comparação frente à zeroização CMOS convencional</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="grid-2-asym">
+            <div class="col-stack">
+              <table class="data-table compact" style="height: 100%;">
+                <thead>
+                  <tr>
+                    <th>Métrica Extraída da SRAM 6T</th>
+                    <th>Simulado</th>
+                    <th>Critério / Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="math">V(q)<sub>Hold</sub></span> (<code>Key=0</code>, 12 ns)</td>
+                    <td><strong>0,9768 V</strong></td>
+                    <td><span class="badge pass">&gt; 0,80 V · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">V(qb)<sub>Hold</sub></span> (<code>Key=0</code>, 12 ns)</td>
+                    <td><strong>0,0020 V</strong></td>
+                    <td><span class="badge pass">&lt; 0,20 V · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">ΔV<sub>Key0</sub></span> (12 ns)</td>
+                    <td><strong>0,9747 V</strong></td>
+                    <td><span class="badge pass">&gt; 0,80 V · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">ΔV<sub>Collapse1</sub></span> (18 ns)</td>
+                    <td><strong>0,0841 V</strong></td>
+                    <td><span class="badge pass">&lt; 0,15 V · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">ΔV<sub>Key1</sub></span> (28 ns)</td>
+                    <td><strong>0,0762 V</strong></td>
+                    <td><span class="badge pass">&lt; 0,15 V · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Hold</sub></span> (<code>Key=0, WL=0 V</code>)</td>
+                    <td><strong>167,12 mV</strong></td>
+                    <td><span class="badge pass">&gt; 150 mV · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Read,Unass.</sub></span> (<code>Key=0, WL=1,0 V</code>)</td>
+                    <td><strong>0,00 mV</strong></td>
+                    <td><span class="badge warn">Read Disturb</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Read,Assist</sub></span> (<code>Key=0, WL=0,30 V</code>)</td>
+                    <td><strong>66,23 mV</strong></td>
+                    <td><span class="badge pass">&gt; 50 mV · Passou</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Hold</sub></span> (<code>Key=1, WL=0 V</code>)</td>
+                    <td><strong>0,00 mV</strong></td>
+                    <td><span class="badge lock">= 0 mV · Bloqueado</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Read,Assist</sub></span> (<code>Key=1, 0,30 V</code>)</td>
+                    <td><strong>0,00 mV</strong></td>
+                    <td><span class="badge lock">= 0 mV · Bloqueado</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="math">SNM<sub>Read,Unass.</sub></span> (<code>Key=1, 1,0 V</code>)</td>
+                    <td><strong>0,00 mV</strong></td>
+                    <td><span class="badge lock">= 0 mV · Bloqueado</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-stack">
+              <div class="card teal">
+                <div class="card-title"><span class="dot teal"></span>Zero Overhead de Área &amp; Camuflagem</div>
+                <ul class="clean-list teal">
+                  <li>Layout idêntico ao 6T padrão (6 transistores), sem dispositivos adicionais de corte nem lógica por célula.</li>
+                  <li>Geometria e contatos invariantes resistem a <em>delayering</em> óptico/SEM.</li>
+                </ul>
+              </div>
+
+              <div class="card blue">
+                <div class="card-title"><span class="dot"></span>Imunidade a <em>Supply-Pin Clamping</em></div>
+                <ul class="clean-list">
+                  <li>Com <span class="math">V<sub>DD</sub></span> = 1,0 V e <span class="math">V<sub>SS</sub></span> = 0,0 V estritamente fixos, fixar pinos de alimentação externos não bloqueia o apagamento.</li>
+                </ul>
+              </div>
+
+              <div class="card purple" style="flex: 1;">
+                <div class="card-title"><span class="dot purple"></span>Zeroização &lt; 3 ns e Antigravação</div>
+                <ul class="clean-list purple">
+                  <li>Portas <span class="math">g<sub>2</sub></span> de baixa capacitância colapsam o bit em menos de 3 ns e impedem injeção de dados enquanto bloqueada.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.5: Matriz Consolidada (Tabela III)</span>
+          <span>Slide <strong>11 / 12</strong></span>
+        </footer>
+      </section>
+
+      <!-- ===================================================================
+           SLIDE 12: SEÇÃO 4 — RESULTADOS E CONCLUSÃO (4.6 CONCLUSÕES)
+           =================================================================== -->
+      <section class="slide" id="slide-12">
+        <header class="slide-header">
+          <div>
+            <span class="slide-tag green">Seção 4 · Resultados e Conclusão (4.6)</span>
+            <h2 class="slide-title">Conclusões Gerais, Limitações e Trabalhos Futuros</h2>
+          </div>
+          <p class="slide-subtitle">Fechamento científico e próximos passos para arranjos SRAM 2D</p>
+        </header>
+
+        <div class="slide-body">
+          <div class="card blue">
+            <div class="card-title"><span class="dot"></span>Conclusões Principais</div>
+            <ul class="clean-list">
+              <li><strong>Fluxo Aberto Validado:</strong> O subcircuito <code>bp_ari_ngspice.lib v2</code> reproduz as tabelas 4D com erro médio ≤ <strong>0,0621%</strong> e reduz em <strong>196×</strong> o RMSE de saída <em>p-FET</em> frente ao Synopsys HSPICE (<span class="math">R²</span> = 0,999774).</li>
+              <li><strong>Segurança Nativa em 6T SRAM:</strong> O Mecanismo B combina retenção estável em <code>Key=0</code> (<span class="math">ΔV<sub>Key0</sub></span> = 0,9747 V, <span class="math">SNM<sub>Hold</sub></span> = 167,12 mV com <span class="math">V<sub>g2,PU</sub></span> = −0,2 V) com colapso em &lt; 3 ns e bloqueio de escrita em <code>Key=1</code> (<span class="math">SNM</span> = 0,00 mV, <span class="math">ΔV<sub>Collapse1</sub></span> = 0,0841 V).</li>
+              <li><strong>Estabilidade de Leitura Sem Área Extra:</strong> <em>Wordline Underdrive Read-Assist</em> (<span class="math">WL</span> = 0,30 V) supera o <em>Read Disturb</em>, restaurando <span class="math">SNM<sub>Read,Assist</sub></span> = 66,23 mV.</li>
+            </ul>
+          </div>
+
+          <div class="grid-2" style="flex: 1;">
+            <div class="card amber">
+              <div class="card-title"><span class="dot amber"></span>Limitações Conhecidas do Modelo</div>
+              <ul class="clean-list">
+                <li><strong>Natureza Quase-Estática:</strong> Assim como o <code>bp_ari.va</code> original, as LUTs omitem capacitâncias intrínsecas de porta (compensadas externamente por <span class="math">C<sub>q</sub> = C<sub>qb</sub></span> = 1,0 fF).</li>
+                <li><strong>Lacuna Experimental Não Medida:</strong> A região intermediária <span class="math">V(g2, s) ∈ (−0,90; +0,20) V</span> não possui medições experimentais na base publicada.</li>
+              </ul>
+            </div>
+
+            <div class="card teal">
+              <div class="card-title"><span class="dot teal"></span>Trabalhos Futuros</div>
+              <ul class="clean-list teal">
+                <li><strong>Redes Capacitivas Parasitas:</strong> Incorporar capacitâncias intrínsecas dependentes de polarização para análise de atraso e energia.</li>
+                <li><strong>Variabilidade Estatística:</strong> Avaliar sensibilidade de SNM a defeitos e variabilidade de processo em canais 2D.</li>
+                <li><strong>Matrizes Multi-Célula (2×2 e 4×4):</strong> Investigar margens de escrita (<em>Write Margin</em>) e caminhos parasitas de fuga (<em>bitline sneak paths</em>).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card dark-banner" style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: #f8fafc; border: none; padding: 12px 18px;">
+            <div>
+              <strong style="color: #7dd3fc;">Código &amp; Reprodutibilidade Aberta:</strong>
+              <span style="font-size: 12.5px; color: #cbd5e1; margin-left: 8px;"><code>github.com/BernardooVale/tp_nano</code> · <code>ngspice-47</code> + Python</span>
+            </div>
+            <span style="font-size: 12.5px; font-weight: 700; color: #93c5fd;">Obrigado! Perguntas?</span>
+          </div>
+        </div>
+
+        <footer class="slide-footer">
+          <span><strong>Seção 4 — Resultados e Conclusão</strong> · Subdivisão 4.6: Conclusões · UFMG</span>
+          <span>Slide <strong>12 / 12</strong></span>
+        </footer>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <div class="kbd-hint" aria-hidden="true">
+    ← / → navegar · <strong>G</strong> grade · <strong>F</strong> tela cheia · clique nas figuras para ampliar
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Ampliação da Figura">
+    <button class="lightbox-close" id="lightbox-close" type="button">Fechar (Esc)</button>
+    <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox-caption" id="lightbox-cap"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
