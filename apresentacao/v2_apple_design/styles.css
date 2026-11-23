@@ -51,9 +51,9 @@
   --hairline-dark: rgba(255, 255, 255, 0.14);
   --focus-ring: 0 0 0 3px rgba(0, 113, 227, 0.45);
 
-  /* Tipografia Apple System Stack + Editorial + Tabular Mono */
+  /* Tipografia Apple System Stack + Tabular Mono (100% sem serifa para projeção) */
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
-  --font-serif: "New York", "Iowan Old Style", "Georgia", "Cambria Math", serif;
+  --font-serif: var(--font-display);
   --font-mono: "SF Mono", "Cascadia Mono", "Consolas", monospace;
 }
 
@@ -392,7 +392,7 @@ body.overview-mode .slide.active {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .slide-footer {
@@ -465,8 +465,8 @@ body.overview-mode .slide.active {
 }
 
 .cover-en-sub {
-  font-family: var(--font-serif);
-  font-style: italic;
+  font-family: var(--font-display);
+  font-style: normal;
   font-size: 17px;
   color: var(--ink-on-dark-muted);
   margin-bottom: 22px;
@@ -637,7 +637,7 @@ body.overview-mode .slide.active {
 .col-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   min-height: 0;
 }
 
@@ -699,14 +699,14 @@ body.overview-mode .slide.active {
 .sig-tag.key1 { background: var(--sig-key1-bg); color: var(--sig-key1-ink); }
 .sig-tag.neutral { background: var(--surface-inset); color: var(--ink-secondary); }
 
-/* Listas Limpas (piso >= 13.5px) */
+/* Listas Limpas (piso >= 14.5px) */
 .apple-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  font-size: 14px;
-  line-height: 1.44;
+  gap: 9px;
+  font-size: 14.5px;
+  line-height: 1.48;
   color: var(--ink-secondary);
 }
 
@@ -740,8 +740,9 @@ body.overview-mode .slide.active {
 
 /* Fórmulas e Código */
 .math {
-  font-family: var(--font-serif);
-  font-style: italic;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 600;
 }
 
 code {
@@ -764,7 +765,7 @@ code {
   color: #FFFFFF;
   border-radius: 14px;
   padding: 13px 17px;
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-size: 15.5px;
   line-height: 1.5;
 }
@@ -818,7 +819,7 @@ code {
 .apple-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -827,13 +828,13 @@ code {
   color: var(--ink-primary);
   font-weight: 600;
   text-align: left;
-  padding: 8px 12px;
+  padding: 9px 14px;
   border-bottom: 1px solid var(--hairline-strong);
-  font-size: 13px;
+  font-size: 13.5px;
 }
 
 .apple-table tbody td {
-  padding: 6.5px 12px;
+  padding: 8px 14px;
   color: var(--ink-secondary);
   border-bottom: 1px solid var(--hairline);
   vertical-align: middle;
@@ -847,24 +848,25 @@ code {
   border-bottom: none;
 }
 
-.apple-table.compact thead th { padding: 6px 10px; }
-.apple-table.compact tbody td { padding: 5px 10px; }
+.apple-table.compact { font-size: 13.5px; }
+.apple-table.compact thead th { padding: 7.5px 12px; }
+.apple-table.compact tbody td { padding: 6.5px 12px; }
 
 /* Figuras com Título de Conclusão Acionável (charting-data.md) */
 .chart-card {
   background: var(--surface-card);
   border: 1px solid var(--hairline);
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   display: flex;
   flex-direction: column;
   min-height: 0;
   height: 100%;
-  gap: 6px;
+  gap: 8px;
 }
 
 .chart-takeaway {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.008em;
   color: var(--ink-primary);
