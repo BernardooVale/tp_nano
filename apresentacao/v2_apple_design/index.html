@@ -136,17 +136,13 @@
             <span class="eyebrow">Seção 1 · Introdução e Background (1.1)</span>
             <h2 class="slide-title">Problema, Proposta Polimórfica e Contribuições</h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ Zero Transistores Extras</span>
-            <span class="header-deck-note">Segurança nativa sem corte de alimentação</span>
-          </div>
         </header>
 
         <div class="slide-body">
           <div class="grid-2-asym-right" style="flex: 1;">
             <div class="col-stack" style="justify-content: space-between;">
               <div class="bento-title">3 Ameaças à SRAM CMOS</div>
-              <div class="threat-stack" style="flex: 1; justify-content: space-between;">
+              <div class="threat-stack" style="flex: 1; justify-content: space-around;">
                 <div class="threat-item">
                   <span class="threat-badge">⊗</span>
                   <div>
@@ -248,10 +244,6 @@
           <div class="header-left">
             <span class="eyebrow">Seção 1 · Introdução e Background (1.2)</span>
             <h2 class="slide-title">Física do SB-FET 2D Ambipolar e Colapso na SRAM 6T</h2>
-          </div>
-          <div class="header-right">
-            <span class="regime-pill nfet">● n-FET (e⁻) &nbsp;/&nbsp; ○ p-FET (h⁺)</span>
-            <span class="header-deck-note">Tunelamento Schottky (WKB) e perda de biestabilidade</span>
           </div>
         </header>
 
@@ -356,10 +348,6 @@
             <span class="eyebrow">Seção 2 · Trabalhos Relacionados (2.1 &amp; 2.2)</span>
             <h2 class="slide-title">Evolução de RFETs 1D/2D e Lacunas Preenchidas</h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill nfet">● Estado da Arte vs. Este Trabalho</span>
-            <span class="header-deck-note">Posicionamento direto frente a Wu et al. (Nature Electronics)</span>
-          </div>
         </header>
 
         <div class="slide-body">
@@ -436,10 +424,6 @@
             <span class="eyebrow">Seção 3 · Metodologia (3.1)</span>
             <h2 class="slide-title">Pipeline de Tradução do Modelo 4D para <code>ngspice-47</code></h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill nfet">● bp_ari_ngspice.lib v2</span>
-            <span class="header-deck-note">Substitui $table_model proprietário por subcircuito nativo</span>
-          </div>
         </header>
 
         <div class="slide-body">
@@ -467,21 +451,29 @@
           </div>
 
           <div class="grid-2-asym" style="flex: 1;">
-            <div class="col-stack" style="justify-content: space-between;">
-              <div class="formula-panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                <span class="formula-label">Referência Bilateral de Fonte (Eqs. 1–2)</span>
-                <div><span class="math">V<sub>g,n</sub> = V<sub>g</sub> − min(V<sub>d</sub>, V<sub>s</sub>) , &nbsp; V<sub>g1,n</sub> = V<sub>g1</sub> − min(V<sub>d</sub>, V<sub>s</sub>)</span></div>
-                <div style="margin-top: 5px;"><span class="math">V<sub>g,p</sub> = V<sub>g</sub> − max(V<sub>d</sub>, V<sub>s</sub>) , &nbsp; V<sub>g1,p</sub> = V<sub>g1</sub> − max(V<sub>d</sub>, V<sub>s</sub>)</span></div>
+            <div class="col-stack" style="justify-content: space-around;">
+              <div class="bento-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <div class="bento-head">
+                  <h3 class="bento-title">1. Referência Bilateral de Fonte</h3>
+                  <span class="sig-tag nfet">Simetria</span>
+                </div>
+                <div style="font-size: 14px; color: var(--ink-secondary); line-height: 1.45;">
+                  Normaliza a referência dinâmica pelo menor potencial (<code>min(V<sub>d</sub>, V<sub>s</sub>)</code>) no ramo n-FET e pelo maior (<code>max(V<sub>d</sub>, V<sub>s</sub>)</code>) no ramo p-FET, garantindo simetria total em <em>pass-gates</em>.
+                </div>
               </div>
 
-              <div class="formula-panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                <span class="formula-label">Corrente Dreno–Fonte Imposta (Eq. 3)</span>
-                <div><span class="math">I<sub>ds</sub> = W · I<sub>n</sub>(V<sub>g1,n</sub>, V<sub>g2,s</sub>, V<sub>g,n</sub>) · f<sub>ds,n</sub>(V<sub>g,n</sub>, V<sub>ds</sub>)</span> &nbsp; (<span class="math">V<sub>g2,s</sub></span> &gt; 0)</div>
-                <div style="margin-top: 5px;"><span class="math">I<sub>ds</sub> = W · I<sub>p</sub>(V<sub>g1,p</sub>, V<sub>g2,s</sub>, V<sub>g,p</sub>) · f<sub>ds,p</sub>(V<sub>g,p</sub>, V<sub>ds</sub>)</span> &nbsp; (<span class="math">V<sub>g2,s</sub></span> ≤ 0)</div>
+              <div class="bento-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <div class="bento-head">
+                  <h3 class="bento-title">2. Interpolação 4D Contínua (I<sub>ds</sub>)</h3>
+                  <span class="sig-tag pfet">4 Variáveis</span>
+                </div>
+                <div style="font-size: 14px; color: var(--ink-secondary); line-height: 1.45;">
+                  A corrente é escalada pela largura <code>W</code> e interpolada em tempo real sobre as 4 tensões terminais (<code>V<sub>g1</sub>, V<sub>g2</sub>, V<sub>g</sub>, V<sub>ds</sub></code>), selecionando o ramo n ou p conforme a polaridade de <code>V<sub>g2</sub></code>.
+                </div>
               </div>
             </div>
 
-            <div class="col-stack" style="justify-content: space-between;">
+            <div class="col-stack" style="justify-content: space-around;">
               <div class="bento-card">
                 <div class="bento-head">
                   <h3 class="bento-title">Condução Bidirecional</h3>
@@ -521,10 +513,6 @@
           <div class="header-left">
             <span class="eyebrow">Seção 3 · Metodologia (3.2)</span>
             <h2 class="slide-title">Arquitetura SRAM 6T (Mecanismo B) e Protocolos de Teste</h2>
-          </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ V<sub>DD</sub> = 1,0 V · V<sub>SS</sub> = 0,0 V Fixos</span>
-            <span class="header-deck-note">Topologia 6T, polarizações e extração de SNM a 45°</span>
           </div>
         </header>
 
@@ -601,54 +589,40 @@
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.1)</span>
             <h2 class="slide-title">Validação Cruzada 4D: <code>ngspice-47 v2</code> vs. Synopsys HSPICE</h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ Erro P_output reduzido em 196×</span>
-            <span class="header-deck-note">Referência oficial .printtr0 em 4 regimes de operação</span>
-          </div>
         </header>
 
         <div class="slide-body">
-          <div class="grid-2-asym-right">
+          <div class="grid-2-asym-right" style="grid-template-columns: 0.9fr 1.3fr;">
             <div class="col-stack">
               <div class="apple-table-wrap">
                 <table class="apple-table">
                   <thead>
                     <tr>
-                      <th>Regime (<code>.printtr0</code>)</th>
-                      <th>RMSE v1 (μA)</th>
-                      <th>RMSE v2 (μA)</th>
-                      <th>Redução</th>
-                      <th>R²<sub>v2</sub></th>
+                      <th>Regime</th>
+                      <th>Redução RMSE</th>
+                      <th>R² (v2)</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td><code>N_transfer</code></td>
-                      <td>0,001910</td>
-                      <td><strong>0,001899</strong></td>
                       <td>−0,6%</td>
-                      <td><strong>0,999972</strong></td>
+                      <td><strong>0,99997</strong></td>
                     </tr>
                     <tr>
                       <td><code>P_transfer</code></td>
-                      <td>0,000947</td>
-                      <td><strong>0,000947</strong></td>
                       <td>0,0%</td>
-                      <td><strong>0,999944</strong></td>
+                      <td><strong>0,99994</strong></td>
                     </tr>
                     <tr>
                       <td><code>N_output</code></td>
-                      <td>0,196416</td>
-                      <td><strong>0,130430</strong></td>
                       <td><span class="sig-tag nfet">−33,6%</span></td>
-                      <td>0,927855</td>
+                      <td>0,9279</td>
                     </tr>
                     <tr>
                       <td><code>P_output</code> (−1,5 V)</td>
-                      <td>0,590087</td>
-                      <td><strong>0,003013</strong></td>
-                      <td><span class="sig-tag key0">✓ −99,5% (196×)</span></td>
-                      <td><strong>0,999774</strong></td>
+                      <td><span class="sig-tag key0">✓ 196× menor</span></td>
+                      <td><strong>0,99977</strong></td>
                     </tr>
                   </tbody>
                 </table>
@@ -660,9 +634,8 @@
                   <span class="sig-tag pfet">○ Plano −1,5 V</span>
                 </div>
                 <ul class="apple-list">
-                  <li>A versão preliminar <code>v1</code> (1D + <code>tanh</code>) extrapolava <span class="math">V<sub>g2</sub></span> = −1,5 V com erro severo (<span class="math">R²</span> = −7,6723).</li>
-                  <li>Incluir a superfície experimental medida de −1,5 V derruba o RMSE para <strong>0,003013 μA/μm</strong> (<span class="math">R²</span> = 0,999774).</li>
-                  <li>O travamento plano ±1000 V garante convergência estável em toda a simulação SRAM.</li>
+                  <li>A versão <code>v1</code> (1D) extrapolava <span class="math">V<sub>g2</sub></span> = −1,5 V com erro severo.</li>
+                  <li>A superfície 4D real reduz o erro em <strong>196×</strong> e garante convergência estável na SRAM.</li>
                 </ul>
               </div>
             </div>
@@ -692,10 +665,6 @@
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.2)</span>
             <h2 class="slide-title">Efeito de <span class="math">V<sub>g2</sub></span> e Deslocamento de Banda Plana (<span class="math">ΔV<sub>fb</sub></span>)</h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill pfet">○ ΔV<sub>fb</sub> ≈ −0,25 V em V<sub>g2</sub> = −1,5 V</span>
-            <span class="header-deck-note">Fator físico determinante para o pull-up da SRAM 6T</span>
-          </div>
         </header>
 
         <div class="slide-body">
@@ -722,47 +691,17 @@
             <div class="col-stack">
               <div class="metric-strip">
                 <div class="metric-box">
-                  <div class="metric-val">0,0621%</div>
-                  <div class="metric-lbl">Erro Médio n-FET vs. LUT</div>
+                  <div class="metric-val">0,062%</div>
+                  <div class="metric-lbl">Erro Médio n-FET</div>
                 </div>
                 <div class="metric-box">
-                  <div class="metric-val">0,0032%</div>
-                  <div class="metric-lbl">Erro Médio p-FET vs. LUT</div>
+                  <div class="metric-val">0,003%</div>
+                  <div class="metric-lbl">Erro Médio p-FET</div>
                 </div>
                 <div class="metric-box">
                   <div class="metric-val">2,77 × 10³</div>
                   <div class="metric-lbl">Razão I<sub>on</sub>/I<sub>off</sub> (n-FET)</div>
                 </div>
-              </div>
-
-              <div class="apple-table-wrap">
-                <table class="apple-table compact">
-                  <thead>
-                    <tr>
-                      <th>Modo (<span class="math">|V<sub>ds</sub>|</span> = 0,8 V)</th>
-                      <th>I<sub>on</sub> (μA/μm)</th>
-                      <th>I<sub>off</sub> (nA/μm)</th>
-                      <th>I<sub>on</sub>/I<sub>off</sub></th>
-                      <th>SS<sub>min</sub> (mV/dec)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><span class="sig-tag nfet">● n-FET</span> <small>(1,1 / 0,8 V)</small></td>
-                      <td>1,650</td>
-                      <td>0,596</td>
-                      <td>2,77 × 10³</td>
-                      <td>106,59</td>
-                    </tr>
-                    <tr>
-                      <td><span class="sig-tag pfet">○ p-FET</span> <small>(−1,5 / −1,2 V)</small></td>
-                      <td>1,790</td>
-                      <td>2,811</td>
-                      <td>6,37 × 10²</td>
-                      <td>148,08</td>
-                    </tr>
-                  </tbody>
-                </table>
               </div>
 
               <div class="chart-card" style="flex: 1;">
@@ -790,10 +729,6 @@
           <div class="header-left">
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.3)</span>
             <h2 class="slide-title">Protocolo de 30 ns: Retenção Segura e Colapso em &lt; 3 ns</h2>
-          </div>
-          <div class="header-right">
-            <span class="regime-pill key1">✓ Key=0 (0,9747 V) → ⊗ Key=1 (0,0841 V)</span>
-            <span class="header-deck-note">4 fases consecutivas sob alimentação fixa no ngspice-47</span>
           </div>
         </header>
 
@@ -844,10 +779,6 @@
           <div class="header-left">
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.4)</span>
             <h2 class="slide-title">Curvas Borboleta, Banda Plana e <em>Wordline Read-Assist</em></h2>
-          </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ SNM<sub>Hold</sub> = 167,12 mV · Read-Assist = 66,23 mV</span>
-            <span class="header-deck-note">Análise estática DC e eliminação de Read Disturb</span>
           </div>
         </header>
 
@@ -901,10 +832,6 @@
           <div class="header-left">
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.5)</span>
             <h2 class="slide-title">Matriz de Aceitação e Vantagens em Segurança de Hardware</h2>
-          </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ 11 / 11 Métricas Verificadas</span>
-            <span class="header-deck-note">Conformidade integral frente às metas do projeto</span>
           </div>
         </header>
 
@@ -1029,10 +956,6 @@
             <span class="eyebrow">Seção 4 · Resultados e Conclusão (4.6)</span>
             <h2 class="slide-title">Conclusões Gerais, Limitações e Próximos Passos</h2>
           </div>
-          <div class="header-right">
-            <span class="regime-pill key0">✓ Fluxo Reprodutível Publicado</span>
-            <span class="header-deck-note">Escopo completo validado em ngspice-47 e Python</span>
-          </div>
         </header>
 
         <div class="slide-body">
@@ -1071,14 +994,6 @@
                 <li><strong>Arranjos Multi-Célula (2×2 e 4×4):</strong> Avaliar <em>Write Margin</em> e correntes parasitas em linhas de bits (<em>bitline sneak paths</em>).</li>
               </ul>
             </div>
-          </div>
-
-          <div class="bento-card obsidian" style="flex-direction: row; align-items: center; justify-content: space-between; padding: 13px 20px;">
-            <div>
-              <strong>Repositório Open-Source:</strong>
-              <span style="margin-left: 8px; color: #C7C7CC;"><code>github.com/BernardooVale/tp_nano</code> · <code>ngspice-47</code> + Python</span>
-            </div>
-            <span style="font-weight: 600; color: #70B5FF;">Obrigado pela atenção</span>
           </div>
         </div>
 
