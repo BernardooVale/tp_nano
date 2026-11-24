@@ -13,6 +13,8 @@ const state = {
   selectedEdgeId: null,
   compareKeys: true,
   activeKeyView: 0, // 0 ou 1
+  readoutMode: "bits", // "bits" | "volts"
+  gridMode: "closed", // "closed" | "direct"
   simResult: null,
   isSimulating: false,
 
@@ -65,6 +67,10 @@ const el = {
   btnZoomIn: document.getElementById("btnZoomIn"),
   btnZoomOut: document.getElementById("btnZoomOut"),
   zoomLabel: document.getElementById("zoomLabel"),
+  btnReadoutBits: document.getElementById("btnReadoutBits"),
+  btnReadoutVolts: document.getElementById("btnReadoutVolts"),
+  btnGridClosed: document.getElementById("btnGridClosed"),
+  btnGridDirect: document.getElementById("btnGridDirect"),
   toastBanner: document.getElementById("toastBanner"),
 
   btnPlayerStart: document.getElementById("btnPlayerStart"),
@@ -83,6 +89,7 @@ const el = {
   dockSummaryPill: document.getElementById("dockSummaryPill"),
   canvasScopeV: document.getElementById("canvasScopeV"),
   canvasScopeI: document.getElementById("canvasScopeI"),
+  scopeVoltageTitle: document.getElementById("scopeVoltageTitle"),
   scopeVoltageLegend: document.getElementById("scopeVoltageLegend"),
   metricsCards: document.getElementById("metricsCards"),
   truthTableWrap: document.getElementById("truthTableWrap"),
@@ -689,6 +696,22 @@ function renderInspector() {
     wrap.appendChild(rGroup);
   }
 
+  const res = state.simResult;
+  if (res && ["INPUT", "OUTPUT", "PROBE", "POLY_GATE"].includes(node.type)) {
+    const idx = getCurrentFrameIndex();
+    const useK1 = res.compareKeys && state.activeKeyView === 1;
+    const nodeVolts = useK1 ? res.nodeVoltagesK1 : res.nodeVoltagesK0;
+    const v = nodeVolts?.[node.id]?.[idx];
+    if (v !== undefined) {
+      const thresh = inferLogicThreshold(res.nodeVoltagesK0?.[node.id], res.nodeVoltagesK1?.[node.id]);
+      const bit = voltageToBit(v, thresh);
+      const readoutBox = document.createElement("div");
+      readoutBox.className = "tuple-info-box";
+      readoutBox.innerHTML = `<strong>Leitura Atual:</strong> Bit <strong>${bit}</strong> &nbsp;·&nbsp; ${v.toFixed(3)} V (limiar ${thresh.toFixed(2)} V)`;
+      wrap.appendChild(readoutBox);
+    }
+  }
+
   const delBtn = document.createElement("button");
   delBtn.type = "button";
   delBtn.className = "btn-danger";
@@ -813,11 +836,102 @@ const animRefs = {
   nodes: {}, // nodeId -> refs
 };
 
+const GRID_SNAP = 12;
+
+function snapCoord(val) {
+  return Math.round(val / GRID_SNAP) * GRID_SNAP;
+}
+
+function inferLogicThreshold(seriesA, seriesB = null) {
+  let maxV = 0;
+  if (Array.isArray(seriesA)) {
+    for (const v of seriesA) if (v > maxV) maxV = v;
+  }
+  if (Array.isArray(seriesB)) {
+    for (const v of seriesB) if (v > maxV) maxV = v;
+  }
+  if (maxV >= 1.25) return 0.75;
+  if (maxV >= 0.9) return 0.5;
+  return 0.4;
+}
+
+function voltageToBit(v, threshold = 0.4) {
+  return v >= threshold ? 1 : 0;
+}
+
+function formatNodeReadout(v, threshold = 0.4) {
+  if (v === undefined || v === null || Number.isNaN(v)) {
+    return state.readoutMode === "bits" ? "Bit —" : "— V";
+  }
+  if (state.readoutMode === "bits") {
+    return `Bit ${voltageToBit(v, threshold)}`;
+  }
+  return `${v.toFixed(2)} V`;
+}
+
+function setReadoutMode(mode) {
+  if (state.readoutMode === mode) return;
+  state.readoutMode = mode;
+  el.btnReadoutBits?.classList.toggle("active", mode === "bits");
+  el.btnReadoutVolts?.classList.toggle("active", mode === "volts");
+  if (el.scopeVoltageTitle) {
+    el.scopeVoltageTitle.textContent =
+      mode === "bits"
+        ? "Níveis Lógicos (Bits 0/1) — Entradas & Saídas"
+        : "Tensões Nodais V(t) — Entradas & Saídas";
+  }
+  renderCircuitGraph();
+  updateAnimationFrame();
+  renderInspector();
+}
+
+function setGridMode(mode) {
+  if (state.gridMode === mode) return;
+  state.gridMode = mode;
+  el.btnGridClosed?.classList.toggle("active", mode === "closed");
+  el.btnGridDirect?.classList.toggle("active", mode === "direct");
+  if (el.canvasBg) {
+    el.canvasBg.setAttribute("fill", mode === "closed" ? "url(#closedGridPattern)" : "url(#gridPattern)");
+  }
+  renderCircuitGraph();
+}
+
 function bezierPath(x1, y1, x2, y2) {
   const dx = Math.max(Math.abs(x2 - x1) * 0.48, 36);
   const c1x = x1 + (x2 >= x1 ? dx : -dx);
   const c2x = x2 - (x2 >= x1 ? dx : -dx);
   return `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+}
+
+function orthogonalPath(x1, y1, x2, y2, laneIndex = 0) {
+  const stub = 24;
+  const laneShift = ((laneIndex % 5) - 2) * 12;
+
+  if (Math.abs(y2 - y1) < 2 && x2 >= x1) {
+    return `M ${x1} ${y1} L ${x2} ${y2}`;
+  }
+
+  if (x2 >= x1 + stub * 1.5) {
+    const midX = snapCoord((x1 + x2) / 2 + laneShift * 0.5);
+    const clampedMidX = Math.max(x1 + 12, Math.min(x2 - 12, midX));
+    return `M ${x1} ${y1} L ${clampedMidX} ${y1} L ${clampedMidX} ${y2} L ${x2} ${y2}`;
+  }
+
+  // Conexão reversa ou vertical fechada (ex: realimentação SRAM): contorna pelo corredor externo
+  const outX = snapCoord(x1 + stub);
+  const inX = snapCoord(x2 - stub);
+  const dy = y2 - y1;
+  const detourY =
+    Math.abs(dy) >= 48
+      ? snapCoord((y1 + y2) / 2 + laneShift)
+      : snapCoord(Math.min(y1, y2) - 48 - (laneIndex % 3) * 12);
+  return `M ${x1} ${y1} L ${outX} ${y1} L ${outX} ${detourY} L ${inX} ${detourY} L ${inX} ${y2} L ${x2} ${y2}`;
+}
+
+function getWirePath(x1, y1, x2, y2, laneIndex = 0) {
+  return state.gridMode === "closed"
+    ? orthogonalPath(x1, y1, x2, y2, laneIndex)
+    : bezierPath(x1, y1, x2, y2);
 }
 
 function renderPinShape(port, isActivePin, theme) {
@@ -881,13 +995,13 @@ function renderCircuitGraph() {
   const nodeMap = Object.fromEntries(state.circuit.nodes.map((n) => [n.id, n]));
 
   // 1) Desenha fios
-  for (const edge of state.circuit.edges) {
+  state.circuit.edges.forEach((edge, edgeIdx) => {
     const src = nodeMap[edge.from];
     const dst = nodeMap[edge.to];
-    if (!src || !dst) continue;
+    if (!src || !dst) return;
     const p1 = getPortWorldCoords(src, edge.fromPort);
     const p2 = getPortWorldCoords(dst, edge.toPort);
-    const d = bezierPath(p1.x, p1.y, p2.x, p2.y);
+    const d = getWirePath(p1.x, p1.y, p2.x, p2.y, edgeIdx);
 
     const g = svgEl("g");
     const hit = svgEl("path", { d, class: "wire-hit" });
@@ -915,7 +1029,7 @@ function renderCircuitGraph() {
     g.appendChild(hit);
     el.edgesLayer.appendChild(g);
     animRefs.wires.push({ edge, baseEl: base, flowEl: flow });
-  }
+  });
 
   // 2) Desenha nós
   for (const node of state.circuit.nodes) {
@@ -962,7 +1076,7 @@ function renderCircuitGraph() {
 
       const iTxt = svgEl("text", { x: 64, y: h - 10, "text-anchor": "start", fill: theme.textMuted, "font-size": 11, "font-family": "var(--font-mono)" }, "— µA");
       const vDot = svgEl("circle", { cx: w - 62, cy: h - 14, r: 4, fill: theme.wireIdle });
-      const vTxt = svgEl("text", { x: w - 10, y: h - 10, "text-anchor": "end", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, "— V");
+      const vTxt = svgEl("text", { x: w - 10, y: h - 10, "text-anchor": "end", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, state.readoutMode === "bits" ? "Bit —" : "— V");
       g.appendChild(iTxt);
       g.appendChild(vDot);
       g.appendChild(vTxt);
@@ -981,7 +1095,7 @@ function renderCircuitGraph() {
 
       const readoutY = node.type === "PROBE" ? 52 : 55;
       const vDot = svgEl("circle", { cx: w / 2 - 26, cy: readoutY - 3.5, r: 4, fill: theme.wireIdle });
-      const vTxt = svgEl("text", { x: w / 2 + 5, y: readoutY, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, "0.00 V");
+      const vTxt = svgEl("text", { x: w / 2 + 5, y: readoutY, "text-anchor": "middle", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, state.readoutMode === "bits" ? "Bit —" : "0.00 V");
       g.appendChild(vDot);
       g.appendChild(vTxt);
       refs.vDot = vDot;
@@ -1239,8 +1353,10 @@ function setupCanvasInteractions() {
   window.addEventListener("mousemove", (ev) => {
     if (state.draggingNode) {
       const pt = clientToWorld(ev.clientX, ev.clientY);
-      state.draggingNode.node.x = Math.round(pt.x - state.draggingNode.offsetX);
-      state.draggingNode.node.y = Math.round(pt.y - state.draggingNode.offsetY);
+      const rawX = pt.x - state.draggingNode.offsetX;
+      const rawY = pt.y - state.draggingNode.offsetY;
+      state.draggingNode.node.x = state.gridMode === "closed" ? snapCoord(rawX) : Math.round(rawX);
+      state.draggingNode.node.y = state.gridMode === "closed" ? snapCoord(rawY) : Math.round(rawY);
       renderCircuitGraph();
     } else if (state.panning) {
       state.panX = ev.clientX - state.panning.startX;
@@ -1250,7 +1366,7 @@ function setupCanvasInteractions() {
       const pt = clientToWorld(ev.clientX, ev.clientY);
       el.wirePreviewLayer.innerHTML = "";
       el.wirePreviewLayer.appendChild(
-        svgEl("path", { d: bezierPath(state.wiringFrom.startX, state.wiringFrom.startY, pt.x, pt.y), class: "wire-preview" })
+        svgEl("path", { d: getWirePath(state.wiringFrom.startX, state.wiringFrom.startY, pt.x, pt.y), class: "wire-preview" })
       );
     }
   });
@@ -1500,7 +1616,8 @@ function updateAnimationFrame() {
   for (const [nid, refs] of Object.entries(animRefs.nodes)) {
     if (refs.type === "POLY_GATE") {
       const gm = res.gateMetrics?.[nid];
-      const vOut = nodeVolts?.[nid]?.[idx];
+      const series = nodeVolts?.[nid];
+      const vOut = series?.[idx];
       const iGate = gateCurrs?.[nid]?.[idx];
       const activeFn = gm ? (useK1 ? gm.fnK1 : gm.fnK0) : refs.tdef.key0_fn;
       const keyLabel = useK1 ? 1 : 0;
@@ -1509,15 +1626,22 @@ function updateAnimationFrame() {
       refs.modePill.setAttribute("stroke", useK1 ? theme.dangerBorder : theme.nfetBorder);
       refs.modeTxt.setAttribute("fill", useK1 ? theme.dangerText : theme.nfetText);
       if (vOut !== undefined) {
-        refs.vTxt.textContent = `${vOut.toFixed(2)} V`;
+        const thresh = inferLogicThreshold(res.nodeVoltagesK0?.[nid], res.nodeVoltagesK1?.[nid]);
+        refs.vTxt.textContent = formatNodeReadout(vOut, thresh);
         refs.vDot?.setAttribute("fill", voltageToColor(vOut));
       }
       if (iGate !== undefined) refs.iTxt.textContent = `|I|=${iGate.toFixed(2)} µA`;
     } else if (refs.type === "INPUT" || refs.type === "OUTPUT" || refs.type === "PROBE") {
-      const v = nodeVolts?.[nid]?.[idx];
+      const series = nodeVolts?.[nid];
+      const v = series?.[idx];
       if (v !== undefined) {
-        refs.vTxt.textContent = `${v.toFixed(2)} V`;
-        refs.vTxt.setAttribute("fill", theme.textMain);
+        const thresh = inferLogicThreshold(res.nodeVoltagesK0?.[nid], res.nodeVoltagesK1?.[nid]);
+        const bit = voltageToBit(v, thresh);
+        refs.vTxt.textContent = formatNodeReadout(v, thresh);
+        refs.vTxt.setAttribute(
+          "fill",
+          state.readoutMode === "bits" ? (bit ? theme.high : theme.textMuted) : theme.textMain
+        );
         refs.vDot?.setAttribute("fill", voltageToColor(v));
       }
     } else if (refs.type === "ARI_FET") {
@@ -1534,9 +1658,11 @@ function updateAnimationFrame() {
         refs.chGlow.setAttribute("opacity", String(0.15 + 0.85 * cond));
       }
     } else if (refs.type === "VDC" || refs.type === "VPWL") {
-      const v = nodeVolts?.[nid]?.[idx];
+      const series = nodeVolts?.[nid];
+      const v = series?.[idx];
       if (v !== undefined) {
-        refs.vTxt.textContent = `${v.toFixed(2)} V`;
+        const thresh = inferLogicThreshold(res.nodeVoltagesK0?.[nid], res.nodeVoltagesK1?.[nid]);
+        refs.vTxt.textContent = formatNodeReadout(v, thresh);
       }
     }
   }
@@ -1615,32 +1741,49 @@ function drawVoltageScope(res) {
   const { ctx, w, h } = setupHiDpiCanvas(el.canvasScopeV);
   ctx.clearRect(0, 0, w, h);
 
+  const isBitMode = state.readoutMode === "bits";
   const pad = { l: 48, r: 14, t: 12, b: 24 };
   const pw = w - pad.l - pad.r;
   const ph = h - pad.t - pad.b;
 
   const traces = res.probeTraces || [];
   let minV = 0, maxV = 1.6;
-  for (const tr of traces) {
-    for (const v of tr.k0) { minV = Math.min(minV, v); maxV = Math.max(maxV, v); }
-    for (const v of tr.k1) { minV = Math.min(minV, v); maxV = Math.max(maxV, v); }
+  if (isBitMode) {
+    minV = -0.15;
+    maxV = 1.15;
+  } else {
+    for (const tr of traces) {
+      for (const v of tr.k0) { minV = Math.min(minV, v); maxV = Math.max(maxV, v); }
+      for (const v of tr.k1) { minV = Math.min(minV, v); maxV = Math.max(maxV, v); }
+    }
+    minV = Math.floor((minV - 0.1) * 5) / 5;
+    maxV = Math.ceil((maxV + 0.15) * 5) / 5;
   }
-  minV = Math.floor((minV - 0.1) * 5) / 5;
-  maxV = Math.ceil((maxV + 0.15) * 5) / 5;
 
   // Grade
   ctx.strokeStyle = theme.scopeGrid;
   ctx.lineWidth = 1;
   ctx.font = '11px "SF Mono", ui-monospace, monospace';
   ctx.fillStyle = theme.scopeLabel;
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.t + (ph * i) / 4;
-    const val = maxV - ((maxV - minV) * i) / 4;
-    ctx.beginPath();
-    ctx.moveTo(pad.l, y);
-    ctx.lineTo(pad.l + pw, y);
-    ctx.stroke();
-    ctx.fillText(`${val.toFixed(1)}V`, 4, y + 4);
+  if (isBitMode) {
+    [0, 1].forEach((b) => {
+      const y = pad.t + ph - ((b - minV) / (maxV - minV)) * ph;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, y);
+      ctx.lineTo(pad.l + pw, y);
+      ctx.stroke();
+      ctx.fillText(`Bit ${b}`, 6, y + 4);
+    });
+  } else {
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + (ph * i) / 4;
+      const val = maxV - ((maxV - minV) * i) / 4;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, y);
+      ctx.lineTo(pad.l + pw, y);
+      ctx.stroke();
+      ctx.fillText(`${val.toFixed(1)}V`, 4, y + 4);
+    }
   }
 
   const tArr = res.tGridNs;
@@ -1652,16 +1795,24 @@ function drawVoltageScope(res) {
   traces.forEach((tr, ti) => {
     const col = theme.traceColors[ti % theme.traceColors.length];
     legendItems.push(`<span><i class="leg-line" style="background:${col}"></i>${tr.label}</span>`);
+    const thresh = inferLogicThreshold(tr.k0, tr.k1);
+    const valAt = (v) => (isBitMode ? voltageToBit(v, thresh) : v);
 
     ctx.strokeStyle = col;
     ctx.lineWidth = tr.role === "output" ? 2.2 : 1.4;
     ctx.setLineDash([]);
     ctx.beginPath();
+    let prevY = null;
     tr.k0.forEach((v, i) => {
       const x = mapX(tArr[i]);
-      const y = mapY(v);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      const y = mapY(valAt(v));
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        if (isBitMode && prevY !== null && prevY !== y) ctx.lineTo(x, prevY);
+        ctx.lineTo(x, y);
+      }
+      prevY = y;
     });
     ctx.stroke();
 
@@ -1670,11 +1821,17 @@ function drawVoltageScope(res) {
       ctx.lineWidth = 1.7;
       ctx.setLineDash([5, 4]);
       ctx.beginPath();
+      let prevY1 = null;
       tr.k1.forEach((v, i) => {
         const x = mapX(tArr[i]);
-        const y = mapY(v);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        const y = mapY(valAt(v));
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          if (isBitMode && prevY1 !== null && prevY1 !== y) ctx.lineTo(x, prevY1);
+          ctx.lineTo(x, y);
+        }
+        prevY1 = y;
       });
       ctx.stroke();
       ctx.setLineDash([]);
@@ -1698,7 +1855,9 @@ function drawVoltageScope(res) {
   const traceNames = traces.map((t) => t.label).join(", ");
   el.canvasScopeV.setAttribute(
     "aria-label",
-    `Osciloscópio de tensões nodais de 0 a ${maxT} ns, faixa ${minV.toFixed(1)}V a ${maxV.toFixed(1)}V, sinais: ${traceNames || "nenhum"}.`
+    isBitMode
+      ? `Osciloscópio de bits lógicos (0/1) de 0 a ${maxT} ns, sinais: ${traceNames || "nenhum"}.`
+      : `Osciloscópio de tensões nodais de 0 a ${maxT} ns, faixa ${minV.toFixed(1)}V a ${maxV.toFixed(1)}V, sinais: ${traceNames || "nenhum"}.`
   );
 }
 
@@ -2008,7 +2167,11 @@ function loadTemplate(templateId) {
   if (!tpl) return;
 
   stopPlayback();
+  const prevMode = state.mode;
   state.mode = tpl.mode;
+  if (prevMode !== tpl.mode) {
+    setReadoutMode(tpl.mode === "high" ? "bits" : "volts");
+  }
   updateModeButtons();
   updateCanvasHelpText();
   state.circuit = JSON.parse(JSON.stringify({
@@ -2116,8 +2279,18 @@ async function init() {
     updateAnimationFrame();
   });
 
-  el.btnModeHigh.addEventListener("click", () => switchAbstractionMode("high"));
-  el.btnModeLow.addEventListener("click", () => switchAbstractionMode("low"));
+  el.btnModeHigh.addEventListener("click", () => {
+    setReadoutMode("bits");
+    switchAbstractionMode("high");
+  });
+  el.btnModeLow.addEventListener("click", () => {
+    setReadoutMode("volts");
+    switchAbstractionMode("low");
+  });
+  el.btnReadoutBits?.addEventListener("click", () => setReadoutMode("bits"));
+  el.btnReadoutVolts?.addEventListener("click", () => setReadoutMode("volts"));
+  el.btnGridClosed?.addEventListener("click", () => setGridMode("closed"));
+  el.btnGridDirect?.addEventListener("click", () => setGridMode("direct"));
 
   el.templateSelect.addEventListener("change", (e) => loadTemplate(e.target.value));
   el.chkCompareKeys.addEventListener("change", (e) => {

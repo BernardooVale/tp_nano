@@ -127,17 +127,17 @@ def test_all_templates():
             assert res["transistorsK1"]["x1"]["polarity"][0] == "n-FET"
             assert res["transistorsK1"]["x3"]["polarity"][0] == "p-FET"
 
-        # Verifica colapso de memória na SRAM 6T (Módulo 04)
-        if tpl["id"] == "tpl_low_sram_6t":
+        # Verifica colapso de memória na SRAM 6T (Módulo 04 e Apresentação v2 + Read-Assist)
+        if tpl["id"] in ("tpl_low_sram_6t", "tpl_low_sram_6t_v2"):
             t_grid = res["tGridNs"]
-            idx_hold = min(range(len(t_grid)), key=lambda i: abs(t_grid[i] - 12.0))
+            idx_hold = min(range(len(t_grid)), key=lambda i: abs(t_grid[i] - 11.0))
             idx_col = min(range(len(t_grid)), key=lambda i: abs(t_grid[i] - 28.0))
             q_hold = res["nodeVoltagesK0"]["pq"][idx_hold]
             qb_hold = res["nodeVoltagesK0"]["pqb"][idx_hold]
             q_col = res["nodeVoltagesK0"]["pq"][idx_col]
             qb_col = res["nodeVoltagesK0"]["pqb"][idx_col]
-            assert abs(q_hold - qb_hold) > 0.7, f"SRAM 6T falhou retenção em 12ns: Q={q_hold}, QB={qb_hold}"
-            assert abs(q_col - qb_col) < 0.25, f"SRAM 6T não colapsou em 28ns: Q={q_col}, QB={qb_col}"
+            assert abs(q_hold - qb_hold) > 0.7, f"{tpl['id']} falhou retenção/Read-Assist em 11ns: Q={q_hold}, QB={qb_hold}"
+            assert abs(q_col - qb_col) < 0.25, f"{tpl['id']} não colapsou em 28ns: Q={q_col}, QB={qb_col}"
             assert res["transistorsK0"]["xpu1"]["polarity"][idx_hold] == "p-FET"
             assert res["transistorsK0"]["xpu1"]["polarity"][idx_col] == "n-FET"
 
@@ -197,7 +197,7 @@ def test_http_server():
 
         with urllib.request.urlopen(f"{base}/api/templates") as r:
             tpls = json.loads(r.read().decode("utf-8"))
-            assert len(tpls["templates"]) == 8
+            assert len(tpls["templates"]) == 9
 
         first_tpl = tpls["templates"][0]
         req = urllib.request.Request(

@@ -65,6 +65,8 @@
 
   /* Canvas & Oscilloscope Tokens */
   --grid-dot: rgba(255, 255, 255, 0.13);
+  --grid-line-minor: rgba(255, 255, 255, 0.055);
+  --grid-line-major: rgba(255, 255, 255, 0.11);
   --scope-grid: rgba(255, 255, 255, 0.09);
   --scope-label: #a0a8b8;
   --scope-cursor: #f2f4f8;
@@ -135,6 +137,8 @@
     --signal-xray-border: rgba(123, 44, 191, 0.34);
 
     --grid-dot: rgba(29, 29, 31, 0.14);
+    --grid-line-minor: rgba(29, 29, 31, 0.065);
+    --grid-line-major: rgba(29, 29, 31, 0.13);
     --scope-grid: rgba(0, 0, 0, 0.09);
     --scope-label: #515662;
     --scope-cursor: #1d1d1f;
@@ -754,6 +758,16 @@ input:focus-visible {
   fill: var(--grid-dot);
 }
 
+.grid-minor-line {
+  stroke: var(--grid-line-minor);
+  stroke-width: 1;
+}
+
+.grid-major-line {
+  stroke: var(--grid-line-major);
+  stroke-width: 1.2;
+}
+
 .glass-pill,
 .glass-floating {
   background: var(--glass-bg);
@@ -781,10 +795,51 @@ input:focus-visible {
   border-radius: 999px;
   font-size: 12px;
   color: var(--text-main);
-  max-width: calc(100% - 148px);
+  max-width: calc(100% - 460px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.canvas-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+
+.seg-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+}
+
+.seg-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+
+.seg-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-elevated);
+}
+
+.seg-btn.active {
+  background: var(--accent-primary-fill);
+  color: var(--text-on-accent);
 }
 
 .zoom-controls {
