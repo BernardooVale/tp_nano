@@ -1506,18 +1506,38 @@ async function simulateCircuit() {
   el.simStatusBadge.textContent = "Compilando no ngspice...";
 
   try {
-    const resp = await fetch("/api/simulate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mode: state.mode,
-        compareKeys: state.compareKeys,
-        circuit: state.circuit,
-      }),
-    });
-    const data = await resp.json();
-    if (!resp.ok || !data.ok) {
-      throw new Error(data.error || "Falha ao simular circuito.");
+    let data = null;
+    if (window.location.protocol === "file:" && window.PRECOMPILED_DATA?.simulations) {
+      const tplId = el.templateSelect.value;
+      if (window.PRECOMPILED_DATA.simulations[tplId]) {
+        data = window.PRECOMPILED_DATA.simulations[tplId];
+      } else {
+        throw new Error("Modo offline (file://): apenas os circuitos pré-configurados têm simulação pré-compilada.");
+      }
+    } else {
+      try {
+        const resp = await fetch("/api/simulate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mode: state.mode,
+            compareKeys: state.compareKeys,
+            circuit: state.circuit,
+          }),
+        });
+        data = await resp.json();
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.error || "Falha ao simular circuito.");
+        }
+      } catch (fetchErr) {
+        const tplId = el.templateSelect.value;
+        if (window.PRECOMPILED_DATA?.simulations?.[tplId]) {
+          data = window.PRECOMPILED_DATA.simulations[tplId];
+          showToast("Servidor Python offline: usando dados pré-compilados do ngspice.", 3500);
+        } else {
+          throw fetchErr;
+        }
+      }
     }
 
     applySimulationResult(data, true);
@@ -2366,19 +2386,34 @@ async function init() {
 
   window.addEventListener("resize", () => drawOscilloscopes());
 
-  // Carrega definições de tuplas e templates do backend
+  // Carrega definições de tuplas e templates do backend (ou fallback pré-compilado offline)
   try {
-    const [tupResp, tplResp] = await Promise.all([fetch("/api/tuples"), fetch("/api/templates")]);
-    const tupData = await tupResp.json();
-    const tplData = await tplResp.json();
-    state.tuples = tupData.tuples || {};
-    state.templates = tplData.templates || [];
+    if (window.location.protocol === "file:" && window.PRECOMPILED_DATA) {
+      state.tuples = window.PRECOMPILED_DATA.tuples || {};
+      state.templates = window.PRECOMPILED_DATA.templates || [];
+    } else {
+      const [tupResp, tplResp] = await Promise.all([fetch("/api/tuples"), fetch("/api/templates")]);
+      const tupData = await tupResp.json();
+      const tplData = await tplResp.json();
+      state.tuples = tupData.tuples || {};
+      state.templates = tplData.templates || [];
+    }
     populateTemplateSelect();
     if (state.templates.length) {
       loadTemplate(state.templates[0].id);
     }
   } catch (err) {
-    showToast(`Erro ao conectar ao servidor: ${err.message}`);
+    if (window.PRECOMPILED_DATA) {
+      state.tuples = window.PRECOMPILED_DATA.tuples || {};
+      state.templates = window.PRECOMPILED_DATA.templates || [];
+      populateTemplateSelect();
+      if (state.templates.length) {
+        loadTemplate(state.templates[0].id);
+      }
+      showToast("Modo offline: carregado com dados pré-compilados do ngspice.", 3500);
+    } else {
+      showToast(`Erro ao conectar ao servidor: ${err.message}`);
+    }
   }
 }
 
