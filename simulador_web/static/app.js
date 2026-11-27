@@ -2,6 +2,60 @@
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+const SRAM_6T_DEF = {
+  id: "SRAM_6T",
+  name: "Célula SRAM 6T Polimórfica",
+  category: "Memória Segura 2D",
+  inputs: ["WL", "BL", "BLB"],
+  outputs: ["Q", "QB"],
+  core_transistors: 6,
+  total_transistors: 6,
+  sum_w: 9.0,
+  vdd: 1.0,
+  key0_fn: "Retenção",
+  key1_fn: "Colapso",
+  description:
+    "Célula SRAM 6T polimórfica BP SB-FET (VDD=1.0V fixo): em Key=0 retém com Read-Assist (WL=0.30V); em Key=1 inverte PU/PD e colapsa Q=QB.",
+  internal_schematic: {
+    width: 700,
+    height: 440,
+    subtitle: "Célula SRAM 6T Polimórfica 2D (PU=1µm, PD=2µm, PG=1.5µm, VDD=1.0V)",
+    nodes: [
+      { id: "vdd", label: "VDD (1.0V)", x: 350, y: 32, role: "rail" },
+      { id: "vss", label: "VSS (0.0V)", x: 350, y: 408, role: "rail" },
+      { id: "BL", label: "BL", x: 55, y: 220, role: "input" },
+      { id: "BLB", label: "BLB", x: 645, y: 220, role: "input" },
+      { id: "WL", label: "WL", x: 350, y: 85, role: "bias" },
+      { id: "Q", label: "Q", x: 240, y: 220, role: "output" },
+      { id: "QB", label: "QB", x: 460, y: 220, role: "output" },
+      { id: "g1_pu", label: "g1_PU", x: 140, y: 55, role: "bias" },
+      { id: "g2_pu", label: "g2_PU", x: 560, y: 55, role: "bias" },
+      { id: "g1_pd", label: "g1_PD", x: 140, y: 385, role: "bias" },
+      { id: "g2_pd", label: "g2_PD", x: 560, y: 385, role: "bias" },
+      { id: "g1_pg", label: "g1_PG", x: 55, y: 130, role: "bias" },
+      { id: "g2_pg", label: "g2_PG", x: 645, y: 130, role: "bias" },
+    ],
+    transistors: [
+      { id: "XPU1", label: "XPU1", w: 1.0, x: 240, y: 135, d: "Q", g: "QB", s: "vdd", g1: "g1_pu", g2: "g2_pu" },
+      { id: "XPD1", label: "XPD1", w: 2.0, x: 240, y: 305, d: "Q", g: "QB", s: "vss", g1: "g1_pd", g2: "g2_pd" },
+      { id: "XPU2", label: "XPU2", w: 1.0, x: 460, y: 135, d: "QB", g: "Q", s: "vdd", g1: "g1_pu", g2: "g2_pu" },
+      { id: "XPD2", label: "XPD2", w: 2.0, x: 460, y: 305, d: "QB", g: "Q", s: "vss", g1: "g1_pd", g2: "g2_pd" },
+      { id: "XPG1", label: "XPG1", w: 1.5, x: 130, y: 220, d: "Q", g: "WL", s: "BL", g1: "g1_pg", g2: "g2_pg" },
+      { id: "XPG2", label: "XPG2", w: 1.5, x: 570, y: 220, d: "QB", g: "WL", s: "BLB", g1: "g1_pg", g2: "g2_pg" },
+    ],
+    wires: [
+      ["vdd", "XPU1.s"], ["vdd", "XPU2.s"],
+      ["vss", "XPD1.s"], ["vss", "XPD2.s"],
+      ["XPU1.d", "Q"], ["XPD1.d", "Q"], ["XPG1.d", "Q"],
+      ["XPU2.d", "QB"], ["XPD2.d", "QB"], ["XPG2.d", "QB"],
+      ["BL", "XPG1.s"], ["BLB", "XPG2.s"],
+      ["WL", "XPG1.g"], ["WL", "XPG2.g"],
+      ["Q", "XPU2.g"], ["Q", "XPD2.g"],
+      ["QB", "XPU1.g"], ["QB", "XPD1.g"],
+    ],
+  },
+};
+
 const state = {
   mode: "high", // "high" | "low"
   tuples: {},
@@ -335,6 +389,8 @@ function getNodeBox(node) {
       const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
       return { w: 214, h: tdef.inputs.length >= 3 ? 136 : 118 };
     }
+    case "SRAM_6T":
+      return { w: 230, h: 152 };
     case "ARI_FET":
       return { w: 152, h: 108 };
     case "VDC":
@@ -374,6 +430,15 @@ function getNodePorts(node) {
       ports.push({ name: "Y", dir: "out", lx: w, ly: h / 2 - 2, label: "Y" });
       return ports;
     }
+    case "SRAM_6T":
+      return [
+        { name: "WL", dir: "in", lx: 0, ly: 42, label: "WL" },
+        { name: "BL", dir: "in", lx: 0, ly: 78, label: "BL" },
+        { name: "BLB", dir: "in", lx: 0, ly: 114, label: "BLB" },
+        { name: "K", dir: "in", lx: 34, ly: h, label: "Key" },
+        { name: "Q", dir: "out", lx: w, ly: 56, label: "Q" },
+        { name: "QB", dir: "out", lx: w, ly: 102, label: "QB" },
+      ];
     case "ARI_FET":
       return [
         { name: "d", dir: "bi", lx: w / 2, ly: 0, label: "d" },
@@ -465,6 +530,7 @@ function renderPalette() {
   const items = state.mode === "high"
     ? [
         { type: "POLY_GATE", title: "Porta Lógica Polimórfica", sub: "Configurável entre as 7 tuplas BP-FET" },
+        { type: "SRAM_6T", title: "Célula SRAM 6T Polimórfica", sub: "Memória 2D BP SB-FET (6T, VDD=1.0V)" },
         { type: "INPUT", title: "Entrada Digital (A, B, C...)", sub: "Fonte PWL automática ou customizada" },
         { type: "KEY", title: "Chave Polimórfica (Key)", sub: "Alterna polaridade Key=0 ↔ Key=1" },
         { type: "OUTPUT", title: "Saída / Ponta de Prova", sub: "Extrai tabela-verdade e formas de onda" },
@@ -507,6 +573,7 @@ function addComponentToCenter(type) {
     INPUT: String.fromCharCode(64 + Math.min(countOfType, 26)),
     KEY: `K${countOfType - 1}`,
     POLY_GATE: `Porta ${countOfType}`,
+    SRAM_6T: `SRAM 6T ${countOfType}`,
     OUTPUT: `Out${countOfType}`,
     ARI_FET: `X${countOfType}`,
     VDC: `V${countOfType}`,
@@ -521,6 +588,7 @@ function addComponentToCenter(type) {
     INPUT: { pattern: "auto" },
     KEY: { value: 0 },
     POLY_GATE: { tupleId: "NAND_NOR", localKey: 0 },
+    SRAM_6T: { localKey: 0, vg2pu: -0.2 },
     OUTPUT: {},
     ARI_FET: { w: 1.0 },
     VDC: { voltage: 0.8, keyDependent: false, vKey0: 0.8, vKey1: 0.0, isSupply: false },
@@ -625,14 +693,56 @@ function renderInspector() {
     xrayBtn.textContent = "Abrir Raio-X (Transistores ARI Internos)";
     xrayBtn.addEventListener("click", () => openXrayModal(node.id));
     wrap.appendChild(xrayBtn);
+  } else if (node.type === "SRAM_6T") {
+    const localKey = Number(node.props?.localKey ?? 0);
+    const vg2pu = Number(node.props?.vg2pu ?? -0.2);
+
+    const keyGroup = document.createElement("div");
+    keyGroup.className = "field-group";
+    keyGroup.innerHTML = `
+      <label for="inpLocalKey">Chave Local (quando pino Key está livre)</label>
+      <select id="inpLocalKey">
+        <option value="0" ${localKey === 0 ? "selected" : ""}>Key = 0 → Retenção (PU=p, PD=n)</option>
+        <option value="1" ${localKey === 1 ? "selected" : ""}>Key = 1 → Colapso (PU=n, PD=p)</option>
+      </select>
+    `;
+    wrap.appendChild(keyGroup);
+
+    const vgGroup = document.createElement("div");
+    vgGroup.className = "field-group";
+    vgGroup.innerHTML = `<label for="inpVg2Pu">Sintonia Vg2_PU em Key=0 (V)</label><input type="number" step="0.05" id="inpVg2Pu" value="${vg2pu}" />`;
+    wrap.appendChild(vgGroup);
+
+    const infoBox = document.createElement("div");
+    infoBox.className = "tuple-info-box";
+    infoBox.innerHTML = `
+      <strong>${SRAM_6T_DEF.category}</strong> · 6T (VDD = 1.0 V fixo) · ΣW = 9.0 µm<br/>
+      <strong>Key=0:</strong> Retenção + Read-Assist (WL=0.30V)<br/>
+      <strong>Key=1:</strong> Auto-Destruição &amp; Bloqueio (Q=QB)<br/>
+      <span>${SRAM_6T_DEF.description}</span>
+    `;
+    wrap.appendChild(infoBox);
+
+    const xrayBtn = document.createElement("button");
+    xrayBtn.type = "button";
+    xrayBtn.className = "xray-cta-btn";
+    xrayBtn.textContent = "Abrir Raio-X (6 Transistores ARI Internos)";
+    xrayBtn.addEventListener("click", () => openXrayModal(node.id));
+    wrap.appendChild(xrayBtn);
   } else if (node.type === "INPUT") {
     const patGroup = document.createElement("div");
     patGroup.className = "field-group";
     patGroup.innerHTML = `
-      <label for="inpPattern">Padrão de Bits ("auto" ou ex: "0110")</label>
+      <label for="inpPattern">Padrão de Bits ("auto", "pwl" ou ex: "0110")</label>
       <input type="text" id="inpPattern" value="${node.props?.pattern || "auto"}" />
     `;
     wrap.appendChild(patGroup);
+    if (node.props?.pwl !== undefined) {
+      const pwlGroup = document.createElement("div");
+      pwlGroup.className = "field-group";
+      pwlGroup.innerHTML = `<label for="inpPwl">Pontos PWL (tempo tensão ...)</label><input type="text" id="inpPwl" value="${node.props.pwl}" />`;
+      wrap.appendChild(pwlGroup);
+    }
   } else if (node.type === "KEY") {
     const val = Number(node.props?.value ?? 0);
     const kGroup = document.createElement("div");
@@ -697,7 +807,7 @@ function renderInspector() {
   }
 
   const res = state.simResult;
-  if (res && ["INPUT", "OUTPUT", "PROBE", "POLY_GATE"].includes(node.type)) {
+  if (res && ["INPUT", "OUTPUT", "PROBE", "POLY_GATE", "SRAM_6T"].includes(node.type)) {
     const idx = getCurrentFrameIndex();
     const useK1 = res.compareKeys && state.activeKeyView === 1;
     const nodeVolts = useK1 ? res.nodeVoltagesK1 : res.nodeVoltagesK0;
@@ -742,6 +852,10 @@ function renderInspector() {
   document.getElementById("inpLocalKey")?.addEventListener("change", (e) => {
     node.props.localKey = Number(e.target.value);
     renderCircuitGraph();
+  });
+
+  document.getElementById("inpVg2Pu")?.addEventListener("input", (e) => {
+    node.props.vg2pu = parseFloat(e.target.value);
   });
 
   document.getElementById("inpPattern")?.addEventListener("input", (e) => {
@@ -1087,6 +1201,45 @@ function renderCircuitGraph() {
       refs.vTxt = vTxt;
       refs.iTxt = iTxt;
       refs.tdef = tdef;
+    } else if (node.type === "SRAM_6T") {
+      const hdr = svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 26, rx: 10 });
+      g.appendChild(hdr);
+      g.appendChild(
+        svgEl("text", { x: 10, y: 18, fill: theme.textMain, "font-size": 12, "font-weight": 700 }, node.label || "SRAM 6T")
+      );
+
+      const xrayBtn = svgEl("g", { class: "xray-mini-btn", transform: `translate(${w - 66}, 3)` });
+      xrayBtn.appendChild(svgEl("rect", { x: -2, y: -2, width: 64, height: 24, fill: "transparent" }));
+      xrayBtn.appendChild(svgEl("rect", { width: 60, height: 20, rx: 6, fill: theme.xrayBg, stroke: theme.xrayBorder, "stroke-width": 1 }));
+      xrayBtn.appendChild(svgEl("text", { x: 30, y: 14, "text-anchor": "middle", fill: theme.xrayText, "font-size": 11, "font-weight": 700 }, "Raio-X"));
+      xrayBtn.addEventListener("mousedown", (ev) => ev.stopPropagation());
+      xrayBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        openXrayModal(node.id);
+      });
+      g.appendChild(xrayBtn);
+
+      g.appendChild(
+        svgEl("text", { x: w / 2, y: 42, "text-anchor": "middle", fill: theme.textMuted, "font-size": 11, "font-weight": 600 }, "BP SB-FET 2D · 6T · 1.0V")
+      );
+
+      const modePill = svgEl("rect", { x: 36, y: 52, width: w - 72, height: 24, rx: 6, fill: theme.nfetBg, stroke: theme.nfetBorder });
+      const modeTxt = svgEl("text", { x: w / 2, y: 68, "text-anchor": "middle", fill: theme.nfetText, "font-size": 11, "font-weight": 700 }, "Retenção · K=0");
+      g.appendChild(modePill);
+      g.appendChild(modeTxt);
+
+      const iTxt = svgEl("text", { x: 64, y: h - 10, "text-anchor": "start", fill: theme.textMuted, "font-size": 11, "font-family": "var(--font-mono)" }, "— µA");
+      const vDot = svgEl("circle", { cx: w - 78, cy: h - 14, r: 4, fill: theme.wireIdle });
+      const vTxt = svgEl("text", { x: w - 10, y: h - 10, "text-anchor": "end", fill: theme.textMain, "font-size": 11, "font-weight": 600, "font-family": "var(--font-mono)" }, "Q —");
+      g.appendChild(iTxt);
+      g.appendChild(vDot);
+      g.appendChild(vTxt);
+
+      refs.modePill = modePill;
+      refs.modeTxt = modeTxt;
+      refs.vDot = vDot;
+      refs.vTxt = vTxt;
+      refs.iTxt = iTxt;
     } else if (node.type === "INPUT" || node.type === "OUTPUT" || node.type === "PROBE") {
       const badgeColor = node.type === "INPUT" ? theme.accentText : theme.high;
       g.appendChild(svgEl("rect", { class: "node-header-bar", x: 1, y: 1, width: w - 2, height: 20, rx: 9 }));
@@ -1210,7 +1363,7 @@ function renderCircuitGraph() {
         tx = p.lx + 9;
         ty = h - 7;
       }
-      if (node.type === "POLY_GATE" || node.type === "ARI_FET") {
+      if (node.type === "POLY_GATE" || node.type === "SRAM_6T" || node.type === "ARI_FET") {
         g.appendChild(svgEl("text", { x: tx, y: ty, "text-anchor": anchor, fill: theme.textMuted, "font-size": 11, "font-weight": 600, "pointer-events": "none" }, p.label));
       }
 
@@ -1246,7 +1399,7 @@ function renderCircuitGraph() {
 
     g.addEventListener("dblclick", (ev) => {
       ev.stopPropagation();
-      if (node.type === "POLY_GATE") openXrayModal(node.id);
+      if (node.type === "POLY_GATE" || node.type === "SRAM_6T") openXrayModal(node.id);
     });
 
     el.nodesLayer.appendChild(g);
@@ -1614,7 +1767,7 @@ function updateAnimationFrame() {
     const ed = wref.edge;
     let v = null;
     if (res.mode === "high") {
-      v = nodeVolts?.[ed.from]?.[idx] ?? null;
+      v = nodeVolts?.[`${ed.from}:${ed.fromPort}`]?.[idx] ?? nodeVolts?.[ed.from]?.[idx] ?? null;
     } else {
       v = nodeVolts?.[`${ed.from}:${ed.fromPort}`]?.[idx] ?? nodeVolts?.[ed.from]?.[idx] ?? nodeVolts?.[ed.to]?.[idx] ?? null;
     }
@@ -1649,6 +1802,24 @@ function updateAnimationFrame() {
         const thresh = inferLogicThreshold(res.nodeVoltagesK0?.[nid], res.nodeVoltagesK1?.[nid]);
         refs.vTxt.textContent = formatNodeReadout(vOut, thresh);
         refs.vDot?.setAttribute("fill", voltageToColor(vOut));
+      }
+      if (iGate !== undefined) refs.iTxt.textContent = `|I|=${iGate.toFixed(2)} µA`;
+    } else if (refs.type === "SRAM_6T") {
+      const vQ = nodeVolts?.[`${nid}:Q`]?.[idx] ?? nodeVolts?.[nid]?.[idx];
+      const vQB = nodeVolts?.[`${nid}:QB`]?.[idx];
+      const iGate = gateCurrs?.[nid]?.[idx];
+      const xray = res.gateXray?.[nid];
+      const trPu = (useK1 ? xray?.transistorsK1 : xray?.transistorsK0)?.XPU1;
+      const isCollapsed = trPu ? trPu.polarity[idx] === "n-FET" : useK1;
+      refs.modeTxt.textContent = isCollapsed ? "Colapso · Key=1" : "Retenção · Key=0";
+      refs.modePill.setAttribute("fill", isCollapsed ? theme.dangerBg : theme.nfetBg);
+      refs.modePill.setAttribute("stroke", isCollapsed ? theme.dangerBorder : theme.nfetBorder);
+      refs.modeTxt.setAttribute("fill", isCollapsed ? theme.dangerText : theme.nfetText);
+      if (vQ !== undefined && vQB !== undefined) {
+        refs.vTxt.textContent = state.readoutMode === "bits"
+          ? `Q=${vQ > 0.5 ? 1 : 0} QB=${vQB > 0.5 ? 1 : 0}`
+          : `${vQ.toFixed(2)}/${vQB.toFixed(2)}V`;
+        refs.vDot?.setAttribute("fill", voltageToColor(vQ));
       }
       if (iGate !== undefined) refs.iTxt.textContent = `|I|=${iGate.toFixed(2)} µA`;
     } else if (refs.type === "INPUT" || refs.type === "OUTPUT" || refs.type === "PROBE") {
@@ -2039,11 +2210,11 @@ function renderTruthAndMetrics(res) {
 // ---------------------------------------------------------------------------
 
 function openXrayModal(gateId) {
-  const node = state.circuit.nodes.find((n) => n.id === gateId && n.type === "POLY_GATE");
+  const node = state.circuit.nodes.find((n) => n.id === gateId && (n.type === "POLY_GATE" || n.type === "SRAM_6T"));
   if (!node) return;
   state.xrayGateId = gateId;
-  const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
-  el.xrayTitle.textContent = `Raio-X: ${node.label || "Porta"} — ${tdef.name}`;
+  const tdef = node.type === "SRAM_6T" ? SRAM_6T_DEF : getTupleDef(node.props?.tupleId || "NAND_NOR");
+  el.xrayTitle.textContent = `Raio-X: ${node.label || "Bloco"} — ${tdef.name}`;
   el.xraySubtitle.textContent = tdef.internal_schematic?.subtitle || tdef.description;
   el.xrayModal.classList.remove("hidden");
   renderXrayFrame();
@@ -2061,7 +2232,7 @@ function renderXrayFrame() {
   const node = state.circuit.nodes.find((n) => n.id === gateId);
   if (!node) return;
 
-  const tdef = getTupleDef(node.props?.tupleId || "NAND_NOR");
+  const tdef = node.type === "SRAM_6T" ? SRAM_6T_DEF : getTupleDef(node.props?.tupleId || "NAND_NOR");
   const sch = tdef.internal_schematic;
   if (!sch) return;
 

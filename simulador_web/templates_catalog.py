@@ -405,6 +405,65 @@ TUPLE_DEFINITIONS = {
 }
 
 
+SRAM_6T_DEFINITION = {
+    "id": "SRAM_6T",
+    "name": "Célula SRAM 6T Polimórfica",
+    "category": "Memória Segura 2D",
+    "inputs": ["WL", "BL", "BLB"],
+    "outputs": ["Q", "QB"],
+    "core_transistors": 6,
+    "total_transistors": 6,
+    "sum_w": 9.0,
+    "vdd": 1.0,
+    "vin": 1.0,
+    "dual_rail": False,
+    "key0_fn": "Retenção",
+    "key1_fn": "Colapso",
+    "description": (
+        "Célula SRAM 6T polimórfica BP SB-FET (VDD=1.0V fixo): em Key=0 opera como memória CMOS biestável "
+        "(PU=p-FET, PD=n-FET) com Read-Assist (WL=0.30V); em Key=1 inverte PU/PD e colapsa Q=QB."
+    ),
+    "internal_schematic": {
+        "width": 700,
+        "height": 440,
+        "subtitle": "Célula SRAM 6T Polimórfica 2D (PU=1µm, PD=2µm, PG=1.5µm, VDD=1.0V)",
+        "nodes": [
+            {"id": "vdd", "label": "VDD (1.0V)", "x": 350, "y": 32, "role": "rail"},
+            {"id": "vss", "label": "VSS (0.0V)", "x": 350, "y": 408, "role": "rail"},
+            {"id": "BL", "label": "BL", "x": 55, "y": 220, "role": "input"},
+            {"id": "BLB", "label": "BLB", "x": 645, "y": 220, "role": "input"},
+            {"id": "WL", "label": "WL", "x": 350, "y": 85, "role": "bias"},
+            {"id": "Q", "label": "Q", "x": 240, "y": 220, "role": "output"},
+            {"id": "QB", "label": "QB", "x": 460, "y": 220, "role": "output"},
+            {"id": "g1_pu", "label": "g1_PU", "x": 140, "y": 55, "role": "bias"},
+            {"id": "g2_pu", "label": "g2_PU", "x": 560, "y": 55, "role": "bias"},
+            {"id": "g1_pd", "label": "g1_PD", "x": 140, "y": 385, "role": "bias"},
+            {"id": "g2_pd", "label": "g2_PD", "x": 560, "y": 385, "role": "bias"},
+            {"id": "g1_pg", "label": "g1_PG", "x": 55, "y": 130, "role": "bias"},
+            {"id": "g2_pg", "label": "g2_PG", "x": 645, "y": 130, "role": "bias"},
+        ],
+        "transistors": [
+            {"id": "XPU1", "label": "XPU1", "w": 1.0, "x": 240, "y": 135, "d": "Q", "g": "QB", "s": "vdd", "g1": "g1_pu", "g2": "g2_pu"},
+            {"id": "XPD1", "label": "XPD1", "w": 2.0, "x": 240, "y": 305, "d": "Q", "g": "QB", "s": "vss", "g1": "g1_pd", "g2": "g2_pd"},
+            {"id": "XPU2", "label": "XPU2", "w": 1.0, "x": 460, "y": 135, "d": "QB", "g": "Q", "s": "vdd", "g1": "g1_pu", "g2": "g2_pu"},
+            {"id": "XPD2", "label": "XPD2", "w": 2.0, "x": 460, "y": 305, "d": "QB", "g": "Q", "s": "vss", "g1": "g1_pd", "g2": "g2_pd"},
+            {"id": "XPG1", "label": "XPG1", "w": 1.5, "x": 130, "y": 220, "d": "Q", "g": "WL", "s": "BL", "g1": "g1_pg", "g2": "g2_pg"},
+            {"id": "XPG2", "label": "XPG2", "w": 1.5, "x": 570, "y": 220, "d": "QB", "g": "WL", "s": "BLB", "g1": "g1_pg", "g2": "g2_pg"},
+        ],
+        "wires": [
+            ["vdd", "XPU1.s"], ["vdd", "XPU2.s"],
+            ["vss", "XPD1.s"], ["vss", "XPD2.s"],
+            ["XPU1.d", "Q"], ["XPD1.d", "Q"], ["XPG1.d", "Q"],
+            ["XPU2.d", "QB"], ["XPD2.d", "QB"], ["XPG2.d", "QB"],
+            ["BL", "XPG1.s"], ["BLB", "XPG2.s"],
+            ["WL", "XPG1.g"], ["WL", "XPG2.g"],
+            ["Q", "XPU2.g"], ["Q", "XPD2.g"],
+            ["QB", "XPU1.g"], ["QB", "XPD1.g"],
+        ],
+    },
+}
+
+
 CIRCUIT_TEMPLATES = [
     {
         "id": "tpl_single_tuple_2in",
@@ -541,6 +600,81 @@ CIRCUIT_TEMPLATES = [
             {"id": "e8", "from": "g2", "fromPort": "Y", "to": "g3", "toPort": "B"},
             {"id": "e9", "from": "key_0", "fromPort": "out", "to": "g3", "toPort": "K"},
             {"id": "e10", "from": "g3", "fromPort": "Y", "to": "out_1", "toPort": "in"},
+        ],
+    },
+    {
+        "id": "tpl_high_sram_6t_v2",
+        "name": "SRAM 6T Polimórfica 2D — Apresentação v2 (Alto Nível)",
+        "mode": "high",
+        "description": (
+            "Representação em alto nível da célula SRAM 6T (BP SB-FET 2D) da apresentação v2: "
+            "Escrita (0–6ns), Read-Assist WL=0.30V (8–12ns), Retenção (12–15ns), "
+            "Auto-Destruição Key=1 (15–20ns) e Bloqueio de Escrita (20–30ns)."
+        ),
+        "durationNs": 30.0,
+        "nodes": [
+            {
+                "id": "in_wl",
+                "type": "INPUT",
+                "label": "WL (Read-Assist)",
+                "x": 60,
+                "y": 80,
+                "props": {
+                    "pattern": "pwl",
+                    "pwl": "0n 0 1.9n 0 2n 1.0 6n 1.0 6.1n 0 7.9n 0 8n 0.30 12n 0.30 12.1n 0 19.9n 0 20n 1.0 24n 1.0 24.1n 0 30n 0",
+                },
+            },
+            {
+                "id": "in_bl",
+                "type": "INPUT",
+                "label": "BL",
+                "x": 60,
+                "y": 190,
+                "props": {
+                    "pattern": "pwl",
+                    "pwl": "0n 1.0 19.9n 1.0 20n 0.0 24n 0.0 24.1n 1.0 30n 1.0",
+                },
+            },
+            {
+                "id": "in_blb",
+                "type": "INPUT",
+                "label": "BLB",
+                "x": 60,
+                "y": 300,
+                "props": {
+                    "pattern": "pwl",
+                    "pwl": "0n 0.0 7.9n 0.0 8n 1.0 12n 1.0 12.1n 0.0 19.9n 0.0 20n 1.0 24n 1.0 24.1n 0.0 30n 0.0",
+                },
+            },
+            {
+                "id": "key_0",
+                "type": "KEY",
+                "label": "Key (0→1 em 15ns)",
+                "x": 60,
+                "y": 415,
+                "props": {
+                    "value": 0,
+                    "pwl": "0n 0 14.9n 0 15.1n 1 30n 1",
+                },
+            },
+            {
+                "id": "sram_1",
+                "type": "SRAM_6T",
+                "label": "SRAM 6T (2D)",
+                "x": 370,
+                "y": 165,
+                "props": {"localKey": 0, "vg2pu": -0.2},
+            },
+            {"id": "out_q", "type": "OUTPUT", "label": "Q", "x": 720, "y": 150, "props": {}},
+            {"id": "out_qb", "type": "OUTPUT", "label": "QB", "x": 720, "y": 270, "props": {}},
+        ],
+        "edges": [
+            {"id": "e1", "from": "in_wl", "fromPort": "out", "to": "sram_1", "toPort": "WL"},
+            {"id": "e2", "from": "in_bl", "fromPort": "out", "to": "sram_1", "toPort": "BL"},
+            {"id": "e3", "from": "in_blb", "fromPort": "out", "to": "sram_1", "toPort": "BLB"},
+            {"id": "e4", "from": "key_0", "fromPort": "out", "to": "sram_1", "toPort": "K"},
+            {"id": "e5", "from": "sram_1", "fromPort": "Q", "to": "out_q", "toPort": "in"},
+            {"id": "e6", "from": "sram_1", "fromPort": "QB", "to": "out_qb", "toPort": "in"},
         ],
     },
     {

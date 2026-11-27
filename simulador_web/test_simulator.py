@@ -141,6 +141,21 @@ def test_all_templates():
             assert res["transistorsK0"]["xpu1"]["polarity"][idx_hold] == "p-FET"
             assert res["transistorsK0"]["xpu1"]["polarity"][idx_col] == "n-FET"
 
+        # Verifica representação em alto nível da SRAM 6T (Apresentação v2)
+        if tpl["id"] == "tpl_high_sram_6t_v2":
+            t_grid = res["tGridNs"]
+            idx_hold = min(range(len(t_grid)), key=lambda i: abs(t_grid[i] - 11.0))
+            idx_col = min(range(len(t_grid)), key=lambda i: abs(t_grid[i] - 28.0))
+            q_hold = res["nodeVoltagesK0"]["out_q"][idx_hold]
+            qb_hold = res["nodeVoltagesK0"]["out_qb"][idx_hold]
+            q_col = res["nodeVoltagesK0"]["out_q"][idx_col]
+            qb_col = res["nodeVoltagesK0"]["out_qb"][idx_col]
+            assert abs(q_hold - qb_hold) > 0.7, f"{tpl['id']} falhou retenção/Read-Assist em 11ns: Q={q_hold}, QB={qb_hold}"
+            assert abs(q_col - qb_col) < 0.25, f"{tpl['id']} não colapsou em 28ns: Q={q_col}, QB={qb_col}"
+            xray = res["gateXray"]["sram_1"]
+            assert xray["transistorsK0"]["XPU1"]["polarity"][idx_hold] == "p-FET"
+            assert xray["transistorsK0"]["XPU1"]["polarity"][idx_col] == "n-FET"
+
         print(f"  OK {tpl['id']:22s} ({tpl['mode']:4s}) | {res['elapsedMs']} ms")
 
 
@@ -197,7 +212,7 @@ def test_http_server():
 
         with urllib.request.urlopen(f"{base}/api/templates") as r:
             tpls = json.loads(r.read().decode("utf-8"))
-            assert len(tpls["templates"]) == 9
+            assert len(tpls["templates"]) == 10
 
         first_tpl = tpls["templates"][0]
         req = urllib.request.Request(

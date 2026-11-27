@@ -16,7 +16,7 @@ from bisect import bisect_right
 from collections import defaultdict, deque
 from typing import Any
 
-from templates_catalog import TUPLE_DEFINITIONS
+from templates_catalog import SRAM_6T_DEFINITION, TUPLE_DEFINITIONS
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 NGSPICE_EXE = os.path.join(ROOT_DIR, "ngspice-47_64", "Spice64", "bin", "ngspice_con.exe")
@@ -383,8 +383,376 @@ def _compute_gate_delays_and_windows(
     return delays, w01, w10
 
 
+def _compile_high_level_sram(circuit: dict[str, Any], compare_keys: bool) -> dict[str, Any]:
+    """Compila e simula bloco(s) de alto nível SRAM_6T no ngspice-47."""
+    nodes = circuit.get("nodes", [])
+    edges = circuit.get("edges", [])
+    node_map = {n["id"]: n for n in nodes}
+
+    sram_nodes = [n for n in nodes if n.get("type") == "SRAM_6T"]
+    input_nodes = sorted(
+        [n for n in nodes if n.get("type") == "INPUT"],
+        key=lambda n: (n.get("y", 0), n.get("x", 0)),
+    )
+    output_nodes = sorted(
+        [n for n in nodes if n.get("type") == "OUTPUT"],
+        key=lambda n: (n.get("y", 0), n.get("x", 0)),
+    )
+
+    incoming: dict[tuple[str, str], tuple[str, str]] = {}
+    for edge in edges:
+        src = edge.get("from")
+        dst = edge.get("to")
+        if src in node_map and dst in node_map:
+            incoming[(dst, edge.get("toPort", ""))] = (src, edge.get("fromPort", ""))
+
+    duration_ns = float(circuit.get("durationNs", 30.0))
+    if duration_ns <= 0:
+        duration_ns = 30.0
+
+    lines: list[str] = [
+        "* Netlist gerado automaticamente pelo BP-FET Studio (Alto Nivel SRAM 6T Polimorfica)",
+        f'.include "{_norm_ngspice_path(LIB_PATH)}"',
+        "",
+        "Vss vss 0 0.0",
+        "Vdd vdd 0 1.0",
+        "Vg1pg g1_pg 0 1.8",
+        "Vg2pg g2_pg 0 2.1",
+        "",
+    ]
+
+    # Fontes para entradas digitais (WL, BL, BLB)
+    input_nets: dict[str, str] = {}
+    input_meta: list[dict[str, Any]] = []
+    wr_nodes: list[str] = []
+
+    for idx, inode in enumerate(input_nodes):
+        iid = inode["id"]
+        siid = _safe_id(iid)
+        props = inode.get("props", {})
+        pwl_str = str(props.get("pwl", "")).strip()
+        net_name = f"in_{siid}"
+        if pwl_str:
+            lines.append(f"V_{siid} {net_name} 0 pwl({pwl_str})")
+        else:
+            pat = str(props.get("pattern", "0")).strip()
+            bits = [1 if ch == "1" else 0 for ch in pat if ch in ("0", "1")] or [0]
+            step_ns = duration_ns / max(len(bits), 1)
+            lines.append(f"V_{siid} {net_name} 0 pwl({_format_pwl_points(bits, 1.0, 0.0, step_ns)})")
+        input_nets[iid] = net_name
+        wr_nodes.append(net_name)
+        input_meta.append({"id": iid, "label": inode.get("label", f"In{idx+1}"), "net": net_name})
+
+    sram_info: list[dict[str, Any]] = []
+    alter_k1_lines: list[str] = []
+
+    for snode in sram_nodes:
+        sid = snode["id"]
+        ssid = _safe_id(sid)
+        props = snode.get("props", {})
+        vg2pu = float(props.get("vg2pu", -0.2))
+
+        def _resolve_in_net(port_name: str, default_v: float = 0.0) -> str:
+            src = incoming.get((sid, port_name))
+            if src and src[0] in input_nets:
+                return input_nets[src[0]]
+            dnet = f"{ssid}_def_{port_name.lower()}"
+            lines.append(f"V_{ssid}_{port_name.lower()} {dnet} 0 {default_v}")
+            return dnet
+
+        wl_net = _resolve_in_net("WL", 0.0)
+        bl_net = _resolve_in_net("BL", 1.0)
+        blb_net = _resolve_in_net("BLB", 0.0)
+
+        src_k = incoming.get((sid, "K"))
+        key_node = node_map[src_k[0]] if (src_k and src_k[0] in node_map and node_map[src_k[0]].get("type") == "KEY") else None
+        k_pwl = str(key_node.get("props", {}).get("pwl", "")).strip() if key_node else ""
+        nominal_k = (
+            (1 if int(key_node.get("props", {}).get("value", 0)) == 1 else 0)
+            if key_node
+            else (1 if int(props.get("localKey", 0)) == 1 else 0)
+        )
+
+        k_net = f"{ssid}_k"
+        k_static_param = f"p_{ssid}_k_force"
+        if k_pwl:
+            k_pwl_net = f"{ssid}_kpwl"
+            lines.append(f"V_{ssid}_kpwl {k_pwl_net} 0 pwl({k_pwl})")
+            lines.append(f".param {k_static_param} = -1")
+            lines.append(f"B_{ssid}_k {k_net} 0 V = ({k_static_param} < 0 ? v({k_pwl_net}) : {k_static_param})")
+            if compare_keys:
+                alter_k1_lines.append(f"alterparam {k_static_param} = 1")
+        else:
+            k0_val = 0 if compare_keys else nominal_k
+            lines.append(f".param {k_static_param} = {k0_val}")
+            lines.append(f"V_{ssid}_k {k_net} 0 {{{k_static_param}}}")
+            if compare_keys and k0_val != 1:
+                alter_k1_lines.append(f"alterparam {k_static_param} = 1")
+
+        g1_pu = f"{ssid}_g1pu"
+        g2_pu = f"{ssid}_g2pu"
+        g1_pd = f"{ssid}_g1pd"
+        g2_pd = f"{ssid}_g2pd"
+        q_net = f"{ssid}_q"
+        qb_net = f"{ssid}_qb"
+
+        lines.extend([
+            f"B_{ssid}_g1pu {g1_pu} 0 V = -0.5 + 2.3 * v({k_net})",
+            f"B_{ssid}_g2pu {g2_pu} 0 V = {vg2pu} + (2.1 - ({vg2pu})) * v({k_net})",
+            f"B_{ssid}_g1pd {g1_pd} 0 V = 0.8 - 2.3 * v({k_net})",
+            f"B_{ssid}_g2pd {g2_pd} 0 V = 1.1 - 2.6 * v({k_net})",
+            f"X_{ssid}_PU1 {q_net}  {qb_net} vdd   {g1_pu} {g2_pu} ARI W=1.0",
+            f"X_{ssid}_PD1 {q_net}  {qb_net} vss   {g1_pd} {g2_pd} ARI W=2.0",
+            f"X_{ssid}_PU2 {qb_net} {q_net}  vdd   {g1_pu} {g2_pu} ARI W=1.0",
+            f"X_{ssid}_PD2 {qb_net} {q_net}  vss   {g1_pd} {g2_pd} ARI W=2.0",
+            f"X_{ssid}_PG1 {q_net}  {wl_net} {bl_net}  g1_pg g2_pg ARI W=1.5",
+            f"X_{ssid}_PG2 {qb_net} {wl_net} {blb_net} g1_pg g2_pg ARI W=1.5",
+            f"C_{ssid}_q  {q_net}  0 1f",
+            f"C_{ssid}_qb {qb_net} 0 1f",
+            "",
+        ])
+        wr_nodes.extend([q_net, qb_net, wl_net, bl_net, blb_net, g1_pu, g2_pu, g1_pd, g2_pd, k_net])
+        sram_info.append({
+            "id": sid,
+            "ssid": ssid,
+            "label": snode.get("label", "SRAM 6T"),
+            "q_net": q_net,
+            "qb_net": qb_net,
+            "wl_net": wl_net,
+            "bl_net": bl_net,
+            "blb_net": blb_net,
+            "g1_pu": g1_pu,
+            "g2_pu": g2_pu,
+            "g1_pd": g1_pd,
+            "g2_pd": g2_pd,
+            "k_net": k_net,
+            "k_pwl": bool(k_pwl),
+        })
+
+    unique_v = list(dict.fromkeys(wr_nodes))
+    wr_items = [f"v({vn})" for vn in unique_v] + ["i(Vdd)"]
+    wr_line_k0 = "wrdata run_k0.dat " + " ".join(wr_items)
+    wr_line_k1 = "wrdata run_k1.dat " + " ".join(wr_items)
+
+    lines.extend([
+        ".control",
+        "set wr_vecnames",
+        "set wr_singlescale",
+        f"tran 20p {duration_ns:.2f}n",
+        wr_line_k0,
+    ])
+    run_dual = compare_keys and len(alter_k1_lines) > 0
+    if run_dual:
+        lines.extend([
+            "",
+            "* Segunda simulacao em Key = 1",
+            *alter_k1_lines,
+            "reset",
+            f"tran 20p {duration_ns:.2f}n",
+            wr_line_k1,
+        ])
+    lines.extend([".endc", ".end"])
+    netlist_str = "\n".join(lines)
+
+    t0_wall = time.perf_counter()
+    work_dir, _ = _run_ngspice_script(netlist_str)
+    try:
+        cols0, data0 = _parse_wrdata_file(os.path.join(work_dir, "run_k0.dat"))
+        if run_dual:
+            cols1, data1 = _parse_wrdata_file(os.path.join(work_dir, "run_k1.dat"))
+        else:
+            cols1, data1 = cols0, data0
+    finally:
+        shutil.rmtree(work_dir, ignore_errors=True)
+    elapsed_ms = int((time.perf_counter() - t0_wall) * 1000)
+
+    col_map0 = {c.lower(): idx for idx, c in enumerate(cols0)}
+    col_map1 = {c.lower(): idx for idx, c in enumerate(cols1)}
+    t0_s, t1_s = data0[0], data1[0]
+    t0_ns = [t * 1e9 for t in t0_s]
+    t1_ns = [t * 1e9 for t in t1_s]
+    n_grid = 300
+    t_grid = _linspace(0.0, duration_ns, n_grid)
+
+    def _get_col(data: list[list[float]], cmap: dict[str, int], expr: str, default: float = 0.0) -> list[float]:
+        key = expr.lower()
+        if key in cmap:
+            return data[cmap[key]]
+        return [default] * (len(data[0]) if data else 0)
+
+    node_voltages_k0: dict[str, list[float]] = {}
+    node_voltages_k1: dict[str, list[float]] = {}
+    probe_traces = []
+
+    for im in input_meta:
+        v0 = _get_col(data0, col_map0, f"v({im['net']})")
+        v1 = _get_col(data1, col_map1, f"v({im['net']})")
+        node_voltages_k0[im["id"]] = _downsample_trace(t0_ns, v0, t_grid)
+        node_voltages_k1[im["id"]] = _downsample_trace(t1_ns, v1, t_grid)
+        probe_traces.append({
+            "id": im["id"],
+            "label": im["label"],
+            "role": "input",
+            "vdd": 1.0,
+            "k0": node_voltages_k0[im["id"]],
+            "k1": node_voltages_k1[im["id"]],
+        })
+
+    i0 = [abs(-v) for v in _get_col(data0, col_map0, "i(vdd)")]
+    i1 = [abs(-v) for v in _get_col(data1, col_map1, "i(vdd)")]
+    i0_ua = _downsample_trace(t0_ns, [v * 1e6 for v in i0], t_grid, preserve_abs_peaks=True)
+    i1_ua = _downsample_trace(t1_ns, [v * 1e6 for v in i1], t_grid, preserve_abs_peaks=True)
+    pk0 = float(max(i0) * 1e6) if i0 else 0.0
+    pk1 = float(max(i1) * 1e6) if i1 else 0.0
+    md0 = _time_avg(t0_s, i0) * 1e6 if i0 else 0.0
+    md1 = _time_avg(t1_s, i1) * 1e6 if i1 else 0.0
+    p_med_nw = 0.5 * (md0 + md1) * 1e-6 * 1.0 * 1e9
+
+    gate_currents_k0_ua: dict[str, list[float]] = {}
+    gate_currents_k1_ua: dict[str, list[float]] = {}
+    gate_metrics: dict[str, dict[str, Any]] = {}
+    gate_xray: dict[str, Any] = {}
+    sch = SRAM_6T_DEFINITION["internal_schematic"]
+
+    for si in sram_info:
+        sid = si["id"]
+        q0 = _downsample_trace(t0_ns, _get_col(data0, col_map0, f"v({si['q_net']})"), t_grid)
+        q1 = _downsample_trace(t1_ns, _get_col(data1, col_map1, f"v({si['q_net']})"), t_grid)
+        qb0 = _downsample_trace(t0_ns, _get_col(data0, col_map0, f"v({si['qb_net']})"), t_grid)
+        qb1 = _downsample_trace(t1_ns, _get_col(data1, col_map1, f"v({si['qb_net']})"), t_grid)
+        node_voltages_k0[sid] = q0
+        node_voltages_k1[sid] = q1
+        node_voltages_k0[f"{sid}:Q"] = q0
+        node_voltages_k1[f"{sid}:Q"] = q1
+        node_voltages_k0[f"{sid}:QB"] = qb0
+        node_voltages_k1[f"{sid}:QB"] = qb1
+
+        gate_currents_k0_ua[sid] = i0_ua
+        gate_currents_k1_ua[sid] = i1_ua
+        gate_metrics[sid] = {
+            "id": sid,
+            "label": si["label"],
+            "tupleId": "SRAM_6T",
+            "tupleName": SRAM_6T_DEFINITION["name"],
+            "fnK0": "4 Fases (0→1)" if si["k_pwl"] else "Retenção",
+            "fnK1": "Colapso (Key=1)",
+            "iPeakK0_uA": round(pk0, 4),
+            "iPeakK1_uA": round(pk1, 4),
+            "dpaPeakPct": round(_asym_pct(pk0, pk1), 2),
+            "dpaMeanPct": round(_asym_pct(md0, md1), 2),
+            "delayPs": 0.0,
+            "powerNw": round(p_med_nw, 2),
+            "eSwFj": 0.0,
+            "pdpAj": 0.0,
+        }
+
+        net_lookup = {
+            "vdd": ("const", 1.0),
+            "vss": ("const", 0.0),
+            "g1_pg": ("const", 1.8),
+            "g2_pg": ("const", 2.1),
+            "Q": ("net", si["q_net"]),
+            "QB": ("net", si["qb_net"]),
+            "WL": ("net", si["wl_net"]),
+            "BL": ("net", si["bl_net"]),
+            "BLB": ("net", si["blb_net"]),
+            "g1_pu": ("net", si["g1_pu"]),
+            "g2_pu": ("net", si["g2_pu"]),
+            "g1_pd": ("net", si["g1_pd"]),
+            "g2_pd": ("net", si["g2_pd"]),
+        }
+
+        def _make_sram_resolver(data: list[list[float]], cmap: dict[str, int], t_ns_ref: list[float]):
+            cache: dict[str, list[float]] = {}
+
+            def resolve(key: str) -> list[float]:
+                if key in cache:
+                    return cache[key]
+                kind, target = net_lookup.get(key, ("const", 0.0))
+                if kind == "const":
+                    arr = [float(target)] * n_grid
+                else:
+                    raw = _get_col(data, cmap, f"v({target})")
+                    arr = _interp_series(t_grid, t_ns_ref, raw)
+                cache[key] = arr
+                return arr
+
+            return resolve
+
+        res0 = _make_sram_resolver(data0, col_map0, t0_ns)
+        res1 = _make_sram_resolver(data1, col_map1, t1_ns)
+        gate_xray[sid] = {
+            "tupleId": "SRAM_6T",
+            "nodeVoltagesK0": {nd["id"]: [round(float(x), 4) for x in res0(nd["id"])] for nd in sch["nodes"]},
+            "nodeVoltagesK1": {nd["id"]: [round(float(x), 4) for x in res1(nd["id"])] for nd in sch["nodes"]},
+            "transistorsK0": _classify_ari_transistors(sch["transistors"], res0, n_grid),
+            "transistorsK1": _classify_ari_transistors(sch["transistors"], res1, n_grid),
+        }
+
+    for onode in output_nodes:
+        src = incoming.get((onode["id"], "in"))
+        if src:
+            src_id, src_port = src
+            key_port = f"{src_id}:{src_port}"
+            v_k0 = node_voltages_k0.get(key_port) or node_voltages_k0.get(src_id)
+            v_k1 = node_voltages_k1.get(key_port) or node_voltages_k1.get(src_id)
+            if v_k0 is not None and v_k1 is not None:
+                node_voltages_k0[onode["id"]] = v_k0
+                node_voltages_k1[onode["id"]] = v_k1
+                probe_traces.append({
+                    "id": onode["id"],
+                    "label": onode.get("label", "Out"),
+                    "role": "output",
+                    "vdd": 1.0,
+                    "k0": v_k0,
+                    "k1": v_k1,
+                })
+
+    n_sram = len(sram_nodes)
+    return {
+        "ok": True,
+        "mode": "high",
+        "compareKeys": run_dual,
+        "elapsedMs": elapsed_ms,
+        "durationNs": duration_ns,
+        "stepNs": 5.0,
+        "warnings": [],
+        "tGridNs": [round(float(t), 4) for t in t_grid],
+        "vectorLabels": [],
+        "nodeVoltagesK0": node_voltages_k0,
+        "nodeVoltagesK1": node_voltages_k1,
+        "gateCurrentsK0_uA": gate_currents_k0_ua,
+        "gateCurrentsK1_uA": gate_currents_k1_ua,
+        "totalCurrentK0_uA": i0_ua,
+        "totalCurrentK1_uA": i1_ua,
+        "probeTraces": probe_traces,
+        "truthTable": [],
+        "gateMetrics": gate_metrics,
+        "gateXray": gate_xray,
+        "metrics": {
+            "coreTransistors": 6 * n_sram,
+            "totalTransistors": 6 * n_sram,
+            "sumW_um": 9.0 * n_sram,
+            "iPeakK0_uA": round(pk0, 4),
+            "iPeakK1_uA": round(pk1, 4),
+            "dpaPeakPct": round(_asym_pct(pk0, pk1), 2) if run_dual else 0.0,
+            "dpaMeanPct": round(_asym_pct(md0, md1), 2) if run_dual else 0.0,
+            "maxStageDpaPeakPct": round(_asym_pct(pk0, pk1), 2) if run_dual else 0.0,
+            "delayPs": 0.0,
+            "powerNw": round(p_med_nw, 2),
+            "pdpAj": 0.0,
+            "hdPct": 0.0,
+        },
+        "netlist": netlist_str,
+    }
+
+
 def _compile_high_level(circuit: dict[str, Any], compare_keys: bool) -> dict[str, Any]:
     nodes = circuit.get("nodes", [])
+    sram_nodes = [n for n in nodes if n.get("type") == "SRAM_6T"]
+    if sram_nodes:
+        return _compile_high_level_sram(circuit, compare_keys)
+
     edges = circuit.get("edges", [])
     node_map = {n["id"]: n for n in nodes}
 
